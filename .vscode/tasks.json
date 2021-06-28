@@ -1,0 +1,49 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Build Resource",
+            "group": "build",
+            "command": "windres",
+            "args": [
+                "src\\*.rc",
+                "-O",
+                "coff",
+                "-o",
+                "obj/resource.res"
+            ],
+        },
+        {
+            "type": "shell", 
+            "label": "Build Project",
+            "command": "C:\\MinGW\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "src\\*.cpp",
+                "src\\engine\\*.cpp",
+                "src\\game\\*.cpp",
+                "-o",
+                "bin\\windebug32\\TheCommemorationOfWhiteLight.exe",
+                "obj\\*.res",
+                "-I..\\SDL2\\include",
+                "-L..\\SDL2\\lib",
+                "-lmingw32",
+                "-lSDL2main",
+                "-lSDL2",
+                "-lSDL2_net",
+                "-static-libstdc++",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

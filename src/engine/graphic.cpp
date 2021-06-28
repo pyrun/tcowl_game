@@ -1,0 +1,58 @@
+#include "graphic.h"
+
+#include <string>
+
+#include "log.h"
+
+using namespace engine;
+
+void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) {
+    SDL_Rect l_srcrect = { shift.x, shift.y, size.x, size.y};
+    SDL_Rect l_dstrect = { pos.x, pos.y, size.x, size.y};
+
+    SDL_RenderCopy( p_renderer, image->getTexture(), &l_srcrect, &l_dstrect);
+}
+
+graphic::graphic() {
+    snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_LENGTH, "%s", ENGINE_GRAPHIC_DEFAULT_TITEL);
+}
+
+graphic::~graphic() {
+
+}
+
+void graphic::init() {
+    uint32_t l_windows_flags = SDL_WINDOW_SHOWN;
+    p_window = SDL_CreateWindow( p_config.titel,
+                                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                ENGINE_GRAPHIC_DEFAULT_W, ENGINE_GRAPHIC_DEFAULT_H,
+                                l_windows_flags);
+    if( p_window == NULL) {
+        engine::log( engine::log_fatal, "Could not create window: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
+    if( p_renderer == NULL ) {
+        engine::log( engine::log_fatal, "Could not create renderer: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_SetRenderDrawColor( p_renderer, 0x20, 0x20, 0x20, 0x20);
+}
+
+void graphic::update() {
+    //Clear screen
+    SDL_RenderClear( p_renderer );
+
+    // Todo:
+    // Render files
+    //SDL_RenderCopy( p_renderer, )
+    for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
+        graphic_object *l_obj = p_graphic_objects[i];
+        l_obj->draw( this);
+    }
+
+    //Update screen
+    SDL_RenderPresent( p_renderer );
+}

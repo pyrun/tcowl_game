@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/src/**",
+                "C:/MinGW/include/**",
+                "C:/MinGW/lib/gcc/mingw32/9.2.0/include/**",
+                "C:/MinGW/lib/gcc/mingw32/9.2.0/include/c++/**",
+                "../SDL2/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x86"
+        }
+    ],
+    "version": 4
+}
