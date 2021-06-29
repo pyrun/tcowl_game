@@ -14,6 +14,11 @@ namespace engine {
         bool attack;
     };
 
+    enum input_key_state {
+        input_key_down = 0,
+        input_key_up
+    };
+
     class input {
         public:
             input();
@@ -24,6 +29,8 @@ namespace engine {
             void update();
 
             void reset();
+
+            void key( input_key_state state, SDL_Keycode key);
 
             input_event getEvents() { return p_map_event; }
         private:
