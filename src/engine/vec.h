@@ -1,4 +1,5 @@
 #ifndef ENGINE_VEC_H
+#define ENGINE_VEC_H
 
 #include <stdint.h>
 

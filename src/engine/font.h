@@ -20,6 +20,7 @@ namespace engine {
             void init( graphic *graphic, font_setting setting);
 
             void draw( const char *data, vec2 position);
+            void print( vec2 position, const char *fmt, ...);
 
             void draw_character( char character, vec2 position);
         private:

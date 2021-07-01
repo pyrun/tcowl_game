@@ -34,6 +34,19 @@ void font::draw( const char *data, vec2 position) {
     }
 }
 
+void font::print( vec2 position, const char *fmt, ...) {
+    if( p_graphic == NULL)
+        return;
+    
+    char l_log_buffer[256];
+    uint32_t l_length;
+    va_list ap;
+    va_start(ap, fmt);
+    l_length = vsnprintf( l_log_buffer, 256, fmt, ap);
+    va_end(ap);
+    draw( l_log_buffer, position);
+}
+
 void font::draw_character( char character, vec2 position) {
     uint8_t l_index = character - ENGINE_FONT_OFFSET;
     p_graphic->draw( &p_image,

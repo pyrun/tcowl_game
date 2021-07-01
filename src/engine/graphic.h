@@ -34,8 +34,13 @@ namespace engine {
 
             void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0});
 
+            uint32_t getDisplacedElements() { return p_displayed_elements; }
         public:
             SDL_Renderer *p_renderer;
+            vec2 p_camera_position;
+            vec2 p_camera_size;
+            uint32_t p_displayed_elements;
+            uint32_t p_displayed_elements_counter;
     };
 
     class graphic_object {
@@ -52,10 +57,12 @@ namespace engine {
             ~graphic();
 
             void init();
+            void reset();
 
             void update();
 
             void addObject( graphic_object* object) { p_graphic_objects.push_back( object); }
+
         private:
             SDL_Window *p_window;
             graphic_config p_config;

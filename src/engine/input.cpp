@@ -3,6 +3,7 @@
 #include <string>
 
 #include "log.h"
+#include "helper.h"
 
 using namespace engine;
 
@@ -29,6 +30,9 @@ void input::update() {
             case SDL_KEYDOWN: {
                 key( input_key_down, p_event.key.keysym.sym);
             } break;
+            case SDL_KEYUP: {
+                key( input_key_up, p_event.key.keysym.sym);
+            } break;
             default: {
                 // Something else
             } break;
@@ -38,23 +42,35 @@ void input::update() {
 
 void input::reset() {
     p_map_event.quit = false;
+    
+    p_map_input.x = 0;
+    p_map_input.y = 0;
 }
 
 void input::key( input_key_state state, SDL_Keycode key) {
     // todo einstelbar
     switch( key) {
         case SDLK_w: {
-            p_map_input.y = -128;
+            key_axis( false, state, -ENGINE_INPUT_OFFSET_KEYS);
         } break;
         case SDLK_s: {
-            p_map_input.y = 128;
+            key_axis( false, state, ENGINE_INPUT_OFFSET_KEYS);
         } break;
         case SDLK_a: {
-            p_map_input.y = -128;
+            key_axis( true, state, -ENGINE_INPUT_OFFSET_KEYS);
         } break;
         case SDLK_d: {
-            p_map_input.y = 128;
+            key_axis( true, state, ENGINE_INPUT_OFFSET_KEYS);
         } break;
         default: break;
+    }
+}
+
+void input::key_axis( bool horizontal, input_key_state state, int8_t value) {
+    int8_t *l_axis = horizontal?&p_map_input.x:&p_map_input.y;
+    if( state == input_key_state::input_key_down)
+        *l_axis = value;
+    else if( MIN( value, *l_axis) >= MAX( value, *l_axis)) { // Reset the value if it was previously set
+        *l_axis = 0;
     }
 }

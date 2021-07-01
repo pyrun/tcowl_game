@@ -24,7 +24,7 @@ int main( int argc, char* args[] ) {
     p_font.init( &p_graphic, p_font_setting);
 
     game::lobby p_lobby;    
-    p_lobby.init( &p_font);
+    p_lobby.init( &p_font, p_input.getInputMap());
 
     p_graphic.addObject( &p_lobby);
 

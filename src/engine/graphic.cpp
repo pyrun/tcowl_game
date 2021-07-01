@@ -7,14 +7,21 @@
 using namespace engine;
 
 void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) {
+    if( p_camera_position.x > pos.x+size.x ||
+        p_camera_position.y > pos.y+size.y ||
+        p_camera_position.x+p_camera_size.x < pos.x ||
+        p_camera_position.y+p_camera_size.y < pos.y)
+        return; // Nicht anzeigen
+
     SDL_Rect l_srcrect = { shift.x, shift.y, size.x, size.y};
     SDL_Rect l_dstrect = { pos.x, pos.y, size.x, size.y};
 
     SDL_RenderCopy( p_renderer, image->getTexture(), &l_srcrect, &l_dstrect);
+    p_displayed_elements_counter++;
 }
 
 graphic::graphic() {
-    snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_LENGTH, "%s", ENGINE_GRAPHIC_DEFAULT_TITEL);
+    reset();
 }
 
 graphic::~graphic() {
@@ -31,6 +38,8 @@ void graphic::init() {
         engine::log( engine::log_fatal, "Could not create window: %s\n", SDL_GetError());
         exit(1);
     }
+    p_camera_position = { 0, 0};
+    SDL_GetWindowSize( p_window, &p_camera_size.x, &p_camera_size.y);
 
     p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
     if( p_renderer == NULL ) {
@@ -41,9 +50,17 @@ void graphic::init() {
     SDL_SetRenderDrawColor( p_renderer, 0x20, 0x20, 0x20, 0x20);
 }
 
+void graphic::reset() {
+    snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_LENGTH, "%s", ENGINE_GRAPHIC_DEFAULT_TITEL);
+    p_displayed_elements = 0;
+    p_displayed_elements_counter = 0;
+}
+
 void graphic::update() {
     //Clear screen
     SDL_RenderClear( p_renderer );
+    p_displayed_elements = p_displayed_elements_counter;
+    p_displayed_elements_counter = 0;
 
     // Todo:
     // Render files
