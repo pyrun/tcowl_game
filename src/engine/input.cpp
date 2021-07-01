@@ -37,11 +37,21 @@ void input::update() {
                 // Something else
             } break;
         }
+        switch( p_event.window.event) {
+            case SDL_WINDOWEVENT_SIZE_CHANGED: {
+                p_map_event.windows_callback_size.x = p_event.window.data1;
+                p_map_event.windows_callback_size.y = p_event.window.data2;
+                p_map_event.windows_size_change = true;
+            } break;
+            default:
+            break;
+        }
     }
 }
 
 void input::reset() {
     p_map_event.quit = false;
+    p_map_event.windows_size_change = false;
     
     p_map_input.x = 0;
     p_map_input.y = 0;

@@ -8,12 +8,16 @@
 
 #define ENGINE_GRAPHIC_DEFAULT_TITEL    "NO_TITEL_SET"
 #define ENGINE_GRAPHIC_DEFAULT_LENGTH   256
+
+#define ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_W 320
+#define ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_H 180
 #define ENGINE_GRAPHIC_DEFAULT_W        640
-#define ENGINE_GRAPHIC_DEFAULT_H        400
+#define ENGINE_GRAPHIC_DEFAULT_H        360
 
 namespace engine {
     struct graphic_config {
         char titel[ENGINE_GRAPHIC_DEFAULT_LENGTH];
+        vec2 native_resolution = vec2{ ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_W, ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_H};
     };
 
     class graphic_image {
@@ -63,6 +67,7 @@ namespace engine {
 
             void addObject( graphic_object* object) { p_graphic_objects.push_back( object); }
 
+            graphic_config *getConfig() { return &p_config; }
         private:
             SDL_Window *p_window;
             graphic_config p_config;

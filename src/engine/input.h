@@ -10,6 +10,8 @@
 namespace engine {
     struct input_event {
         bool quit;
+        vec2 windows_callback_size;
+        bool windows_size_change;
     };
 
     struct input_map {
@@ -37,7 +39,7 @@ namespace engine {
             void key( input_key_state state, SDL_Keycode key);
             void key_axis( bool horizontal, input_key_state state, int8_t value);
 
-            input_event getEvents() { return p_map_event; }
+            input_event *getEvents() { return &p_map_event; }
             input_map *getInputMap() { return &p_map_input; }
         private:
             SDL_Event p_event;

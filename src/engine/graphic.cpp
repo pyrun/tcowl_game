@@ -21,6 +21,9 @@ void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) 
 }
 
 graphic::graphic() {
+    p_window = NULL;
+    p_renderer = NULL;
+
     reset();
 }
 
@@ -29,25 +32,30 @@ graphic::~graphic() {
 }
 
 void graphic::init() {
-    uint32_t l_windows_flags = SDL_WINDOW_SHOWN;
-    p_window = SDL_CreateWindow( p_config.titel,
-                                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                ENGINE_GRAPHIC_DEFAULT_W, ENGINE_GRAPHIC_DEFAULT_H,
-                                l_windows_flags);
+    uint32_t l_windows_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+    if( p_window == NULL) {
+        p_window = SDL_CreateWindow( p_config.titel,
+                                    SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                    ENGINE_GRAPHIC_DEFAULT_W, ENGINE_GRAPHIC_DEFAULT_H,
+                                    l_windows_flags);
+    }
     if( p_window == NULL) {
         engine::log( engine::log_fatal, "Could not create window: %s\n", SDL_GetError());
         exit(1);
     }
     p_camera_position = { 0, 0};
     SDL_GetWindowSize( p_window, &p_camera_size.x, &p_camera_size.y);
-
-    p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
+    if( p_renderer == NULL)
+        p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
     if( p_renderer == NULL ) {
         engine::log( engine::log_fatal, "Could not create renderer: %s\n", SDL_GetError());
         exit(1);
     }
 
-    SDL_SetRenderDrawColor( p_renderer, 0x20, 0x20, 0x20, 0x20);
+    SDL_SetRenderDrawColor( p_renderer, 0x0, 0x0, 0x0, 0xFF);
+    SDL_RenderSetLogicalSize( p_renderer, p_config.native_resolution.x, p_config.native_resolution.y);
+    SDL_RenderSetIntegerScale( p_renderer, SDL_bool::SDL_TRUE);
+    SDL_RenderPresent( p_renderer );
 }
 
 void graphic::reset() {

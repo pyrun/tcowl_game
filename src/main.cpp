@@ -19,6 +19,8 @@ int main( int argc, char* args[] ) {
     engine::font p_font;
     engine::font_setting p_font_setting = { .size{ 7, 9} };
 
+    snprintf( p_graphic.getConfig()->titel, 64, "The Commemoration of White Light");
+
     p_graphic.init();
     p_input.init();
     p_font.init( &p_graphic, p_font_setting);
@@ -32,8 +34,12 @@ int main( int argc, char* args[] ) {
     // https://opengameart.org/content/2d-modified-dark-forest-tileset
     // https://opengameart.org/content/forest-tileset-for-rpgs
     
-    while( p_input.getEvents().quit == false) {
+    while( p_input.getEvents()->quit == false) {
         p_input.update();
+        if( p_input.getEvents()->windows_size_change) {
+            p_input.getEvents()->windows_size_change = false;
+            p_graphic.init();
+        }
         p_graphic.update();
         SDL_Delay( 10);
     }
