@@ -11,10 +11,10 @@ lobby::~lobby() {
     
 }
 
-void lobby::init( engine::font *font, engine::input_map *input) {
+void lobby::init( engine::font *font, engine::input_map *input, engine::entity_handler *entitys) {
     p_font = font;
     p_input = input;
-
+    p_entity = entitys;
 }
 
 void lobby::draw( engine::graphic_draw *graphic) {
@@ -31,7 +31,7 @@ void lobby::draw( engine::graphic_draw *graphic) {
     if( p_input->y > 0)
         pos.y += 1;
     
-    p_font->print( { 100, 50}, "test %d %d %d", p_input->x, p_input->y, graphic->getDisplacedElements());
+    p_font->print( { 100, 50}, "test %d %d %d amount %d", p_input->x, p_input->y, graphic->getDisplacedElements(), p_entity->getAmount());
 
-    p_font->draw( "{dies ist ein sehr langer test} mit äöü ? und anderen sonderzeichen/()", pos);
+    p_font->draw( "{dies ist ein sehr langer test} mit ï¿½ï¿½ï¿½ ? und anderen sonderzeichen/()", pos);
 }
