@@ -1,0 +1,23 @@
+{
+    "name": "human",
+    "id": 100100,
+    "happy": true,
+    "action": [
+        {
+            "name": "Walk",
+            "id": 100,
+            "position": [ 0, 0],
+            "size": [ 32, 32],
+            "quantity": 4,
+            "ticks_for_next_image": 100
+        },
+        {
+            "name": "Walk2",
+            "id": 200,
+            "position": [ 0, 32],
+            "size": [ 32, 32],
+            "quantity": 4,
+            "ticks_for_next_image": 100
+        }
+    ]
+}
