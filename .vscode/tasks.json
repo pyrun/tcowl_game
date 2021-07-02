@@ -27,6 +27,7 @@
                 "bin\\windebug32\\TheCommemorationOfWhiteLight.exe",
                 "obj\\*.res",
                 "-I..\\SDL2\\include",
+                "-I..\\json\\include",
                 "-L..\\SDL2\\lib",
                 "-lmingw32",
                 "-lSDL2main",

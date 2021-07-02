@@ -7,7 +7,8 @@
                 "C:/MinGW/include/**",
                 "C:/MinGW/lib/gcc/mingw32/9.2.0/include/**",
                 "C:/MinGW/lib/gcc/mingw32/9.2.0/include/c++/**",
-                "../SDL2/include"
+                "../SDL2/include",
+                "..\\json\\include"
             ],
             "defines": [
                 "_DEBUG",
