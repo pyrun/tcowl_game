@@ -44,7 +44,8 @@ void graphic::init() {
         exit(1);
     }
     p_camera_position = { 0, 0};
-    SDL_GetWindowSize( p_window, &p_camera_size.x, &p_camera_size.y);
+    //SDL_GetWindowSize( p_window, &p_camera_size.x, &p_camera_size.y);
+    p_camera_size = p_config.native_resolution;
     if( p_renderer == NULL)
         p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
     if( p_renderer == NULL ) {

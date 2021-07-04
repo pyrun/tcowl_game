@@ -1,0 +1,146 @@
+#include "type.h"
+
+#include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+#include "log.h"
+
+using json = nlohmann::json;
+
+using namespace engine;
+
+type::type() {
+
+}
+
+type::~type() {
+
+}
+
+type_handler::type_handler() {
+
+}
+
+type_handler::~type_handler() {
+    p_type.clear();
+}
+
+void type_handler::loadtype( graphic *graphic, std::string folder) {
+    std::ifstream l_file( folder + "definition.json");
+    if( l_file.is_open() == false) {
+        log( log_level::log_warn, "type_handler::loadtype %s konnte nicht geoefnet werden", (folder + "definition.json").c_str());
+        return;
+    }
+
+    json l_json;
+    l_file >> l_json;
+
+    type *l_type = createtype();
+
+    // Name
+    if( !l_json["name"].is_null() &&
+        l_json["name"].is_string())
+        l_type->setName( l_json["name"].get<std::string>().c_str());
+    else
+        l_type->setName( "NoName");
+    log( log_trace, "Name: %s", l_type->getName());
+
+    // Id
+    if( !l_json["id"].is_null() &&
+        l_json["id"].is_number_unsigned()) {
+        l_type->setId( l_json["id"].get<uint32_t>());
+    } else {
+        removetype( l_type);
+        return;
+    }
+    log( log_trace, "Id: %d", l_type->getId());
+
+    // Graphic
+    std::string l_image_file;
+    if( !l_json["image"].is_null() &&
+        l_json["image"].is_string()) {
+         l_image_file = l_json["image"].get<std::string>();
+    } else {
+        removetype( l_type);
+        return;
+    }
+    log( log_trace, "image: %s", (folder + l_image_file).c_str());
+    l_type->getImage()->load( graphic, folder + l_image_file);
+
+    // Alle Aktionen laden und hinzufügen
+    if( !l_json["action"].is_null() &&
+        l_json["action"].is_array()) {
+        
+        json l_json_root_action = l_json["action"];
+        for( uint32_t i = 0; i < l_json["action"].size(); i++) {
+            json l_action_json = l_json_root_action[i];
+            action l_action;
+
+            if( !l_action_json["id"].is_null()) {
+                l_action.id  = l_action_json["id"].get<uint32_t>();
+            } else {
+                log( log_warn, "error loading action index %d, id", i);
+                continue;
+            }
+
+            if( !l_action_json["name"].is_null())
+                l_action.name = l_action_json["name"].get<std::string>();
+            else
+                l_action.name = "NoName";
+
+            if( !l_action_json["position"].is_null()) {
+                l_action.postion = { l_action_json["position"][0].get<int32_t>(), l_action_json["position"][1].get<int32_t>() };
+            } else {
+                log( log_warn, "error loading action index %d, position", i);
+                continue;
+            }
+
+            if( !l_action_json["size"].is_null()) {
+                l_action.size = { l_action_json["size"][0].get<int32_t>(), l_action_json["size"][1].get<int32_t>() };
+            } else {
+                log( log_warn, "error loading action index %d, size", i);
+                continue;
+            }
+            
+            if( !l_action_json["quantity"].is_null())
+                l_action.quantity  = l_action_json["quantity"].get<uint32_t>();
+            else
+                l_action.quantity = 1;
+            
+            if( !l_action_json["ticks_for_next_image"].is_null())
+                l_action.ticks_for_next_image  = l_action_json["ticks_for_next_image"].get<uint32_t>();
+            else
+                l_action.ticks_for_next_image = 1;
+            log( log_level::log_debug, "action '%s' %dx%d %dx%d length %d durration %d",
+                                                                                        l_action.name.c_str(),
+                                                                                        l_action.postion.x,
+                                                                                        l_action.postion.y,
+                                                                                        l_action.size.x,
+                                                                                        l_action.size.y,
+                                                                                        l_action.quantity,
+                                                                                        l_action.ticks_for_next_image);
+
+            l_type->addAction( l_action);
+        }
+    }
+
+    log( log_level::log_info, "Enitity %s with %d Action loaded", l_type->getName(), l_type->getAmountActions());
+}
+
+type *type_handler::createtype() {
+    type l_type;
+    p_type.push_back(l_type);
+    return &p_type[ p_type.size()-1];
+}
+
+bool type_handler::removetype( type *target) {
+    for( uint32_t i = 0; i < p_type.size(); i++) {
+        type *l_type = &p_type[i];
+        if( l_type == target) {
+            p_type.erase( p_type.begin()+i);
+            return true;
+        }
+    }
+    return false;
+}

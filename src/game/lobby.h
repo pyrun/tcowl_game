@@ -13,7 +13,7 @@ namespace game {
             lobby();
             ~lobby();
 
-            void init( engine::font *font, engine::input_map *input, engine::entity_handler *entitys);
+            void init( engine::font *font, engine::input_map *input, engine::entity_handler *entity);
 
             void draw( engine::graphic_draw *graphic);
 

@@ -8,6 +8,7 @@
 #include "engine/input.h"
 #include "engine/image.h"
 #include "engine/font.h"
+#include "engine/type.h"
 #include "engine/entity.h"
 
 #include "game/lobby.h"
@@ -19,6 +20,7 @@ int main( int argc, char* args[] ) {
     engine::input p_input;
     engine::font p_font;
     engine::font_setting p_font_setting = { .size{ 7, 9} };
+    engine::type_handler p_types;
     engine::entity_handler p_entity;
 
     snprintf( p_graphic.getConfig()->titel, 64, "The Commemoration of White Light");
@@ -31,7 +33,9 @@ int main( int argc, char* args[] ) {
     p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);
 
     p_graphic.addObject( &p_lobby);
-    p_entity.loadEntity( "entity/human/human.json");
+    //p_graphic.addObject( &p_types);
+    
+    p_types.loadtype( &p_graphic,  "entity/human/");
 
     // https://donjon.bin.sh/fantasy/name/#type=set;set=deity
     // https://opengameart.org/content/2d-modified-dark-forest-tileset
