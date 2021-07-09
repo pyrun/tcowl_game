@@ -24,9 +24,6 @@ namespace engine {
             type();
             ~type();
 
-            void update();
-            void draw();
-
             void setId( uint32_t id) { p_id = id; }
             uint32_t getId() { return p_id; }
             void setName( const char *name) { snprintf( p_name, ENGINE_TYPE_NAME_MAX_LENGTH, name); }
@@ -35,6 +32,7 @@ namespace engine {
             void addAction( action annimation) { p_action.push_back(annimation); }
             uint32_t getAmountActions() { return p_action.size(); }
             image *getImage() { return &p_image; }
+            action *getAction( uint32_t index) { return &p_action[index]; }
         private: 
             std::vector<action> p_action;
             char p_name[ENGINE_TYPE_NAME_MAX_LENGTH];
@@ -50,6 +48,8 @@ namespace engine {
             void loadtype( graphic *graphic, std::string file);
             
             uint32_t getAmount() { return (uint32_t)p_type.size(); }
+            type *get( uint32_t index) { return &p_type.at( index); }
+            type *getById( uint32_t id);
         private:
             type *createtype();
             bool removetype( type *target);

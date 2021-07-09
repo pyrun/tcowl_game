@@ -19,11 +19,11 @@ type::~type() {
 }
 
 type_handler::type_handler() {
-
+    p_type.clear();
 }
 
 type_handler::~type_handler() {
-    p_type.clear();
+
 }
 
 void type_handler::loadtype( graphic *graphic, std::string folder) {
@@ -65,8 +65,21 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         removetype( l_type);
         return;
     }
+
+    // Alpha key
+    if( !l_json["alpha-key"].is_null() &&
+        l_json["alpha-key"].is_array() &&
+        l_json["alpha-key"].size() >= 3) {
+        json l_json_root_color = l_json["alpha-key"];
+        l_type->getImage()->setAlphaKey(    l_json_root_color[0].get<uint8_t>(),
+                                            l_json_root_color[1].get<uint8_t>(),
+                                            l_json_root_color[2].get<uint8_t>());
+    }
+
+    // Load image
     log( log_trace, "image: %s", (folder + l_image_file).c_str());
     l_type->getImage()->load( graphic, folder + l_image_file);
+
 
     // Alle Aktionen laden und hinzufügen
     if( !l_json["action"].is_null() &&
@@ -131,7 +144,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
 type *type_handler::createtype() {
     type l_type;
     p_type.push_back(l_type);
-    return &p_type[ p_type.size()-1];
+    return &p_type.back();
 }
 
 bool type_handler::removetype( type *target) {
@@ -143,4 +156,11 @@ bool type_handler::removetype( type *target) {
         }
     }
     return false;
+}
+
+type *type_handler::getById( uint32_t id) {
+    for( uint32_t i = 0; i < p_type.size(); i++)
+        if( p_type[i].getId() == id)
+            return &p_type[i];
+    return NULL;
 }
