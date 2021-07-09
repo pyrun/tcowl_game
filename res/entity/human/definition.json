@@ -3,12 +3,13 @@
     "id": 100100,
     "happy": true,
     "image": "graphic.bmp",
+    "alpha-key": [ 255, 255, 255],
     "action": [
         {
             "name": "Walk",
             "id": 100,
             "position": [ 0, 0],
-            "size": [ 32, 32],
+            "size": [ 16, 32],
             "quantity": 4,
             "ticks_for_next_image": 100
         },
@@ -16,15 +17,23 @@
             "name": "Walk2",
             "id": 200,
             "position": [ 0, 32],
-            "size": [ 32, 32],
+            "size": [ 16, 32],
             "quantity": 4,
             "ticks_for_next_image": 100
         },
         {
             "name": "Walk3",
             "id": 300,
-            "position": [ 32, 32],
-            "size": [ 32, 32],
+            "position": [ 0, 48],
+            "size": [ 16, 32],
+            "quantity": 4,
+            "ticks_for_next_image": 100
+        },
+        {
+            "name": "Walk4",
+            "id": 400,
+            "position": [ 0, 64],
+            "size": [ 16, 32],
             "quantity": 4,
             "ticks_for_next_image": 100
         }
