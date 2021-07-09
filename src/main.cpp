@@ -28,14 +28,18 @@ int main( int argc, char* args[] ) {
     p_graphic.init();
     p_input.init();
     p_font.init( &p_graphic, p_font_setting);
+    p_entity.init( &p_types);
 
     game::lobby p_lobby;    
     p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);
 
     p_graphic.addObject( &p_lobby);
-    //p_graphic.addObject( &p_types);
+    p_graphic.addObject( &p_entity);
     
     p_types.loadtype( &p_graphic,  "entity/human/");
+
+    int32_t l_id = p_entity.createObject( 100100);
+    //p_entity.get( l_id)->id = 100;
 
     // https://donjon.bin.sh/fantasy/name/#type=set;set=deity
     // https://opengameart.org/content/2d-modified-dark-forest-tileset
