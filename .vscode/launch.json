@@ -8,7 +8,7 @@
       "program": "${workspaceFolder}\\bin\\windebug32\\TheCommemorationOfWhiteLight.exe",
       "args": [],
       "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}\\res",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
