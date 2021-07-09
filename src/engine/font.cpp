@@ -49,6 +49,8 @@ void font::print( vec2 position, const char *fmt, ...) {
 
 void font::draw_character( char character, vec2 position) {
     uint8_t l_index = character - ENGINE_FONT_OFFSET;
+    if( p_setting.breakpoint == 0) // Verhinderung Teilung 0
+        return;
     p_graphic->draw( &p_image,
                     position,
                     p_setting.size,
