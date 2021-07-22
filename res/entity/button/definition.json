@@ -1,0 +1,17 @@
+{
+    "name": "button",
+    "id": 2,
+    "happy": true,
+    "image": "graphic.bmp",
+    "alpha-key": [ 255, 255, 255],
+    "action": [
+        {
+            "name": "idle",
+            "id": 100,
+            "position": [ 0, 0],
+            "size": [ 128, 32],
+            "length": 1,
+            "ticks_for_next_image": 0
+        }
+    ]
+}

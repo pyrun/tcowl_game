@@ -90,5 +90,5 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     graphic->draw(  obj->objtype->getImage(),
                     obj->position,
                     l_action->size,
-                    l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->quantity) * l_action->size.x, 0});
+                    l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
 }

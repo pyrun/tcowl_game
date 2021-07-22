@@ -16,7 +16,7 @@ namespace engine {
         vec2 postion; // Wo im Bild das erste anfängt
         vec2 size; // Größe w x h
         uint32_t ticks_for_next_image; // Nach wie vielen Ticks weiter gesprungen wird
-        uint32_t quantity; // Anzahl der Bilder
+        uint32_t length; // Anzahl der Bilder
     };
 
     class type {

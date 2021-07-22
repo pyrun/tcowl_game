@@ -116,10 +116,10 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
                 continue;
             }
             
-            if( !l_action_json["quantity"].is_null())
-                l_action.quantity  = l_action_json["quantity"].get<uint32_t>();
+            if( !l_action_json["length"].is_null())
+                l_action.length  = l_action_json["length"].get<uint32_t>();
             else
-                l_action.quantity = 1;
+                l_action.length = 1;
             
             if( !l_action_json["ticks_for_next_image"].is_null())
                 l_action.ticks_for_next_image  = l_action_json["ticks_for_next_image"].get<uint32_t>();
@@ -131,7 +131,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
                                                                                         l_action.postion.y,
                                                                                         l_action.size.x,
                                                                                         l_action.size.y,
-                                                                                        l_action.quantity,
+                                                                                        l_action.length,
                                                                                         l_action.ticks_for_next_image);
 
             l_type->addAction( l_action);
