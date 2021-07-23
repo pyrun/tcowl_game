@@ -35,12 +35,11 @@ int main( int argc, char* args[] ) {
 
     p_graphic.addObject( &p_lobby);
     p_graphic.addObject( &p_entity);
-    
-    p_types.loadtype( &p_graphic,  "entity/human/");
-    p_types.loadtype( &p_graphic,  "entity/button/");
 
-    int32_t l_id = p_entity.createObject( 1);
-    l_id = p_entity.createObject( 2);
+    p_types.loadFolder( &p_graphic, "entity");
+
+    int32_t l_id = p_entity.createObject(1);
+    l_id = p_entity.createObject(2);
     p_entity.get( l_id)->position = { 10, 10};
 
     // https://donjon.bin.sh/fantasy/name/#type=set;set=deity

@@ -28,6 +28,7 @@ int32_t entity_handler::createObject( std::string name) {
             return createObject( p_types->get(i));
     return -1;
 }
+
 int32_t entity_handler::createObject( uint32_t id) {
     if( p_types == NULL)
         return -1;
@@ -36,6 +37,7 @@ int32_t entity_handler::createObject( uint32_t id) {
         return -1;
     return createObject( l_type);
 }
+
 int32_t entity_handler::createObject( type *objtype) {
     if( p_types == NULL)
         return -1;

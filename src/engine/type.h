@@ -8,6 +8,7 @@
 #include <string>
 
 #define ENGINE_TYPE_NAME_MAX_LENGTH 64
+#define ENGINE_TYPE_FILE_DESCRIPTION "definition.json"
 
 namespace engine {
     struct action {
@@ -45,6 +46,7 @@ namespace engine {
             type_handler();
             ~type_handler();
 
+            bool loadFolder( graphic *graphic, std::string path);
             void loadtype( graphic *graphic, std::string file);
             
             uint32_t getAmount() { return (uint32_t)p_type.size(); }
