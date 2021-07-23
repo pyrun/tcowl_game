@@ -23,6 +23,7 @@
                 "src\\*.cpp",
                 "src\\engine\\*.cpp",
                 "src\\game\\*.cpp",
+                "src\\network\\*.cpp",
                 "-o",
                 "bin\\windebug32\\TheCommemorationOfWhiteLight.exe",
                 "obj\\*.res",

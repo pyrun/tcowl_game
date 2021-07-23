@@ -13,6 +13,8 @@
 
 #include "game/lobby.h"
 
+#include "network/server.h"
+
 int main( int argc, char* args[] ) {
     sdl::init();
 
@@ -46,15 +48,23 @@ int main( int argc, char* args[] ) {
     // https://opengameart.org/content/2d-modified-dark-forest-tileset
     // https://opengameart.org/content/forest-tileset-for-rpgs
     
+    
+    network::server l_server;
+
+    l_server.begin();
+
     while( p_input.getEvents()->quit == false) {
         p_input.update();
         if( p_input.getEvents()->windows_size_change) {
             p_input.getEvents()->windows_size_change = false;
             p_graphic.init();
         }
+        l_server.update();
         p_graphic.update();
         SDL_Delay( 10);
     }
+
+    l_server.close();
 
     sdl::deinit();
 
