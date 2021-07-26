@@ -82,7 +82,6 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         l_type->setName( l_json["name"].get<std::string>().c_str());
     else
         l_type->setName( "NoName");
-    log( log_trace, "Name: %s", l_type->getName());
 
     // Id
     if( !l_json["id"].is_null() &&
@@ -92,7 +91,6 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         removetype( l_type);
         return;
     }
-    log( log_trace, "Id: %d", l_type->getId());
 
     // Graphic
     std::string l_image_file;
@@ -115,7 +113,6 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     }
 
     // Load image
-    log( log_trace, "image: %s", (folder + l_image_file).c_str());
     l_type->getImage()->load( graphic, folder + l_image_file);
 
 
@@ -176,7 +173,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         }
     }
 
-    log( log_level::log_info, "Enitity %s with %d Action loaded", l_type->getName(), l_type->getAmountActions());
+    log( log_level::log_info, "Entity id:%d name:%s action:%d loaded", l_type->getId(), l_type->getName(), l_type->getAmountActions());
 }
 
 type *type_handler::createtype() {
