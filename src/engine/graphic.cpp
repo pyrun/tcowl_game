@@ -71,9 +71,7 @@ void graphic::update() {
     p_displayed_elements = p_displayed_elements_counter;
     p_displayed_elements_counter = 0;
 
-    // Todo:
-    // Render files
-    //SDL_RenderCopy( p_renderer, )
+    // Render pipeline
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
         graphic_object *l_obj = p_graphic_objects[i];
         l_obj->draw( this);

@@ -32,6 +32,7 @@ namespace engine {
             int32_t createObject( uint32_t id); // -> objtype
             int32_t createObject( std::string name); // -> objtype
             int32_t createObject( type *objtype);
+            bool deleteObject( uint32_t id);
 
             entity *get( int32_t index) { return p_entity[ (uint32_t)index]; }
 

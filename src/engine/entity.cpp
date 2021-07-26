@@ -60,7 +60,7 @@ int32_t entity_handler::createObject( type *objtype) {
     }
 
     l_entity = p_entity[l_index] = new entity;
-    l_entity->id = 0;
+    l_entity->id = l_index;
 
     l_entity->objtype = objtype;
     l_entity->objtypeid = objtype->getId();
@@ -71,6 +71,16 @@ int32_t entity_handler::createObject( type *objtype) {
     log( log_trace, "entity_handler::createObject created");
     
     return l_index;
+}
+bool entity_handler::deleteObject( uint32_t id) {
+    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
+        if( p_entity[i] != NULL && p_entity[i]->id == id) {
+            delete p_entity[i];
+            p_entity[i] = NULL;
+            return true;
+        }
+    }
+    return false;
 }
 
 void entity_handler::draw( engine::graphic_draw *graphic) {

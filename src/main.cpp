@@ -44,6 +44,9 @@ int main( int argc, char* args[] ) {
     l_id = p_entity.createObject(2);
     p_entity.get( l_id)->position = { 100, 100};
 
+    l_id = p_entity.createObject(1);
+    p_entity.get( l_id)->position = { 50, 50};
+
     // https://donjon.bin.sh/fantasy/name/#type=set;set=deity
     // https://opengameart.org/content/2d-modified-dark-forest-tileset
     // https://opengameart.org/content/forest-tileset-for-rpgs
@@ -58,6 +61,7 @@ int main( int argc, char* args[] ) {
         if( p_input.getEvents()->windows_size_change) {
             p_input.getEvents()->windows_size_change = false;
             p_graphic.init();
+            p_entity.deleteObject( l_id);
         }
         l_server.update();
         p_graphic.update();
