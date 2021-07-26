@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <time.h>
 
 using namespace sdl;
 
@@ -18,6 +20,10 @@ bool sdl::init() {
         printf("SDLNet_Init: %s\n", SDLNet_GetError());
         return false;
     }
+
+    // pseudo random generator
+    srand( time( NULL ) );
+
     return true;
 }
 
