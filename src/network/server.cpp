@@ -55,8 +55,12 @@ void server::addSync( synchronisation *sync) {
 
 bool server::delSync( synchronisation *sync) {
     for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
-        //if( sync)
+        if( sync == p_sync_objects[i]) {
+            p_sync_objects.erase( p_sync_objects.begin()+i);
+            return true;
+        }
     }
+    return false;
 }
 
 bool server::addClient( TCPsocket socket) {
@@ -100,7 +104,7 @@ void server::delClient( server_client *client) {
         engine::log( engine::log_error, "%s", SDLNet_GetError());
         exit(-1);
     }
- 
+
     engine::log( engine::log_debug, "server::delClient close connection %d", client->id);
     SDLNet_TCP_Close( client->socket);
     uint32_t l_index = client->index;
@@ -109,24 +113,21 @@ void server::delClient( server_client *client) {
 }
 
 uint8_t* server::recvData( server_client *client, uint16_t* length) {
-    uint8_t temp_data[ NETWORK_SERVER_PACKETSIZE];
-    int num_recv = SDLNet_TCP_Recv( client->socket, temp_data, NETWORK_SERVER_PACKETSIZE);
+    uint8_t l_temp_data[ NETWORK_SERVER_PACKETSIZE];
+    int l_num_recv = SDLNet_TCP_Recv( client->socket, l_temp_data, NETWORK_SERVER_PACKETSIZE);
  
-    if(num_recv <= 0) {
+    if( l_num_recv <= 0) {
         delClient( client);
         return NULL;
     } else {
-        *length = num_recv;
- 
-        uint8_t* data = (uint8_t*) malloc(num_recv*sizeof(uint8_t));
-        memcpy(data, temp_data, num_recv);
- 
-        return data;
+        *length = l_num_recv;
+        uint8_t* l_data = (uint8_t*) malloc( l_num_recv*sizeof(uint8_t));
+        memcpy( l_data, l_temp_data, l_num_recv);
+        return l_data;
     }
 }
 
 void server::update() {
-    int len;
     TCPsocket l_client_socket;
 
     //try to accept a connection 

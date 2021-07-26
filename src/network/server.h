@@ -1,9 +1,11 @@
-#ifndef HTTP_SERVER_H
-#define HTTP_SERVER_H
+#ifndef NETWORK_SERVER_H
+#define NETWORK_SERVER_H
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
 #include <vector>
+
+#include "network.h"
 
 #define NETWORK_SERVER_DEFAULT_PORT 22255
 #define NETWORK_SERVER_MAX_CLIENTS 16
