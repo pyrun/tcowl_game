@@ -42,7 +42,7 @@ int main( int argc, char* args[] ) {
 
     int32_t l_id = p_entity.createObject(1);
     l_id = p_entity.createObject(2);
-    p_entity.get( l_id)->position = { 10, 10};
+    p_entity.get( l_id)->position = { 100, 100};
 
     // https://donjon.bin.sh/fantasy/name/#type=set;set=deity
     // https://opengameart.org/content/2d-modified-dark-forest-tileset
