@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}\\bin\\windebug32\\TheCommemorationOfWhiteLight.exe",
-      "args": [],
+      "args": ["server"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}\\res",
       "environment": [],

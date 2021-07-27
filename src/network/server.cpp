@@ -49,6 +49,37 @@ bool server::begin() {
     return true;
 }
 
+void server::sendPacket( packet packet, client *client) {
+    uint8_t l_temp_data[NETWORK_SERVER_PACKETSIZE];
+    uint32_t l_offset = 2;
+
+    l_temp_data[0] = packet.type;
+    l_temp_data[1] = packet.length;
+    memcpy( l_temp_data + l_offset, packet.data, packet.length);
+    l_offset += packet.length;
+
+    l_temp_data[l_offset] = getCRC8( packet);
+    l_offset++;
+
+    if( client == NULL) {
+        for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
+            if( p_clients[i] == NULL)
+                continue;
+            int l_send_length = SDLNet_TCP_Send( p_clients[i]->socket, l_temp_data, l_offset);
+            if( l_send_length < l_offset) {
+                engine::log( engine::log_error, "server::sendPacket SDLNet_TCP_Send: %s", SDLNet_GetError());
+                delClient( p_clients[i]);
+            }
+        }
+    } else {
+        int l_send_length = SDLNet_TCP_Send( client->socket, l_temp_data, l_offset);
+        if( l_send_length < l_offset) {
+            engine::log( engine::log_error, "server::sendPacket SDLNet_TCP_Send: %s", SDLNet_GetError());
+            delClient( client);
+        }
+    }
+}
+
 void server::addSync( synchronisation *sync) {
     p_sync_objects.push_back( sync);
 }
@@ -66,14 +97,14 @@ bool server::delSync( synchronisation *sync) {
 bool server::addClient( TCPsocket socket) {
     uint32_t ipaddr;
     int32_t l_index = getFreeClientIndex();
-    server_client *l_client = NULL;
+    client *l_client = NULL;
     if( l_index == -1) {
         engine::log( engine::log_warn, "server::addClient no space for new connection");
         return false;
     }
 
     // set up the client
-    p_clients[ l_index] = new server_client;
+    p_clients[ l_index] = new client;
     l_client = getClient( l_index);
     l_client->socket = socket;
     l_client->index = l_index;
@@ -96,28 +127,33 @@ bool server::addClient( TCPsocket socket) {
         // perhaps you need to restart the set and make it bigger...
     }
 
+    for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
+        network::synchronisation *l_sync = p_sync_objects[i];
+        l_sync->newClientCallback( l_client, this);
+    }
+
     return true;
 }
 
-void server::delClient( server_client *client) {
-    if( SDLNet_TCP_DelSocket( p_server_socketset, client->socket) == -1) {
+void server::delClient( client *client_ptr) {
+    if( SDLNet_TCP_DelSocket( p_server_socketset, client_ptr->socket) == -1) {
         engine::log( engine::log_error, "%s", SDLNet_GetError());
         exit(-1);
     }
 
-    engine::log( engine::log_debug, "server::delClient close connection %d", client->id);
-    SDLNet_TCP_Close( client->socket);
-    uint32_t l_index = client->index;
-    free( client);
+    engine::log( engine::log_debug, "server::delClient close connection %d", client_ptr->id);
+    SDLNet_TCP_Close( client_ptr->socket);
+    uint32_t l_index = client_ptr->index;
+    free( client_ptr);
     p_clients[ l_index] = NULL;
 }
 
-uint8_t* server::recvData( server_client *client, uint16_t* length) {
-    uint8_t l_temp_data[ NETWORK_SERVER_PACKETSIZE];
-    int l_num_recv = SDLNet_TCP_Recv( client->socket, l_temp_data, NETWORK_SERVER_PACKETSIZE);
+uint8_t* server::recvData( client *client_ptr, uint16_t* length) {
+    uint8_t l_temp_data[ NETWORK_SERVER_PACKETSIZE*4];
+    int l_num_recv = SDLNet_TCP_Recv( client_ptr->socket, l_temp_data, NETWORK_SERVER_PACKETSIZE*4);
  
     if( l_num_recv <= 0) {
-        delClient( client);
+        delClient( client_ptr);
         return NULL;
     } else {
         *length = l_num_recv;
@@ -141,7 +177,7 @@ void server::update() {
     // check for recv
     int32_t l_num_active_sockets = SDLNet_CheckSockets( p_server_socketset, 0);
     for( uint32_t i = 0; (i < NETWORK_SERVER_MAX_CLIENTS) && l_num_active_sockets; i++) {
-        server_client *l_client = getClient( i);
+        client *l_client = getClient( i);
         if( l_client == NULL)
             continue;
         if( !SDLNet_SocketReady( l_client->socket))
@@ -153,6 +189,19 @@ void server::update() {
         uint8_t* data = recvData( l_client, &length);
         if( data == NULL)
             continue;
+
+        // todo stream
+        packet l_packet;
+        l_packet.type = (network::packet_type)data[0];
+        l_packet.length = data[1];
+        memcpy( l_packet.data, data + 2, l_packet.length);
+        l_packet.crc = data[ 2 + l_packet.length];
+
+
+        for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
+            network::synchronisation *l_sync = p_sync_objects[i];
+            l_sync->recvPacket( l_packet);
+        }
 
         engine::log( engine::log_debug, "Test: %.*s", length, data);
 

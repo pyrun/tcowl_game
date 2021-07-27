@@ -14,9 +14,16 @@
 #include "game/lobby.h"
 
 #include "network/server.h"
+#include "network/client_connection.h"
 
 int main( int argc, char* args[] ) {
     sdl::init();
+    bool l_start_server = false;
+
+    for( uint32_t i = 0; i < argc; i++) {
+        if( strcmp( args[i], "server") == 0)
+            l_start_server = true;
+    }
 
     engine::graphic p_graphic;
     engine::input p_input;
@@ -40,21 +47,32 @@ int main( int argc, char* args[] ) {
 
     p_types.loadFolder( &p_graphic, "entity");
 
-    int32_t l_id = p_entity.createObject(1);
-    l_id = p_entity.createObject(2);
-    p_entity.get( l_id)->position = { 100, 100};
-
-    l_id = p_entity.createObject(1);
-    p_entity.get( l_id)->position = { 50, 50};
 
     // https://donjon.bin.sh/fantasy/name/#type=set;set=deity
     // https://opengameart.org/content/2d-modified-dark-forest-tileset
     // https://opengameart.org/content/forest-tileset-for-rpgs
     
-    
-    network::server l_server;
 
-    l_server.begin();
+    network::server l_server;
+    network::client_connection l_client;
+    int32_t l_id = 0;
+
+    if( l_start_server) {
+        l_server.begin();
+        l_server.addSync( &p_entity);
+
+        l_id = p_entity.createObject(1);
+        l_id = p_entity.createObject(2);
+        p_entity.get( l_id)->position = { 100, 100};
+
+        l_id = p_entity.createObject(1);
+        p_entity.get( l_id)->position = { 50, 50};
+        l_id = p_entity.createObject(1);
+        p_entity.get( l_id)->position = { 150, 50};
+    } else {
+        l_client.begin();
+        l_client.addSync( &p_entity);
+    }
 
     while( p_input.getEvents()->quit == false) {
         p_input.update();
@@ -63,7 +81,10 @@ int main( int argc, char* args[] ) {
             p_graphic.init();
             p_entity.deleteObject( l_id);
         }
-        l_server.update();
+        if( l_start_server)
+            l_server.update();
+        else
+            l_client.update();
         p_graphic.update();
         SDL_Delay( 10);
     }

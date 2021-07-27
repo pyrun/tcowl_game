@@ -3,6 +3,7 @@
 #include "string.h"
 #include "log.h"
 #include "timer.h"
+#include "helper.h"
 
 using namespace engine;
 
@@ -83,6 +84,46 @@ bool entity_handler::deleteObject( uint32_t id) {
     return false;
 }
 
+uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
+    uint32_t l_offset = 0;
+
+    helper::int32toUint8x4( obj->id, dataDist + l_offset); l_offset +=4;
+    helper::int32toUint8x4( obj->objtypeid, dataDist + l_offset); l_offset +=4;
+
+    helper::int32toUint8x4( obj->position.x, dataDist + l_offset); l_offset +=4;
+    helper::int32toUint8x4( obj->position.y, dataDist + l_offset); l_offset +=4;
+
+    helper::int32toUint8x4( obj->velocity.x, dataDist + l_offset); l_offset +=4;
+    helper::int32toUint8x4( obj->velocity.y, dataDist + l_offset); l_offset +=4;
+
+    return l_offset;
+}
+
+void entity_handler::inNetworkData( uint8_t *dataDist) {
+    uint32_t l_offset = 0;
+    int32_t l_id;
+    int32_t l_type_id;
+
+    helper::uint8x4toInt32( dataDist + l_offset, &l_id); l_offset +=4;
+    helper::uint8x4toInt32( dataDist + l_offset, &l_type_id); l_offset +=4;
+    
+    if( p_types->getById( l_type_id) == NULL)
+        return;
+    entity *l_entity = get(l_id);
+    if( l_entity == NULL)
+        l_entity = p_entity[l_id] = new entity;
+    l_entity->id = l_id;
+    l_entity->objtype = p_types->getById( l_type_id);
+    l_entity->objtypeid = l_type_id;
+
+    helper::uint8x4toInt32( dataDist + l_offset, &l_entity->position.x); l_offset +=4;
+    helper::uint8x4toInt32( dataDist + l_offset, &l_entity->position.y); l_offset +=4;
+
+    helper::uint8x4toInt32( dataDist + l_offset, &l_entity->velocity.x); l_offset +=4;
+    helper::uint8x4toInt32( dataDist + l_offset, &l_entity->velocity.y); l_offset +=4;
+}
+
+
 void entity_handler::draw( engine::graphic_draw *graphic) {
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         if( p_entity[i] != NULL) {
@@ -103,4 +144,31 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
                     obj->position,
                     l_action->size,
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
+}
+
+bool entity_handler::newClientCallback( network::client *client, network::interface *network_interface) {
+    network::packet l_packet;
+
+    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
+        engine::entity *l_entity = p_entity[i];
+        if( l_entity == NULL)
+            continue;
+
+        l_packet.type = network::packet_type::network_type_object_data;
+        l_packet.length = outNetworkData( l_entity, l_packet.data);
+        l_packet.crc = network::getCRC8( l_packet);
+
+        network_interface->sendPacket( l_packet, client);
+    }
+    
+    log( log_trace, "entity_handler::newClientCallback");
+    return true;
+}
+
+void entity_handler::recvPacket( network::packet packet) {
+    // todo check okay
+    if( packet.type == network::packet_type::network_type_object_data)
+        inNetworkData( packet.data);
+    
+    log( log_trace, "entity_handler::recvPacket");
 }
