@@ -11,6 +11,7 @@ entity_handler::entity_handler() {
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++)
         p_entity[i] = NULL;
     p_types = NULL;
+    p_amount = 0;
 }
 
 entity_handler::~entity_handler() {
@@ -70,6 +71,8 @@ int32_t entity_handler::createObject( type *objtype) {
     l_entity->velocity = { 0, 0};
 
     log( log_trace, "entity_handler::createObject created");
+
+    p_amount++;
     
     return l_index;
 }
@@ -78,6 +81,7 @@ bool entity_handler::deleteObject( uint32_t id) {
         if( p_entity[i] != NULL && p_entity[i]->id == id) {
             delete p_entity[i];
             p_entity[i] = NULL;
+            p_amount--;
             return true;
         }
     }
@@ -110,8 +114,10 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     if( p_types->getById( l_type_id) == NULL)
         return;
     entity *l_entity = get(l_id);
-    if( l_entity == NULL)
+    if( l_entity == NULL) {
         l_entity = p_entity[l_id] = new entity;
+        p_amount++;
+    }
     l_entity->id = l_id;
     l_entity->objtype = p_types->getById( l_type_id);
     l_entity->objtypeid = l_type_id;
@@ -146,6 +152,21 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
 }
 
+void entity_handler::network_update( network::interface *network_interface) {
+    network::packet l_packet;
+    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
+        engine::entity *l_entity = p_entity[i];
+        if( l_entity == NULL)
+            continue;
+
+        l_packet.type = network::packet_type::network_type_object_data;
+        l_packet.length = outNetworkData( l_entity, l_packet.data);
+        l_packet.crc = network::getCRC8( l_packet);
+
+        network_interface->sendPacket( l_packet, NULL);
+    }
+}
+
 bool entity_handler::newClientCallback( network::client *client, network::interface *network_interface) {
     network::packet l_packet;
 
@@ -169,6 +190,4 @@ void entity_handler::recvPacket( network::packet packet) {
     // todo check okay
     if( packet.type == network::packet_type::network_type_object_data)
         inNetworkData( packet.data);
-    
-    log( log_trace, "entity_handler::recvPacket");
 }

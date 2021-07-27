@@ -18,7 +18,7 @@ namespace network {
             void addSync( synchronisation *sync);
             bool delSync( synchronisation *sync);
 
-            uint8_t* recvData( uint16_t* length);
+            uint8_t* recvData( uint16_t *length);
             void stream( uint8_t *data, uint32_t length);
 
             void update();

@@ -20,18 +20,18 @@ void lobby::init( engine::font *font, engine::input_map *input, engine::entity_h
 void lobby::draw( engine::graphic_draw *graphic) {
     if( !p_font)
         return;
+    if( p_entity->get( 2)) {
+        if( p_input->x < 0)
+            p_entity->get( 2)->position.x -= 1;
+        if( p_input->x > 0)
+            p_entity->get( 2)->position.x += 1;
+        if( p_input->y < 0)
+            p_entity->get( 2)->position.y -= 1;
+        if( p_input->y > 0)
+            p_entity->get( 2)->position.y += 1;
+    }
     
-    static vec2 pos = { 100, 100};
-    if( p_input->x < 0)
-        pos.x -= 1;
-    if( p_input->x > 0)
-        pos.x += 1;
-    if( p_input->y < 0)
-        pos.y -= 1;
-    if( p_input->y > 0)
-        pos.y += 1;
-    
-    p_font->print( { 100, 50}, "test %d %d %d amount", p_input->x, p_input->y, graphic->getDisplacedElements() /*, p_entity->getAmount()*/);
+    p_font->print( { 100, 50}, "test %d %d %d %d amount", p_input->x, p_input->y, graphic->getDisplacedElements() , p_entity->getAmount());
 
-    p_font->draw( "{dies ist ein sehr langer test} mit ��� ? und anderen sonderzeichen/()", pos);
+    p_font->draw( "{dies ist ein sehr langer test} mit ��� ? und anderen sonderzeichen/()", vec2{ 100, 100});
 }

@@ -7,7 +7,7 @@
 
 #include <string>
 
-#define ENGINE_ENTITY_MAX_AMOUNT 2048
+#define ENGINE_ENTITY_MAX_AMOUNT 1024
 
 namespace engine {
     struct entity {
@@ -43,12 +43,15 @@ namespace engine {
             void draw( engine::graphic_draw *graphic);
             void drawEntity( engine::graphic_draw *graphic, entity* obj);
 
+            uint32_t getAmount() { return p_amount; }
             // network
+            void network_update( network::interface *network_interface);
             bool newClientCallback( network::client *client, network::interface *network_interface);
             void recvPacket( network::packet packet);
         private:
             type_handler *p_types;
             entity *p_entity[ENGINE_ENTITY_MAX_AMOUNT];
+            uint32_t p_amount;
     };
 };
 

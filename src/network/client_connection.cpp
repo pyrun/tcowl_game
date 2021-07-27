@@ -44,7 +44,22 @@ bool client_connection::begin() {
 }
 
 void client_connection::sendPacket( packet packet, client *client) {
+    uint8_t l_temp_data[NETWORK_PACKET_MAX_SIZE];
+    uint32_t l_offset = 2;
 
+    l_temp_data[0] = packet.type;
+    l_temp_data[1] = packet.length;
+    memcpy( l_temp_data + l_offset, packet.data, packet.length);
+    l_offset += packet.length;
+
+    l_temp_data[l_offset] = getCRC8( packet);
+    l_offset++;
+
+    int l_send_length = SDLNet_TCP_Send( p_socket, l_temp_data, l_offset);
+    if( l_send_length < l_offset) {
+        engine::log( engine::log_error, "server::sendPacket SDLNet_TCP_Send: %s", SDLNet_GetError());
+        close();
+    }
 }
 
 void client_connection::addSync( synchronisation *sync) {
@@ -61,9 +76,9 @@ bool client_connection::delSync( synchronisation *sync) {
     return false;
 }
 
-uint8_t* client_connection::recvData( uint16_t* length) {
-    uint8_t l_temp_data[ NETWORK_PACKET_MAX_SIZE];
-    int l_num_recv = SDLNet_TCP_Recv( p_socket, l_temp_data, NETWORK_PACKET_MAX_SIZE);
+uint8_t* client_connection::recvData( uint16_t *length) {
+    uint8_t l_temp_data[ *length];
+    int l_num_recv = SDLNet_TCP_Recv( p_socket, l_temp_data, *length);
  
     if( l_num_recv <= 0) {
         close();
@@ -78,41 +93,56 @@ uint8_t* client_connection::recvData( uint16_t* length) {
 
 void client_connection::update() {
     // check for recv
-    SDLNet_CheckSockets( p_socketset, 0);
-    if( SDLNet_SocketReady( p_socket)) {
-        uint16_t l_length, flag;
-        uint8_t* data = recvData( &l_length);
-        if( data == NULL)
-            return;
-        
-        if( p_input_length) {
-            memcpy( p_input_stream + p_input_length, data, l_length);
+    int32_t l_ready = 1;
+    while( l_ready) {
+        l_ready = SDLNet_CheckSockets( p_socketset, 0);
+        if( SDLNet_SocketReady( p_socket)) {
+            uint16_t l_length, flag;
+            l_length = 2;
+            uint8_t* data = recvData( &l_length);
+            if( data == NULL ||
+                l_length != 2) // min 3
+                return;
+
+            packet l_packet;
+
+            // get type and length
+            l_packet.type = (network::packet_type)data[0];
+            l_packet.length = data[1];
+
+            // get data and CRC
             free( data);
-            l_length = l_length+p_input_length;
-            data = (uint8_t*) malloc( l_length*sizeof(uint8_t));
-            memcpy( data, p_input_stream, l_length);
-            p_input_length = 0;
-        }
+            l_length = l_packet.length + 1; // crc
+            data = recvData( &l_length);
 
-        // todo stream
-        packet l_packet;
-        l_packet.type = (network::packet_type)data[0];
-        l_packet.length = data[1];
-        memcpy( l_packet.data, data + 2, l_packet.length);
-        l_packet.crc = data[ 2 + l_packet.length];
+            // check if valid
+            if( l_length != l_packet.length + 1)
+                return;
+            
+            // copy data
+            memcpy( l_packet.data, data, l_packet.length);
+            l_packet.crc = data[ l_packet.length];
+            free( data);
 
-        l_length = l_length - (2 + l_packet.length);
+            // check CRC
+            if( l_packet.crc != getCRC8( l_packet))
+                return;
+            
+            if( l_packet.type == network_type_heatbeat) {
+                packet l_packet;
+                l_packet.type = network::packet_type::network_type_heatbeat;
+                l_packet.length = 0;
+                l_packet.crc = network::getCRC8( l_packet);
 
-        if( l_length) {
-            memcpy( p_input_stream, data + 2 + l_packet.length + 1, l_length);
-            p_input_length = l_length;
-        }
+                sendPacket( l_packet, NULL);
+                return;
+            }
 
-        free( data);
-
-        for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
-            network::synchronisation *l_sync = p_sync_objects[i];
-            l_sync->recvPacket( l_packet);
+            // pocess packet
+            for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
+                network::synchronisation *l_sync = p_sync_objects[i];
+                l_sync->recvPacket( l_packet);
+            }
         }
     }
 }

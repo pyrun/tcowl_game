@@ -14,10 +14,13 @@ namespace network {
         uint32_t index;
         TCPsocket socket;
         IPaddress *IPadress;
+
+        bool ready;
     };
 
     enum packet_type {
-        network_type_object_data = 0,
+        network_type_heatbeat = 0,
+        network_type_object_data,
     };
 
     struct packet {
@@ -41,6 +44,7 @@ namespace network {
             synchronisation() {}
             ~synchronisation() {}
 
+            virtual void network_update( network::interface *network_interface) {}
             virtual bool newClientCallback( client *client, interface *network_interface) { return true; }
             virtual void recvPacket( packet packet) {}
     };
