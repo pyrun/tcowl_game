@@ -137,12 +137,7 @@ bool server::addClient( TCPsocket socket) {
     }
     
     // heatbeat start
-    packet l_packet;
-    l_packet.type = network::packet_type::network_type_heatbeat;
-    l_packet.length = 0;
-    l_packet.crc = network::getCRC8( l_packet);
-
-    sendPacket( l_packet, NULL);
+    sendHeartbeat( NULL);
 
     return true;
 }
@@ -190,12 +185,7 @@ void server::update() {
         l_sync->network_update( this);
 
         // heatbeat
-        packet l_packet;
-        l_packet.type = network::packet_type::network_type_heatbeat;
-        l_packet.length = 0;
-        l_packet.crc = network::getCRC8( l_packet);
-
-        sendPacket( l_packet, NULL);
+        sendHeartbeat( NULL);
     }
 
     //try to accept a connection 
@@ -250,7 +240,7 @@ void server::update() {
         if( l_packet.crc != getCRC8( l_packet))
             continue;
         
-        if( l_packet.type == network_type_heatbeat) {
+        if( l_packet.type == network_type_heartbeat) {
             l_client->ready = true;
             continue;
         }

@@ -12,14 +12,14 @@ namespace network {
     struct client {
         uint32_t id;
         uint32_t index;
-        TCPsocket socket;
+        TCPsocket socket; 
         IPaddress *IPadress;
 
         bool ready;
     };
 
     enum packet_type {
-        network_type_heatbeat = 0,
+        network_type_heartbeat = 0,
         network_type_object_data,
     };
 
@@ -37,6 +37,8 @@ namespace network {
 
             // Falls client == NULL wird es an alle versendet die verbunden sind
             virtual void sendPacket( packet packet, client *client) {}
+
+            void sendHeartbeat( client *client);
     };
 
     class synchronisation {

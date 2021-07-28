@@ -128,13 +128,8 @@ void client_connection::update() {
             if( l_packet.crc != getCRC8( l_packet))
                 return;
             
-            if( l_packet.type == network_type_heatbeat) {
-                packet l_packet;
-                l_packet.type = network::packet_type::network_type_heatbeat;
-                l_packet.length = 0;
-                l_packet.crc = network::getCRC8( l_packet);
-
-                sendPacket( l_packet, NULL);
+            if( l_packet.type == network_type_heartbeat) {
+                sendHeartbeat( NULL);
                 return;
             }
 

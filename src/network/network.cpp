@@ -13,3 +13,8 @@ uint8_t network::getCRC8( network::packet packet) {
     
     return l_crc;
 }
+
+void interface::sendHeartbeat( client *client) {
+    packet l_packet = { .type = network::packet_type::network_type_heartbeat, .length = 0, .crc = network::getCRC8( l_packet)};
+    sendPacket( l_packet, client);
+}

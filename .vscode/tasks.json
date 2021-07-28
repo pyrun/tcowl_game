@@ -30,10 +30,13 @@
                 "-I..\\SDL2\\include",
                 "-I..\\json\\include",
                 "-L..\\SDL2\\lib",
+                "-w",
+                "-W",
                 "-lmingw32",
                 "-lSDL2main",
                 "-lSDL2",
                 "-lSDL2_net",
+                "-static-libgcc",
                 "-static-libstdc++",
             ],
             "options": {
