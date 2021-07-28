@@ -19,6 +19,8 @@ namespace engine {
         vec2 position;
         vec2 velocity;
 
+        uint8_t action;
+
         uint32_t animation_tick;
         uint32_t animation_time;
     };
@@ -51,6 +53,7 @@ namespace engine {
         private:
             type_handler *p_types;
             entity *p_entity[ENGINE_ENTITY_MAX_AMOUNT];
+            std::vector<entity*> p_draw_order;
             uint32_t p_amount;
     };
 };

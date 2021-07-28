@@ -69,9 +69,9 @@ int main( int argc, char* args[] ) {
         p_entity.get( l_id)->position = { 50, 50};
         l_id = p_entity.createObject(1);
         p_entity.get( l_id)->position = { 150, 50};
-        for( int32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
+        for( int32_t i = 0; i < 1024; i++) {
             uint32_t l_test = p_entity.createObject(1);
-            p_entity.get( l_test)->position = { 2*i, 2*i};
+            p_entity.get( l_test)->position = { 20*i, 20*i};
         }
     } else {
         l_client.begin();

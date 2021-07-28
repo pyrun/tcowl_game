@@ -4,12 +4,15 @@
 #include "log.h"
 #include "timer.h"
 #include "helper.h"
+#include <algorithm>
 
 using namespace engine;
 
 entity_handler::entity_handler() {
-    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++)
+    p_draw_order.reserve( ENGINE_ENTITY_MAX_AMOUNT);
+    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         p_entity[i] = NULL;
+    }
     p_types = NULL;
     p_amount = 0;
 }
@@ -62,6 +65,7 @@ int32_t entity_handler::createObject( type *objtype) {
     }
 
     l_entity = p_entity[l_index] = new entity;
+    p_draw_order.push_back( l_entity);
     l_entity->id = l_index;
 
     l_entity->objtype = objtype;
@@ -69,6 +73,7 @@ int32_t entity_handler::createObject( type *objtype) {
 
     l_entity->position = { 0, 0};
     l_entity->velocity = { 0, 0};
+    l_entity->action = 0;
 
     log( log_trace, "entity_handler::createObject created");
 
@@ -79,6 +84,13 @@ int32_t entity_handler::createObject( type *objtype) {
 bool entity_handler::deleteObject( uint32_t id) {
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         if( p_entity[i] != NULL && p_entity[i]->id == id) {
+
+            for( uint32_t n = 0; n < p_draw_order.size(); n++) {
+                if( p_draw_order[n] == p_entity[i]) {
+                    p_draw_order.erase( p_draw_order.begin()+n);
+                    break;
+                }
+            }
             delete p_entity[i];
             p_entity[i] = NULL;
             p_amount--;
@@ -116,6 +128,7 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     entity *l_entity = get(l_id);
     if( l_entity == NULL) {
         l_entity = p_entity[l_id] = new entity;
+        p_draw_order.push_back( l_entity);
         p_amount++;
     }
     l_entity->id = l_id;
@@ -129,12 +142,18 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     helper::uint8x4toInt32( dataDist + l_offset, &l_entity->velocity.y); l_offset +=4;
 }
 
-
 void entity_handler::draw( engine::graphic_draw *graphic) {
-    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
-        if( p_entity[i] != NULL) {
-            drawEntity( graphic, p_entity[i]);
+    struct {
+        bool operator()( entity *a, entity *b) const {
+            return a->position.y+a->objtype->getAction(a->action)->size.y < b->position.y+b->objtype->getAction(b->action)->size.y;
         }
+    } depthSorting;
+
+    std::sort( p_draw_order.begin(), p_draw_order.end(), depthSorting);
+
+    for( uint32_t i = 0; i < p_draw_order.size(); i++) {
+        entity *l_entity = p_draw_order[i];
+        drawEntity( graphic, l_entity);
     }
 }
 
