@@ -11,9 +11,9 @@
 
 namespace engine {
     struct entity {
-        uint32_t id;
+        uint16_t index;
         
-        uint32_t objtypeid;
+        uint16_t objtypeid;
         type *objtype;
 
         vec2 position;
@@ -37,12 +37,12 @@ namespace engine {
 
             void init( type_handler *types);
 
-            int32_t createObject( uint32_t id); // -> objtype
-            int32_t createObject( std::string name); // -> objtype
-            int32_t createObject( type *objtype);
-            bool deleteObject( uint32_t id);
+            int16_t createObject( uint16_t objid); // -> objtype
+            int16_t createObject( std::string name); // -> objtype
+            int16_t createObject( type *objtype, int32_t index = -1);
+            bool deleteObject( uint32_t index);
 
-            entity *get( int32_t index) { return p_entity[ (uint32_t)index]; }
+            entity *get( int16_t index) { return p_entity[ (uint16_t)index]; }
 
             uint32_t outNetworkData( entity *obj, uint8_t *dataDist);
             void inNetworkData( uint8_t *dataDist);

@@ -29,3 +29,13 @@ void helper::uint8x4toInt32( uint8_t *array, int32_t *value) {
   *value += array[2] <<  8;
   *value += array[3];
 }
+
+void helper::int16toUint8x2( int16_t value, uint8_t *array) {
+  array[0] = value >> 8;
+  array[1] = value;
+}
+
+void helper::uint8x2toInt16( uint8_t *array, int16_t *value) {
+  *value = array[0] <<  8;
+  *value += array[1];
+}

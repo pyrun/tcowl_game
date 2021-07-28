@@ -126,7 +126,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
             action l_action;
 
             if( !l_action_json["id"].is_null()) {
-                l_action.id  = l_action_json["id"].get<uint32_t>();
+                l_action.id  = l_action_json["id"].get<uint16_t>();
             } else {
                 log( log_warn, "error loading action index %d, id", i);
                 continue;
@@ -193,7 +193,7 @@ bool type_handler::removetype( type *target) {
     return false;
 }
 
-type *type_handler::getById( uint32_t id) {
+type *type_handler::getById( uint16_t id) {
     for( uint32_t i = 0; i < p_type.size(); i++)
         if( p_type[i].getId() == id)
             return &p_type[i];

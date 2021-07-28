@@ -25,8 +25,8 @@ namespace engine {
             type();
             ~type();
 
-            void setId( uint32_t id) { p_id = id; }
-            uint32_t getId() { return p_id; }
+            void setId( uint16_t id) { p_id = id; }
+            uint16_t getId() { return p_id; }
             void setName( const char *name) { snprintf( p_name, ENGINE_TYPE_NAME_MAX_LENGTH, name); }
             char *getName() { return p_name; }
 
@@ -37,7 +37,7 @@ namespace engine {
         private: 
             std::vector<action> p_action;
             char p_name[ENGINE_TYPE_NAME_MAX_LENGTH];
-            uint32_t p_id;
+            uint16_t p_id;
             image p_image;
     };
 
@@ -51,7 +51,7 @@ namespace engine {
             
             uint32_t getAmount() { return (uint32_t)p_type.size(); }
             type *get( uint32_t index) { return &p_type.at( index); }
-            type *getById( uint32_t id);
+            type *getById( uint16_t id);
         private:
             type *createtype();
             bool removetype( type *target);

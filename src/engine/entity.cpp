@@ -25,7 +25,7 @@ void entity_handler::init( type_handler *types) {
     p_types = types;
 }
 
-int32_t entity_handler::createObject( std::string name) {
+int16_t entity_handler::createObject( std::string name) {
     if( p_types == NULL)
         return -1;
     for( uint32_t i = 0; i < p_types->getAmount(); i++)
@@ -34,16 +34,16 @@ int32_t entity_handler::createObject( std::string name) {
     return -1;
 }
 
-int32_t entity_handler::createObject( uint32_t id) {
+int16_t entity_handler::createObject( uint16_t objid) {
     if( p_types == NULL)
         return -1;
-    type *l_type = p_types->getById( id);
+    type *l_type = p_types->getById( objid);
     if( l_type == NULL)
         return -1;
     return createObject( l_type);
 }
 
-int32_t entity_handler::createObject( type *objtype) {
+int16_t entity_handler::createObject( type *objtype, int32_t index) {
     if( p_types == NULL)
         return -1;
     if( objtype == NULL)
@@ -51,22 +51,27 @@ int32_t entity_handler::createObject( type *objtype) {
     
     entity *l_entity = NULL;
     bool l_found = false;
-    uint32_t l_index = 0;
-    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
-        if( p_entity[i] == NULL) {
-            l_found = true;
-            l_index = i;
-            break;
+    uint16_t l_index = 0;
+
+    if( index < 0) {
+        for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
+            if( p_entity[i] == NULL) {
+                l_found = true;
+                l_index = i;
+                break;
+            }
         }
-    }
-    if( l_found == false) {
-        log( log_error, "entity_handler::createObject no space for new entity");
-        return -1;
+        if( l_found == false) {
+            log( log_error, "entity_handler::createObject no space for new entity");
+            return -1;
+        }
+    } else {
+        l_index = (uint32_t)index;
     }
 
     l_entity = p_entity[l_index] = new entity;
     p_draw_order.push_back( l_entity);
-    l_entity->id = l_index;
+    l_entity->index = l_index;
 
     l_entity->objtype = objtype;
     l_entity->objtypeid = objtype->getId();
@@ -83,9 +88,9 @@ int32_t entity_handler::createObject( type *objtype) {
     
     return l_index;
 }
-bool entity_handler::deleteObject( uint32_t id) {
+bool entity_handler::deleteObject( uint32_t index) {
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
-        if( p_entity[i] != NULL && p_entity[i]->id == id) {
+        if( p_entity[i] != NULL && p_entity[i]->index == index) {
 
             for( uint32_t n = 0; n < p_draw_order.size(); n++) {
                 if( p_draw_order[n] == p_entity[i]) {
@@ -105,8 +110,8 @@ bool entity_handler::deleteObject( uint32_t id) {
 uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
     uint32_t l_offset = 0;
 
-    helper::int32toUint8x4( obj->id, dataDist + l_offset); l_offset +=4;
-    helper::int32toUint8x4( obj->objtypeid, dataDist + l_offset); l_offset +=4;
+    helper::int16toUint8x2( obj->index, dataDist + l_offset); l_offset +=2;
+    helper::int16toUint8x2( obj->objtypeid, dataDist + l_offset); l_offset +=2;
 
     helper::int32toUint8x4( obj->position.x, dataDist + l_offset); l_offset +=4;
     helper::int32toUint8x4( obj->position.y, dataDist + l_offset); l_offset +=4;
@@ -119,21 +124,20 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
 
 void entity_handler::inNetworkData( uint8_t *dataDist) {
     uint32_t l_offset = 0;
-    int32_t l_id;
-    int32_t l_type_id;
+    int16_t l_index;
+    int16_t l_type_id;
 
-    helper::uint8x4toInt32( dataDist + l_offset, &l_id); l_offset +=4;
-    helper::uint8x4toInt32( dataDist + l_offset, &l_type_id); l_offset +=4;
+    helper::uint8x2toInt16( dataDist + l_offset, &l_index); l_offset +=2;
+    helper::uint8x2toInt16( dataDist + l_offset, &l_type_id); l_offset +=2;
     
     if( p_types->getById( l_type_id) == NULL)
         return;
-    entity *l_entity = get(l_id);
+    entity *l_entity = get(l_index);
     if( l_entity == NULL) {
-        l_entity = p_entity[l_id] = new entity;
-        p_draw_order.push_back( l_entity);
-        p_amount++;
+        createObject( p_types->getById( l_type_id), l_index);
+        l_entity = get( l_index);
     }
-    l_entity->id = l_id;
+    l_entity->index = l_index;
     l_entity->objtype = p_types->getById( l_type_id);
     l_entity->objtypeid = l_type_id;
 

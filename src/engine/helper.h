@@ -17,6 +17,9 @@ namespace helper {
 
     void int32toUint8x4( int32_t value, uint8_t *array);
     void uint8x4toInt32( uint8_t *array, int32_t *value);
+
+    void int16toUint8x2( int16_t value, uint8_t *array);
+    void uint8x2toInt16( uint8_t *array, int16_t *value);
 };
 
 #endif
