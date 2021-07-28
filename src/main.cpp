@@ -90,7 +90,7 @@ int main( int argc, char* args[] ) {
         else
             l_client.update();
         p_graphic.update();
-        SDL_Delay( 10);
+        SDL_Delay( 16);
     }
 
     l_server.close();

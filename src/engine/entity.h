@@ -23,6 +23,11 @@ namespace engine {
 
         uint32_t animation_tick;
         uint32_t animation_time;
+
+        // used for network sync
+        // only sync if this true, set be false after sync
+        // todo state of change, like only pos, only action, destroyed
+        bool change;
     };
 
     class entity_handler : public engine::graphic_object, public network::synchronisation {

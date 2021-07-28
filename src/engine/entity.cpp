@@ -75,6 +75,8 @@ int32_t entity_handler::createObject( type *objtype) {
     l_entity->velocity = { 0, 0};
     l_entity->action = 0;
 
+    l_entity->change = true;
+    
     log( log_trace, "entity_handler::createObject created");
 
     p_amount++;
@@ -175,12 +177,14 @@ void entity_handler::network_update( network::interface *network_interface) {
     network::packet l_packet;
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         engine::entity *l_entity = p_entity[i];
-        if( l_entity == NULL)
+        if( l_entity == NULL ||
+            l_entity->change == false)
             continue;
 
         l_packet.type = network::packet_type::network_type_object_data;
         l_packet.length = outNetworkData( l_entity, l_packet.data);
         l_packet.crc = network::getCRC8( l_packet);
+        l_entity->change = false;
 
         network_interface->sendPacket( l_packet, NULL);
     }
