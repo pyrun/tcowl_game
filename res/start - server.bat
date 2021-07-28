@@ -1,2 +1,2 @@
-..\bin\windebug32\TheCommemorationOfWhiteLight.exe server
+..\build\TheCommemorationOfWhiteLight.exe server
 pause

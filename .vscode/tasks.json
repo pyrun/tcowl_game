@@ -11,44 +11,8 @@
                 "-O",
                 "coff",
                 "-o",
-                "obj/resource.res"
+                "build/resource.res"
             ],
-        },
-        {
-            "type": "shell", 
-            "label": "Build Project",
-            "command": "C:\\MinGW\\bin\\g++.exe",
-            "args": [
-                "-g",
-                "src\\*.cpp",
-                "src\\engine\\*.cpp",
-                "src\\game\\*.cpp",
-                "src\\network\\*.cpp",
-                "-o",
-                "bin\\windebug32\\TheCommemorationOfWhiteLight.exe",
-                "obj\\*.res",
-                "-I..\\SDL2\\include",
-                "-I..\\json\\include",
-                "-L..\\SDL2\\lib",
-                "-w",
-                "-W",
-                "-lmingw32",
-                "-lSDL2main",
-                "-lSDL2",
-                "-lSDL2_net",
-                "-static-libgcc",
-                "-static-libstdc++",
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
         }
     ]
 }

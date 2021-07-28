@@ -1,2 +1,2 @@
-..\bin\windebug32\TheCommemorationOfWhiteLight.exe
+..\build\TheCommemorationOfWhiteLight.exe
 pause
