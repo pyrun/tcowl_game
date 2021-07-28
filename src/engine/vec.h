@@ -25,6 +25,19 @@ namespace engine {
         int32_t z;
         int32_t w;
     };
+
+    struct fvec2 {
+        float x = 0;
+        float y = 0;
+
+        fvec2 operator+(const fvec2 rhs) {
+            return fvec2{ x+rhs.x, y+rhs.y};
+        }
+
+        vec2 toVec() {
+            return vec2{ (int32_t)x, (int32_t)y};
+        }
+    };
 };
 
 #endif
