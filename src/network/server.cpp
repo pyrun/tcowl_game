@@ -14,6 +14,7 @@ server::server() {
     p_id_counter = 0;
     for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++)
         p_clients[i] = NULL;
+    p_server_socket = NULL;
 }
 
 server::~server() {
@@ -254,7 +255,8 @@ void server::update() {
 }
 
 void server::close() {
-    SDLNet_TCP_Close( p_server_socket); 
+    if( p_server_socket)
+        SDLNet_TCP_Close( p_server_socket); 
 }
 
 // Search for free space and if it is not available, a negative number is returned
