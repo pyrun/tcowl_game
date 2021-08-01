@@ -8,6 +8,8 @@
 using namespace sdl;
 
 bool sdl::init() {
+    // todo 
+    // init without graphic
     SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
 
     //Initialize SDL
