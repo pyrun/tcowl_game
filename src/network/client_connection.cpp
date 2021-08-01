@@ -95,6 +95,9 @@ void client_connection::update() {
     // check for recv
     int32_t l_ready = 1;
     while( l_ready) {
+        // check if we connected
+        if( p_socketset == NULL)
+            return;
         l_ready = SDLNet_CheckSockets( p_socketset, 0);
         if( SDLNet_SocketReady( p_socket)) {
             uint16_t l_length, flag;
