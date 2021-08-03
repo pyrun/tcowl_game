@@ -43,7 +43,9 @@ namespace game {
             network::client_connection p_client;
 
             // Game logic
-            game::lobby p_lobby;    
+            game::lobby p_lobby;
+            uint32_t p_physics_lastime;
+            uint32_t p_animation_lasttime;
     };
 };
 

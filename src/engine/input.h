@@ -15,9 +15,15 @@ namespace engine {
     };
 
     struct input_map {
-        int8_t x;
-        int8_t y;
+        fvec2 axies;
+
         bool attack;
+
+        // intern
+        bool up;
+        bool down;
+        bool left;
+        bool right;
     };
 
     enum input_key_state {
@@ -37,7 +43,7 @@ namespace engine {
             void reset();
 
             void key( input_key_state state, SDL_Keycode key);
-            void key_axis( bool horizontal, input_key_state state, int8_t value);
+            void key_axis();
 
             input_event *getEvents() { return &p_map_event; }
             input_map *getInputMap() { return &p_map_input; }

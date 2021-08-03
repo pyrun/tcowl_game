@@ -18,6 +18,7 @@ namespace engine {
         vec2 size; // Größe w x h
         uint32_t ticks_for_next_image; // Nach wie vielen Ticks weiter gesprungen wird
         uint32_t length; // Anzahl der Bilder
+        bool bind_velocity; // Anpassen der Animationsgeschwindigkeit an die Geschwindigkeit
     };
 
     class type {

@@ -39,3 +39,8 @@ void helper::uint8x2toInt16( uint8_t *array, int16_t *value) {
   *value = array[0] <<  8;
   *value += array[1];
 }
+
+float helper::lerp(float a, float b, float f)
+{
+    return a + f * (b - a);
+}

@@ -12,7 +12,7 @@ namespace engine {
 
             void begin( graphic *graphic);
 
-            void draw( engine::graphic_draw *graphic);
+            void draw( float dt, engine::graphic_draw *graphic);
         private:
             image p_image;
             graphic *p_graphic;

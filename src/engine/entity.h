@@ -3,6 +3,7 @@
 
 #include "graphic.h"
 #include "type.h"
+#include "world.h"
 #include "../network/network.h"
 
 #include <string>
@@ -16,8 +17,8 @@ namespace engine {
         uint16_t objtypeid;
         type *objtype;
 
-        vec2 position;
-        vec2 velocity;
+        fvec2 position;
+        fvec2 velocity;
 
         uint8_t action;
 
@@ -47,8 +48,10 @@ namespace engine {
             uint32_t outNetworkData( entity *obj, uint8_t *dataDist);
             void inNetworkData( uint8_t *dataDist);
 
-            void draw( engine::graphic_draw *graphic);
-            void drawEntity( engine::graphic_draw *graphic, entity* obj);
+            void update( float dt, world *world);
+
+            void draw( float dt, engine::graphic_draw *graphic);
+            void drawEntity( float dt, engine::graphic_draw *graphic, entity* obj);
 
             uint32_t getAmount() { return p_amount; }
             // network

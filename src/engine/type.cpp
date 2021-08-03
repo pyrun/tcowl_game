@@ -160,6 +160,12 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
                 l_action.ticks_for_next_image  = l_action_json["ticks_for_next_image"].get<uint32_t>();
             else
                 l_action.ticks_for_next_image = 1;
+            
+            if( !l_action_json["bind_velocity"].is_null())
+                l_action.bind_velocity = l_action_json["bind_velocity"].get<bool>();
+            else
+                l_action.bind_velocity = false;
+
             log( log_level::log_debug, "action '%s' %dx%d %dx%d length %d durration %d",
                                                                                         l_action.name.c_str(),
                                                                                         l_action.postion.x,

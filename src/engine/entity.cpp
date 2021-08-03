@@ -4,7 +4,11 @@
 #include "log.h"
 #include "timer.h"
 #include "helper.h"
+
+#include <cstdint>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 
 using namespace engine;
 
@@ -88,6 +92,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     
     return l_index;
 }
+
 bool entity_handler::deleteObject( uint32_t index) {
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         if( p_entity[i] != NULL && p_entity[i]->index == index) {
@@ -148,31 +153,58 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     helper::uint8x4toInt32( dataDist + l_offset, (int32_t *)&l_entity->velocity.y); l_offset +=4;
 }
 
-void entity_handler::draw( engine::graphic_draw *graphic) {
+void entity_handler::update( float dt, world *world) {
+    float l_friction = 0.25f; //todo woher kommt es? was beeinflusst es
+
+    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
+        engine::entity *l_entity = p_entity[i];
+        if( l_entity == NULL)
+            continue;
+        // todo process
+        l_entity->position += l_entity->velocity * dt;
+        // friction
+        l_entity->velocity.x = helper::lerp( l_entity->velocity.x, 0, l_friction);
+        l_entity->velocity.y = helper::lerp( l_entity->velocity.y, 0, l_friction);
+        // todo collision
+    }
+}
+
+void entity_handler::draw( float dt, engine::graphic_draw *graphic) {
+    // depth sorting 
     struct {
         bool operator()( entity *a, entity *b) const {
             return a->position.y+a->objtype->getAction(a->action)->size.y < b->position.y+b->objtype->getAction(b->action)->size.y;
         }
     } depthSorting;
-
     std::sort( p_draw_order.begin(), p_draw_order.end(), depthSorting);
 
+    // only draw entitys which have a graphic
     for( uint32_t i = 0; i < p_draw_order.size(); i++) {
         entity *l_entity = p_draw_order[i];
-        drawEntity( graphic, l_entity);
+        drawEntity( dt, graphic, l_entity);
     }
 }
 
-void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
-    action *l_action = obj->objtype->getAction(0);
+void entity_handler::drawEntity( float dt, engine::graphic_draw *graphic, entity* obj) {
+    // todo get action
+    action *l_action = obj->objtype->getAction(1);
+    float l_time;
 
-    if( helper::time::check( &obj->animation_time, l_action->ticks_for_next_image)) {
+    // adjust animation speed to acceleration if wanted
+    if( l_action->bind_velocity) {
+        l_time = powf( obj->velocity.normalize()/dt, -1);
+        l_time *=l_action->ticks_for_next_image;
+    } else {
+        l_time = l_action->ticks_for_next_image;
+    }
+
+    if( l_time < l_action->ticks_for_next_image*10 && helper::time::check( &obj->animation_time, l_time>l_action->ticks_for_next_image?l_time:l_action->ticks_for_next_image)) {
         helper::time::reset( &obj->animation_time);
         obj->animation_tick++;
     }
 
     graphic->draw(  obj->objtype->getImage(),
-                    obj->position,
+                    obj->position.toVec(),
                     l_action->size,
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
 }

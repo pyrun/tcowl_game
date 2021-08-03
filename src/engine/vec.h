@@ -2,6 +2,7 @@
 #define ENGINE_VEC_H
 
 #include <stdint.h>
+#include <math.h>
 
 namespace engine {
     struct vec2 {
@@ -10,6 +11,12 @@ namespace engine {
 
         vec2 operator+(const vec2 rhs) {
             return vec2{ x+rhs.x, y+rhs.y};
+        }
+
+        vec2& operator+=(const vec2& rhs){
+            this->x += rhs.x;
+            this->y += rhs.y;
+            return *this;
         }
     };
 
@@ -34,8 +41,28 @@ namespace engine {
             return fvec2{ x+rhs.x, y+rhs.y};
         }
 
+        fvec2& operator+=(const fvec2& rhs){
+            this->x += rhs.x;
+            this->y += rhs.y;
+            return *this;
+        }
+
+        fvec2 operator*(const float rhs) {
+            return fvec2{ x*rhs, y*rhs};
+        }
+        
+        fvec2& operator/=(const float rhs){
+            this->x /= rhs;
+            this->y /= rhs;
+            return *this;
+        }
+
         vec2 toVec() {
             return vec2{ (int32_t)x, (int32_t)y};
+        }
+
+        float normalize() {
+            return std::sqrt(x*x + y*y);
         }
     };
 };

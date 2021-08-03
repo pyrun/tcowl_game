@@ -40,7 +40,10 @@ void app::begin( bool server) {
         p_server.begin();
         p_server.addSync( &p_entity);
 
-        int16_t l_id = p_entity.createObject(2);
+        int16_t l_id = p_entity.createObject(1);
+        p_entity.get( l_id)->position = { 100, 100};
+
+        /*int16_t l_id = p_entity.createObject(2);
         p_entity.get( l_id)->position = { 100, 100};
 
         l_id = p_entity.createObject(1);
@@ -53,11 +56,14 @@ void app::begin( bool server) {
             int16_t l_test = p_entity.createObject(1);
             if( l_test > 0)
                 p_entity.get( l_test)->position = engine::vec2{ 10*(i%32), 10*n} + engine::vec2{ 30, 30};
-        }
+        }*/
     } else {
         p_client.begin();
         p_client.addSync( &p_entity);
     }
+
+    p_physics_lastime = SDL_GetTicks();
+    p_animation_lasttime = SDL_GetTicks();
 }
 
 bool app::update() {
@@ -78,8 +84,17 @@ bool app::update() {
     else
         p_client.update();
     
-    p_graphic.update();
+    // physics
+    uint32_t l_physics_current = SDL_GetTicks();
+    float l_delta = (l_physics_current - p_physics_lastime) / 1000.0f;
+    p_entity.update( l_delta, &p_world);
+    p_physics_lastime = l_physics_current;
 
+    // rendering
+    p_graphic.update( SDL_GetTicks()-p_animation_lasttime);
+    p_animation_lasttime = SDL_GetTicks();
+
+    // fps cap
     l_endPerf = SDL_GetPerformanceCounter();
     l_framePerf = l_endPerf - l_startPerf;
 

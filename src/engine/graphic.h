@@ -52,7 +52,7 @@ namespace engine {
             graphic_object() {}
             ~graphic_object() {}
 
-            virtual void draw( graphic_draw *graphic) {}
+            virtual void draw( float dt, graphic_draw *graphic) {}
     };
 
     class graphic : public graphic_draw {
@@ -63,7 +63,7 @@ namespace engine {
             void init();
             void reset();
 
-            void update();
+            void update( float dt);
 
             void addObject( graphic_object* object) { p_graphic_objects.push_back( object); }
 

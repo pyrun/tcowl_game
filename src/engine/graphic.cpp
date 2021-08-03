@@ -65,7 +65,7 @@ void graphic::reset() {
     p_displayed_elements_counter = 0;
 }
 
-void graphic::update() {
+void graphic::update( float dt) {
     //Clear screen
     SDL_RenderClear( p_renderer );
     p_displayed_elements = p_displayed_elements_counter;
@@ -74,7 +74,7 @@ void graphic::update() {
     // Render pipeline
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
         graphic_object *l_obj = p_graphic_objects[i];
-        l_obj->draw( this);
+        l_obj->draw( dt, this);
     }
 
     //Update screen

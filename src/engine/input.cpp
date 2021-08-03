@@ -1,6 +1,7 @@
 #include "input.h"
 
 #include <string>
+#include <math.h>
 
 #include "log.h"
 #include "helper.h"
@@ -52,35 +53,49 @@ void input::update() {
 void input::reset() {
     p_map_event.quit = false;
     p_map_event.windows_size_change = false;
-    
-    p_map_input.x = 0;
-    p_map_input.y = 0;
+
+    p_map_input.axies = { 0.f, 0.f};
 }
 
 void input::key( input_key_state state, SDL_Keycode key) {
+    bool l_update_axis = false;
     // todo einstelbar
     switch( key) {
         case SDLK_w: {
-            key_axis( false, state, -ENGINE_INPUT_OFFSET_KEYS);
+            p_map_input.up = state == input_key_state::input_key_down;
+            l_update_axis = true;
         } break;
         case SDLK_s: {
-            key_axis( false, state, ENGINE_INPUT_OFFSET_KEYS);
+            p_map_input.down = state == input_key_state::input_key_down;
+            l_update_axis = true;
         } break;
         case SDLK_a: {
-            key_axis( true, state, -ENGINE_INPUT_OFFSET_KEYS);
+            p_map_input.left = state == input_key_state::input_key_down;
+            l_update_axis = true;
         } break;
         case SDLK_d: {
-            key_axis( true, state, ENGINE_INPUT_OFFSET_KEYS);
+            p_map_input.right = state == input_key_state::input_key_down;
+            l_update_axis = true;
         } break;
         default: break;
     }
+
+    if( l_update_axis)
+        key_axis();
 }
 
-void input::key_axis( bool horizontal, input_key_state state, int8_t value) {
-    int8_t *l_axis = horizontal?&p_map_input.x:&p_map_input.y;
-    if( state == input_key_state::input_key_down)
-        *l_axis = value;
-    else if( MIN( value, *l_axis) >= MAX( value, *l_axis)) { // Reset the value if it was previously set
-        *l_axis = 0;
+void input::key_axis() {
+    int8_t l_x = (p_map_input.left?-ENGINE_INPUT_OFFSET_KEYS:0) + (p_map_input.right?ENGINE_INPUT_OFFSET_KEYS:0);
+    int8_t l_y = (p_map_input.up?-ENGINE_INPUT_OFFSET_KEYS:0) + (p_map_input.down?ENGINE_INPUT_OFFSET_KEYS:0);
+
+    // special case that both inputs are zero
+    if( l_x == 0 && l_y == 0) {
+        p_map_input.axies = { 0.f, 0.f};
+        return;
     }
+
+    // calculate angle from x and y
+    float l_arc = atan2( l_y, l_x);
+    p_map_input.axies.y = sin(l_arc)*1;
+    p_map_input.axies.x = cos(l_arc)*1;
 }
