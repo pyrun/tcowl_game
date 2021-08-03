@@ -174,6 +174,10 @@ uint8_t* server::recvData( client *client_ptr, uint16_t* length) {
 void server::update() {
     TCPsocket l_client_socket;
 
+    // check
+    if( p_server_socket == NULL)
+        return;
+
     // network update
     bool l_ready = true;
     for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
