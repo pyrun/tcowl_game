@@ -41,5 +41,5 @@ void lobby::draw( engine::graphic_draw *graphic) {
 
     p_font->print( { 100, 50}, "test %d %d %d %d amount", p_input->x, p_input->y, graphic->getDisplacedElements() , p_entity->getAmount());
 
-    p_font->draw( "{dies ist ein sehr langer test} mit ��� ? und anderen sonderzeichen/()", vec2{ 100, 100});
+    p_font->draw( "äöü ß /() € t", vec2{ 0, 100});
 }
