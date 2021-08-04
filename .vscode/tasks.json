@@ -13,6 +13,6 @@
                 "-o",
                 "build/resource.res"
             ],
-        }
+        },
     ]
 }
