@@ -19,7 +19,7 @@ void lobby::init( engine::font *font, engine::input_map *input, engine::entity_h
     p_entity = entitys;
 }
 
-void lobby::draw( float dt, engine::graphic_draw *graphic) {
+void lobby::draw( engine::graphic_draw *graphic) {
     static uint32_t l_time = 0;
     if( !p_font)
         return;

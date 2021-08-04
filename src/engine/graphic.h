@@ -52,7 +52,7 @@ namespace engine {
             graphic_object() {}
             ~graphic_object() {}
 
-            virtual void draw( float dt, graphic_draw *graphic) {}
+            virtual void draw( graphic_draw *graphic) = 0;
     };
 
     class graphic : public graphic_draw {

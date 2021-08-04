@@ -118,11 +118,11 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
     helper::int16toUint8x2( obj->index, dataDist + l_offset); l_offset +=2;
     helper::int16toUint8x2( obj->objtypeid, dataDist + l_offset); l_offset +=2;
 
-    helper::int32toUint8x4( (int32_t)obj->position.x, dataDist + l_offset); l_offset +=4;
-    helper::int32toUint8x4( (int32_t)obj->position.y, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->position.x, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->position.y, dataDist + l_offset); l_offset +=4;
 
-    helper::int32toUint8x4( (int32_t)obj->velocity.x, dataDist + l_offset); l_offset +=4;
-    helper::int32toUint8x4( (int32_t)obj->velocity.y, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->velocity.x, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->velocity.y, dataDist + l_offset); l_offset +=4;
 
     return l_offset;
 }
@@ -146,11 +146,11 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     l_entity->objtype = p_types->getById( l_type_id);
     l_entity->objtypeid = l_type_id;
 
-    helper::uint8x4toInt32( dataDist + l_offset, (int32_t *)&l_entity->position.x); l_offset +=4;
-    helper::uint8x4toInt32( dataDist + l_offset, (int32_t *)&l_entity->position.y); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->position.x); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->position.y); l_offset +=4;
 
-    helper::uint8x4toInt32( dataDist + l_offset, (int32_t *)&l_entity->velocity.x); l_offset +=4;
-    helper::uint8x4toInt32( dataDist + l_offset, (int32_t *)&l_entity->velocity.y); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->velocity.x); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->velocity.y); l_offset +=4;
 }
 
 void entity_handler::update( float dt, world *world) {
@@ -169,7 +169,7 @@ void entity_handler::update( float dt, world *world) {
     }
 }
 
-void entity_handler::draw( float dt, engine::graphic_draw *graphic) {
+void entity_handler::draw( engine::graphic_draw *graphic) {
     // depth sorting 
     struct {
         bool operator()( entity *a, entity *b) const {
@@ -181,18 +181,19 @@ void entity_handler::draw( float dt, engine::graphic_draw *graphic) {
     // only draw entitys which have a graphic
     for( uint32_t i = 0; i < p_draw_order.size(); i++) {
         entity *l_entity = p_draw_order[i];
-        drawEntity( dt, graphic, l_entity);
+        drawEntity( graphic, l_entity);
     }
 }
 
-void entity_handler::drawEntity( float dt, engine::graphic_draw *graphic, entity* obj) {
+void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     // todo get action
     action *l_action = obj->objtype->getAction(1);
     float l_time;
+    float l_factor = 15.f;
 
     // adjust animation speed to acceleration if wanted
     if( l_action->bind_velocity) {
-        l_time = powf( obj->velocity.normalize()/dt, -1);
+        l_time = powf( obj->velocity.normalize() / l_factor, -1);
         l_time *=l_action->ticks_for_next_image;
     } else {
         l_time = l_action->ticks_for_next_image;

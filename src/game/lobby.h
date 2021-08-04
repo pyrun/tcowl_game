@@ -15,7 +15,7 @@ namespace game {
 
             void init( engine::font *font, engine::input_map *input, engine::entity_handler *entity);
 
-            void draw( float dt, engine::graphic_draw *graphic);
+            void draw( engine::graphic_draw *graphic) override;
 
             void update();
         private:

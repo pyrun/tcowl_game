@@ -1,5 +1,7 @@
 #include "helper.h"
 
+#include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>   // stat
 #include <sys/types.h>
 #include <stdbool.h>    // bool type
@@ -38,6 +40,24 @@ void helper::int16toUint8x2( int16_t value, uint8_t *array) {
 void helper::uint8x2toInt16( uint8_t *array, int16_t *value) {
   *value = array[0] <<  8;
   *value += array[1];
+}
+
+void helper::floatToUint8x4(float float_variable, uint8_t *array) { 
+  union {
+    float a;
+    unsigned char bytes[4];
+  } value;
+  value.a = float_variable;
+  memcpy( array, value.bytes, 4);
+}
+
+void helper::uint8x4toFloat(uint8_t *array, float *float_variable) { 
+  union {
+    float a;
+    unsigned char bytes[4];
+  } value;
+  memcpy( value.bytes, array, 4);
+  *float_variable = value.a;
 }
 
 float helper::lerp(float a, float b, float f)

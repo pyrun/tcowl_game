@@ -50,8 +50,8 @@ namespace engine {
 
             void update( float dt, world *world);
 
-            void draw( float dt, engine::graphic_draw *graphic);
-            void drawEntity( float dt, engine::graphic_draw *graphic, entity* obj);
+            void draw( engine::graphic_draw *graphic) override;
+            void drawEntity( engine::graphic_draw *graphic, entity* obj);
 
             uint32_t getAmount() { return p_amount; }
             // network

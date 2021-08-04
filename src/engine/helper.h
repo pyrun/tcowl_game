@@ -21,6 +21,9 @@ namespace helper {
     void int16toUint8x2( int16_t value, uint8_t *array);
     void uint8x2toInt16( uint8_t *array, int16_t *value);
 
+    void floatToUint8x4(float float_variable, uint8_t *array);
+    void uint8x4toFloat(uint8_t *array, float *float_variable);
+
     float lerp(float a, float b, float f);
 };
 

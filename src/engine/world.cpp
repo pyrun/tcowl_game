@@ -15,7 +15,7 @@ void world::begin( graphic *graphic) {
     p_image.load( p_graphic, "tile/grass/graphic.bmp");
 }
 
-void world::draw( float dt, engine::graphic_draw *graphic) {
+void world::draw( engine::graphic_draw *graphic) {
     return;
     for( int32_t x = 2; x < 18; x++)
         for( int32_t y = 2; y < 10; y++)

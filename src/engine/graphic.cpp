@@ -74,7 +74,7 @@ void graphic::update( float dt) {
     // Render pipeline
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
         graphic_object *l_obj = p_graphic_objects[i];
-        l_obj->draw( dt, this);
+        l_obj->draw( this);
     }
 
     //Update screen
