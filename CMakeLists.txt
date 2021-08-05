@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(TheCommemorationOfWhiteLight VERSION 0.1.0)
 
-enable_testing()
-
 set(JSON_INCLUDE_DIR ../json/include)
 set(SDL2_INCLUDE_DIR ../SDL2/include)
 set(SDL2_LIB_DIR ../SDL2/lib)
