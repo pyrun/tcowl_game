@@ -9,6 +9,7 @@
 
 #define ENGINE_TYPE_NAME_MAX_LENGTH 64
 #define ENGINE_TYPE_FILE_DESCRIPTION "definition.json"
+#define ENGINE_TYPE_FILE_SCRIPT "script.lua"
 
 namespace engine {
     struct action {
@@ -30,13 +31,17 @@ namespace engine {
             uint16_t getId() { return p_id; }
             void setName( const char *name) { snprintf( p_name, ENGINE_TYPE_NAME_MAX_LENGTH, name); }
             char *getName() { return p_name; }
+            void setFolderPath( std::string folder) { p_folder = folder; }
+            std::string getFolderPath() { return p_folder; }
 
             void addAction( action annimation) { p_action.push_back(annimation); }
             uint32_t getAmountActions() { return p_action.size(); }
             image *getImage() { return &p_image; }
             action *getAction( uint32_t index) { return &p_action[index]; }
+            action *getAction( std::string name);
         private: 
             std::vector<action> p_action;
+            std::string p_folder;
             char p_name[ENGINE_TYPE_NAME_MAX_LENGTH];
             uint16_t p_id;
             image p_image;

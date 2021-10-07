@@ -44,6 +44,7 @@ namespace game {
 
             // Game logic
             game::lobby p_lobby;
+            float p_framerate_cap; // ms
             uint32_t p_physics_lastime;
             uint32_t p_animation_lasttime;
     };

@@ -12,6 +12,8 @@
 
 using namespace engine;
 
+entity_handler *engine::used_entity_handler = NULL;
+
 entity_handler::entity_handler() {
     p_draw_order.reserve( ENGINE_ENTITY_MAX_AMOUNT);
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
@@ -84,6 +86,9 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     l_entity->velocity = { 0, 0};
     l_entity->action = 0;
 
+    l_entity->lua_state = NULL;
+    loadScriptFile( l_entity);
+
     l_entity->change = true;
     
     log( log_trace, "entity_handler::createObject created");
@@ -110,6 +115,30 @@ bool entity_handler::deleteObject( uint32_t index) {
         }
     }
     return false;
+}
+
+bool entity_handler::loadScriptFile( entity *entity) {
+    std::string l_file;
+
+    // check for null
+    if( entity == NULL)
+        return false;
+    if( entity->objtype == NULL) {
+        log( log_error, "entity_handler::loadScriptFile type not found!\n");
+        return false;
+    }
+    l_file = entity->objtype->getFolderPath() +  ENGINE_TYPE_FILE_SCRIPT;
+
+    // Delete existing script beforehand if it is existing
+    script::free( entity->lua_state);
+
+    // try load script
+    entity->lua_state = script::loadFile( l_file.c_str());
+
+    // run once
+    script::run( entity->lua_state);
+
+    return true;
 }
 
 uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
@@ -156,6 +185,9 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
 void entity_handler::update( float dt, world *world) {
     float l_friction = 0.25f; //todo woher kommt es? was beeinflusst es
 
+    // Für Berechnungen wird diese Klasse verwendet
+    engine::used_entity_handler = this;
+
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         engine::entity *l_entity = p_entity[i];
         if( l_entity == NULL)
@@ -166,7 +198,11 @@ void entity_handler::update( float dt, world *world) {
         l_entity->velocity.x = helper::lerp( l_entity->velocity.x, 0, l_friction);
         l_entity->velocity.y = helper::lerp( l_entity->velocity.y, 0, l_friction);
         // todo collision
+        script::function( "update", l_entity->lua_state, l_entity->index);
     }
+
+    // Freigeben
+    engine::used_entity_handler = NULL;
 }
 
 void entity_handler::draw( engine::graphic_draw *graphic) {
@@ -187,7 +223,7 @@ void entity_handler::draw( engine::graphic_draw *graphic) {
 
 void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     // todo get action
-    action *l_action = obj->objtype->getAction(1);
+    action *l_action = obj->objtype->getAction( obj->action);
     float l_time;
     float l_factor = 15.f;
 

@@ -17,6 +17,7 @@ void app::begin( bool server) {
     p_font_setting = { .size{ 7, 9} };
     snprintf( p_graphic.getConfig()->titel, 64, GAME_APP_WINDOWSTITLE);
     p_serverorclient = server;
+    p_framerate_cap = 16.6667f;
 
     // statup
     p_graphic.init();
@@ -98,12 +99,12 @@ bool app::update() {
     l_endPerf = SDL_GetPerformanceCounter();
     l_framePerf = l_endPerf - l_startPerf;
 
+    // calculate delay
     float l_elapsedMS = (l_framePerf) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
-    float l_delay = floor(16.666f - l_elapsedMS);
+    float l_delay = floor(p_framerate_cap - l_elapsedMS);
     if( l_delay < 1)
         l_delay = 1;
     SDL_Delay( l_delay);
-
     return true;
 }
 

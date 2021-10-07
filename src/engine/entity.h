@@ -4,6 +4,7 @@
 #include "graphic.h"
 #include "type.h"
 #include "world.h"
+#include "script.h"
 #include "../network/network.h"
 
 #include <string>
@@ -24,6 +25,8 @@ namespace engine {
 
         uint32_t animation_tick;
         uint32_t animation_time;
+        
+        lua_State *lua_state;
 
         // used for network sync
         // only sync if this true, set be false after sync
@@ -42,6 +45,7 @@ namespace engine {
             int16_t createObject( std::string name); // -> objtype
             int16_t createObject( type *objtype, int32_t index = -1);
             bool deleteObject( uint32_t index);
+            bool loadScriptFile( entity *entity);
 
             entity *get( int16_t index) { return p_entity[ (uint16_t)index]; }
 
@@ -64,6 +68,8 @@ namespace engine {
             std::vector<entity*> p_draw_order;
             uint32_t p_amount;
     };
+
+    extern entity_handler *used_entity_handler;
 };
 
 #endif

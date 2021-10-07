@@ -7,7 +7,6 @@
     "action": [
         {
             "name": "idle",
-            "id": 100,
             "position": [ 0, 0],
             "size": [ 128, 32],
             "length": 1,

@@ -20,6 +20,15 @@ type::~type() {
 
 }
 
+action *type::getAction( std::string name) {
+    for( std::size_t i = 0; i < p_action.size(); i++) {
+        action *l_action = &p_action[i];
+        if( l_action->name == name)
+            return l_action;
+    }
+    return NULL;
+}
+
 type_handler::type_handler() {
     p_type.clear();
 }
@@ -115,6 +124,8 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     // Load image
     l_type->getImage()->load( graphic, folder + l_image_file);
 
+    // Set Folder path
+    l_type->setFolderPath( folder);
 
     // Alle Aktionen laden und hinzufügen
     if( !l_json["action"].is_null() &&
@@ -124,13 +135,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         for( uint32_t i = 0; i < l_json["action"].size(); i++) {
             json l_action_json = l_json_root_action[i];
             action l_action;
-
-            if( !l_action_json["id"].is_null()) {
-                l_action.id  = l_action_json["id"].get<uint16_t>();
-            } else {
-                log( log_warn, "error loading action index %d, id", i);
-                continue;
-            }
+            l_action.id = i;
 
             if( !l_action_json["name"].is_null())
                 l_action.name = l_action_json["name"].get<std::string>();
