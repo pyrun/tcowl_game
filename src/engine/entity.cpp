@@ -153,6 +153,8 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
     helper::floatToUint8x4( obj->velocity.x, dataDist + l_offset); l_offset +=4;
     helper::floatToUint8x4( obj->velocity.y, dataDist + l_offset); l_offset +=4;
 
+    dataDist[l_offset] = obj->action; l_offset +=1;
+
     return l_offset;
 }
 
@@ -180,6 +182,8 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
 
     helper::uint8x4toFloat( dataDist + l_offset, &l_entity->velocity.x); l_offset +=4;
     helper::uint8x4toFloat( dataDist + l_offset, &l_entity->velocity.y); l_offset +=4;
+
+    l_entity->action = dataDist[l_offset]; l_offset +=1;
 }
 
 void entity_handler::update( float dt, world *world) {
