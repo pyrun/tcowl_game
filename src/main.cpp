@@ -9,26 +9,6 @@
 // https://opengameart.org/content/2d-modified-dark-forest-tileset
 // https://opengameart.org/content/forest-tileset-for-rpgs
 
-extern "C" {
-    #include "lua.h"
-    #include "lauxlib.h"
-    #include "lualib.h"
-}
-
-void test() {
-      // initialization
-      lua_State * L = luaL_newstate();
-      luaL_openlibs(L);
-
-      // execute script
-      const char lua_script[] = "print('Hello World!')";
-      int load_stat = luaL_loadbuffer(L,lua_script,strlen(lua_script),lua_script);
-      lua_pcall(L, 0, 0, 0);
-
-      // cleanup
-      lua_close(L);
-}
-
 int main( int argc, char* args[] ) {
     sdl::init();
     game::app l_app;
@@ -42,10 +22,7 @@ int main( int argc, char* args[] ) {
 
     // startup
     l_app.begin( l_start_server);
-
-    // test code
-    test();
-
+    
     // main loop
     while(l_app.update());
 
