@@ -6,6 +6,7 @@
 #include "world.h"
 #include "script.h"
 #include "../network/network.h"
+#include "input.h"
 
 #include <string>
 
@@ -14,7 +15,7 @@
 namespace engine {
     struct entity {
         uint16_t index;
-        
+
         uint16_t objtypeid;
         type *objtype;
 
@@ -25,8 +26,9 @@ namespace engine {
 
         uint32_t animation_tick;
         uint32_t animation_time;
-        
+
         lua_State *lua_state;
+        engine::input_map *input;
 
         // used for network sync
         // only sync if this true, set be false after sync
@@ -46,6 +48,7 @@ namespace engine {
             int16_t createObject( type *objtype, int32_t index = -1);
             bool deleteObject( uint32_t index);
             bool loadScriptFile( entity *entity);
+            bool bindInput( entity *entity, engine::input_map *input_obj);
 
             entity *get( int16_t index) { return p_entity[ (uint16_t)index]; }
 

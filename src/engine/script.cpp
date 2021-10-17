@@ -5,6 +5,7 @@
 #include "type.h"
 
 #include "script/entity_script.h"
+#include "script/global_script.h"
 
 void engine::script::run( lua_State *state) {
     int32_t l_return;
@@ -61,6 +62,7 @@ lua_State *engine::script::loadFile( const char *file) {
     luaL_openlibs( l_state);
 
     // add libs
+    script::global_lib( l_state);
     script::entity_lib( l_state);
 
     // load the file and call its once

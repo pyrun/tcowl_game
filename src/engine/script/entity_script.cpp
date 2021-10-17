@@ -10,22 +10,6 @@ using namespace engine;
 extern "C"{
 #endif
 
-static int lua_print(lua_State* state) {
-    int l_nargs = lua_gettop( state);
-    std::string l_text;
-
-    for (int i = 1; i <= l_nargs; i++) {
-        if( lua_isstring( state, i)) {
-            l_text += lua_tostring( state, i);
-        }
-    }
-
-    log( log_trace, "lua_print '%s'", l_text.c_str());
-
-    // finish
-    return 0;
-}
-
 entity *entity_script_getObject( lua_State *state) {
     entity *l_obj = NULL;
     int l_id;
@@ -58,17 +42,35 @@ static int lua_isAlive( lua_State *state) {
 }
 
 static int lua_getVelocity( lua_State *state) {
-    entity *l_obj;
     int l_id;
+    entity *l_obj;
 
     l_obj = entity_script_getObject( state);
     if( !l_obj)
         return 0;
-    
+
     lua_pushnumber( state, l_obj->velocity.x);
     lua_pushnumber( state, l_obj->velocity.y);
-
     return 2;
+}
+
+static int lua_doVelocity( lua_State *state) {
+    int l_id;
+    entity *l_obj;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    if( !lua_isnumber( state, 2) || !lua_isnumber( state, 3)) {
+        log( log_warn, "lua_doVelocity call wrong argument");
+        return 0;
+    }
+
+    l_obj->velocity.x += lua_tonumber( state, 2);
+    l_obj->velocity.y += lua_tonumber( state, 3);
+
+    return 0;
 }
 
 static int lua_setAnimation( lua_State *state) {
@@ -95,20 +97,52 @@ static int lua_setAnimation( lua_State *state) {
     return 0;
 }
 
+static int lua_isInputPresent( lua_State *state) {
+    entity *l_obj;
+    int l_id;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    lua_pushboolean( state, l_obj->input!=NULL?true:false);
+    return 1;
+}
+
+static int lua_getInputAxies( lua_State *state) {
+    entity *l_obj;
+    int l_id;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    if( !l_obj->input)
+        return 0;
+
+    lua_pushnumber( state, l_obj->input->axies.x);
+    lua_pushnumber( state, l_obj->input->axies.y);
+    return 2;
+}
+
 #ifdef __cplusplus
 }
 #endif
 
-void engine::script::entity_lib( lua_State *L) {
-    lua_pushcfunction(L, lua_print);
-    lua_setglobal(L, "print");
+static const struct luaL_Reg entity_lib_funcs[] = {
+    {"isAlive", lua_isAlive},
+    {"getVelocity", lua_getVelocity},
+    {"setAnimation", lua_setAnimation},
+    {"doVelocity", lua_doVelocity},
+    {"isInputPresent", lua_isInputPresent},
+    {"getInputAxies", lua_getInputAxies},
+    {NULL, NULL}
+    };
 
-    lua_pushcfunction(L, lua_isAlive);
-    lua_setglobal(L, "isAlive");
-    
-    lua_pushcfunction(L, lua_getVelocity);
-    lua_setglobal(L, "getVelocity");
+LUALIB_API int engine::script::entity_lib( lua_State *L) {
 
-    lua_pushcfunction(L, lua_setAnimation);
-    lua_setglobal(L, "setAnimation");
+    luaL_newlib( L, entity_lib_funcs);
+	lua_setglobal( L, "entity");
+
+    return 1;
 }

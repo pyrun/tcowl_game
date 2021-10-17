@@ -25,8 +25,10 @@ void lobby::draw( engine::graphic_draw *graphic) {
         return;
     if( p_entity->get( 0)) {
         float l_speed = 10.f;
-        p_entity->get( 0)->velocity += p_input->axies*l_speed;
+        //p_entity->get( 0)->velocity += p_input->axies*l_speed;
+        
         p_entity->get( 0)->change = true;
+        p_entity->bindInput( p_entity->get( 0), p_input);
     }
 
     p_font->print( { 100, 80}, "%d ms", helper::time::getDurrent(&l_time)-16);

@@ -90,6 +90,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     loadScriptFile( l_entity);
 
     l_entity->change = true;
+    l_entity->input = NULL;
     
     log( log_trace, "entity_handler::createObject created");
 
@@ -138,6 +139,13 @@ bool entity_handler::loadScriptFile( entity *entity) {
     // run once
     script::run( entity->lua_state);
 
+    return true;
+}
+
+bool entity_handler::bindInput( entity *entity, input_map *input_obj) {
+    if( !entity)
+        return false;
+    entity->input = input_obj;
     return true;
 }
 
