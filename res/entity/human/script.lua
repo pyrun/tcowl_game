@@ -3,6 +3,7 @@
 -- require( "entity")
 
 local velocity_window = 0.1
+local walk_speed = 10.0
 
 function update( id)
 	local l_velX, l_velY
@@ -15,7 +16,7 @@ function update( id)
 		local l_inputX, l_inputY
 		l_inputX, l_inputY = entity.getInputAxies( id)
 
-		entity.doVelocity( id, 10*l_inputX, 10*l_inputY)
+		entity.doVelocity( id, walk_speed*l_inputX, walk_speed*l_inputY)
 	end
 
 	l_velX, l_velY = entity.getVelocity( id)
