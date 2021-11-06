@@ -137,8 +137,11 @@ bool entity_handler::loadScriptFile( entity *entity) {
     entity->lua_state = script::loadFile( l_file.c_str());
 
     // run once
+    engine::used_entity_handler = this;
     script::run( entity->lua_state);
-
+    script::function( "intilisation", entity->lua_state, entity->index);
+    engine::used_entity_handler = NULL;
+    
     return true;
 }
 
@@ -221,7 +224,8 @@ void entity_handler::draw( engine::graphic_draw *graphic) {
     // depth sorting 
     struct {
         bool operator()( entity *a, entity *b) const {
-            return a->position.y+a->objtype->getAction(a->action)->size.y < b->position.y+b->objtype->getAction(b->action)->size.y;
+            return a->position.y+a->objtype->getAction(a->action)->size.y+a->objtype->getDepthSortingOffset().y
+                <  b->position.y+b->objtype->getAction(b->action)->size.y+b->objtype->getDepthSortingOffset().y;
         }
     } depthSorting;
     std::sort( p_draw_order.begin(), p_draw_order.end(), depthSorting);

@@ -39,12 +39,16 @@ namespace engine {
             image *getImage() { return &p_image; }
             action *getAction( uint32_t index) { return &p_action[index]; }
             action *getAction( std::string name);
+
+            void setDepthSortingOffset( vec2 value) { p_depth_sorting_offset = value; }
+            vec2 getDepthSortingOffset() { return p_depth_sorting_offset; }
         private: 
             std::vector<action> p_action;
             std::string p_folder;
             char p_name[ENGINE_TYPE_NAME_MAX_LENGTH];
             uint16_t p_id;
             image p_image;
+            vec2 p_depth_sorting_offset; // offset beim z-depth sorting
     };
 
     class type_handler{

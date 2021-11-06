@@ -121,6 +121,16 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
                                             l_json_root_color[2].get<uint8_t>());
     }
 
+    // depth_sorting_offset
+    if( !l_json["depth_sorting_offset"].is_null() &&
+        l_json["depth_sorting_offset"].is_array() &&
+        l_json["depth_sorting_offset"].size() >= 2) {
+        json l_json_depth_sorting_offset = l_json["depth_sorting_offset"];
+        l_type->setDepthSortingOffset( vec2{ l_json_depth_sorting_offset[0].get<int8_t>(), l_json_depth_sorting_offset[1].get<int8_t>()} );
+    } else {
+        l_type->setDepthSortingOffset( vec2{ 0, 0});
+    }
+
     // Load image
     l_type->getImage()->load( graphic, folder + l_image_file);
 

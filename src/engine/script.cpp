@@ -16,6 +16,8 @@ void engine::script::run( lua_State *state) {
     if( l_return != 0) {
         log( log_error, "engine::script::run LUA_ERROR: %s", lua_tostring( state, -1));
     }
+
+    
 }
 
 void engine::script::function( std::string function, lua_State *state, int16_t number) {
