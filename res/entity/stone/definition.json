@@ -1,0 +1,15 @@
+{
+    "name": "stone",
+    "id": 3,
+    "image": "graphic.bmp",
+    "alpha-key": [ 68, 123, 134],
+    "action": [
+        {
+            "name": "Idle",
+            "position": [ 0, 0],
+            "size": [ 16, 16],
+            "length": 4,
+            "ticks_for_next_image": 0
+        }
+    ]
+}

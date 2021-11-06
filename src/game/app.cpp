@@ -44,6 +44,17 @@ void app::begin( bool server) {
         int16_t l_id = p_entity.createObject(1);
         p_entity.get( l_id)->position = { 100, 100};
 
+        
+        l_id = p_entity.createObject(3);
+        p_entity.get( l_id)->position = { 150, 100};
+
+        l_id = p_entity.createObject(3);
+        p_entity.get( l_id)->position = { 160, 100};
+        l_id = p_entity.createObject(3);
+        p_entity.get( l_id)->position = { 180, 100};
+        l_id = p_entity.createObject(3);
+        p_entity.get( l_id)->position = { 120, 150};
+
         /*int16_t l_id = p_entity.createObject(2);
         p_entity.get( l_id)->position = { 100, 100};
 
