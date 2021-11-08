@@ -65,6 +65,49 @@ namespace engine {
             return std::sqrt(x*x + y*y);
         }
     };
+
+    struct fvec3 {
+        float x = 0;
+        float y = 0;
+        float z = 0;
+
+        fvec3 operator+(const fvec3 rhs) {
+            return fvec3{ x+rhs.x, y+rhs.y, z+rhs.z};
+        }
+
+        fvec3& operator+=(const fvec3& rhs){
+            this->x += rhs.x;
+            this->y += rhs.y;
+            this->z += rhs.z;
+            return *this;
+        }
+
+        fvec3 operator*(const float rhs) {
+            return fvec3{ x*rhs, y*rhs, z*rhs};
+        }
+        
+        fvec3& operator/=(const float rhs){
+            this->x /= rhs;
+            this->y /= rhs;
+            this->z /= rhs;
+            return *this;
+        }
+
+        vec3 toVec() {
+            return vec3{ (int32_t)x, (int32_t)y, (int32_t)z};
+        }
+
+        float normalize() {
+            return std::sqrt((x * x) + (y * y) + (z * z));
+        }
+    };
+
+    struct fvec4 {
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        float w = 0;
+    };
 };
 
 #endif
