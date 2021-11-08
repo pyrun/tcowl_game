@@ -46,12 +46,12 @@ void app::begin( bool server) {
 
         
         l_id = p_entity.createObject(3);
-        p_entity.get( l_id)->position = { 150, 100};
+        p_entity.get( l_id)->position = { 150, 102};
 
         l_id = p_entity.createObject(3);
         p_entity.get( l_id)->position = { 160, 100};
         l_id = p_entity.createObject(3);
-        p_entity.get( l_id)->position = { 180, 100};
+        p_entity.get( l_id)->position = { 180, 99};
         l_id = p_entity.createObject(3);
         p_entity.get( l_id)->position = { 120, 150};
 

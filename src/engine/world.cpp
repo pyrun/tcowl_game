@@ -16,8 +16,7 @@ void world::begin( graphic *graphic) {
 }
 
 void world::draw( engine::graphic_draw *graphic) {
-    return;
     for( int32_t x = 2; x < 18; x++)
         for( int32_t y = 2; y < 10; y++)
-            graphic->draw( &p_image, engine::vec2{ 16*x, 16*y}, engine::vec2{ 16, 16});
+            graphic->draw( &p_image, engine::vec2{ 16*x, 16*y}, engine::vec2{ 16, 16}, engine::vec2{ ((16*x+16*y)%3)*16, (16*y)*0} );
 }
