@@ -8,7 +8,7 @@
             "name": "Idle",
             "position": [ 0, 0],
             "size": [ 16, 16],
-            "length": 4,
+            "length": 8,
             "ticks_for_next_image": 0
         }
     ]
