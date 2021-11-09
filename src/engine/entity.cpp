@@ -93,7 +93,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     l_entity->change = true;
     l_entity->input = NULL;
     
-    log( log_trace, "entity_handler::createObject created");
+    log( log_trace, "entity_handler::createObject %d", l_index);
 
     p_amount++;
     
@@ -111,6 +111,7 @@ bool entity_handler::deleteObject( uint32_t index) {
                     break;
                 }
             }
+            log( log_trace, "entity_handler::deleteObject %d", index);
             p_hub.del( l_entity->body);
             delete p_entity[i];
             p_entity[i] = NULL;
