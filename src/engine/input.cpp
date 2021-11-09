@@ -54,6 +54,11 @@ void input::reset() {
     p_map_event.quit = false;
     p_map_event.windows_size_change = false;
 
+    p_map_input.up = false;
+    p_map_input.down = false;
+    p_map_input.left = false;
+    p_map_input.right = false;
+
     p_map_input.axies = { 0.f, 0.f};
 }
 
