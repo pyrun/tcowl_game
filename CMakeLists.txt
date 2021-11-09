@@ -25,6 +25,8 @@ file(GLOB source_files
             "src/*/*.h"
             "src/*/*/*.cpp"
             "src/*/*/*.h"
+            "src/*/*/*/*.cpp"
+            "src/*/*/*/*.h"
     )
 
 add_executable(TheCommemorationOfWhiteLight ${source_files})

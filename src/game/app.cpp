@@ -42,18 +42,18 @@ void app::begin( bool server) {
         p_server.addSync( &p_entity);
 
         int16_t l_id = p_entity.createObject(1);
-        p_entity.get( l_id)->position = { 100, 100};
+        p_entity.setPosition( l_id, { 100, 100});
 
         
         l_id = p_entity.createObject(3);
-        p_entity.get( l_id)->position = { 150, 102};
+        p_entity.setPosition( l_id, { 150, 102});
 
         l_id = p_entity.createObject(3);
-        p_entity.get( l_id)->position = { 160, 100};
+        p_entity.setPosition( l_id, { 160, 100});
         l_id = p_entity.createObject(3);
-        p_entity.get( l_id)->position = { 180, 99};
+        p_entity.setPosition( l_id, { 180, 100});
         l_id = p_entity.createObject(3);
-        p_entity.get( l_id)->position = { 120, 150};
+        p_entity.setPosition( l_id, { 120, 100});
 
         /*int16_t l_id = p_entity.createObject(2);
         p_entity.get( l_id)->position = { 100, 100};

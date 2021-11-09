@@ -49,8 +49,8 @@ static int lua_getVelocity( lua_State *state) {
     if( !l_obj)
         return 0;
 
-    lua_pushnumber( state, l_obj->velocity.x);
-    lua_pushnumber( state, l_obj->velocity.y);
+    lua_pushnumber( state, l_obj->body->getVelocity().x);
+    lua_pushnumber( state, l_obj->body->getVelocity().y);
     return 2;
 }
 
@@ -67,8 +67,7 @@ static int lua_doVelocity( lua_State *state) {
         return 0;
     }
 
-    l_obj->velocity.x += lua_tonumber( state, 2);
-    l_obj->velocity.y += lua_tonumber( state, 3);
+    l_obj->body->addVelocity( { (float)lua_tonumber( state, 2), (float)lua_tonumber( state, 3)});
 
     return 0;
 }

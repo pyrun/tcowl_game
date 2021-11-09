@@ -7,6 +7,7 @@
 #include "script.h"
 #include "../network/network.h"
 #include "input.h"
+#include "physic/hub.h"
 
 #include <string>
 
@@ -16,11 +17,9 @@ namespace engine {
     struct entity {
         uint16_t index;
 
-        uint16_t objtypeid;
         type *objtype;
-
-        fvec2 position;
-        fvec2 velocity;
+        uint16_t objtypeid;
+        physic::body *body;
 
         uint8_t action;
 
@@ -51,6 +50,7 @@ namespace engine {
             bool bindInput( entity *entity, engine::input_map *input_obj);
 
             entity *get( int16_t index) { return p_entity[ (uint16_t)index]; }
+            void setPosition( int16_t index, fvec2 pos);
 
             uint32_t outNetworkData( entity *obj, uint8_t *dataDist);
             void inNetworkData( uint8_t *dataDist);
@@ -69,6 +69,7 @@ namespace engine {
             type_handler *p_types;
             entity *p_entity[ENGINE_ENTITY_MAX_AMOUNT];
             std::vector<entity*> p_draw_order;
+            physic::hub p_hub;
             uint32_t p_amount;
     };
 

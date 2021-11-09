@@ -82,8 +82,9 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     l_entity->objtype = objtype;
     l_entity->objtypeid = objtype->getId();
 
-    l_entity->position = { 0, 0};
-    l_entity->velocity = { 0, 0};
+    l_entity->body = new physic::body;
+    p_hub.add( l_entity->body);
+
     l_entity->action = 0;
 
     l_entity->lua_state = NULL;
@@ -102,13 +103,15 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
 bool entity_handler::deleteObject( uint32_t index) {
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         if( p_entity[i] != NULL && p_entity[i]->index == index) {
+            entity *l_entity = p_entity[i];
 
             for( uint32_t n = 0; n < p_draw_order.size(); n++) {
-                if( p_draw_order[n] == p_entity[i]) {
+                if( p_draw_order[n] == l_entity) {
                     p_draw_order.erase( p_draw_order.begin()+n);
                     break;
                 }
             }
+            p_hub.del( l_entity->body);
             delete p_entity[i];
             p_entity[i] = NULL;
             p_amount--;
@@ -152,17 +155,25 @@ bool entity_handler::bindInput( entity *entity, input_map *input_obj) {
     return true;
 }
 
+void entity_handler::setPosition( int16_t index, fvec2 pos) {
+    entity *l_entity;
+    l_entity = get(index);
+    if( !l_entity)
+        return;
+    l_entity->body->setPosition( pos);
+}
+
 uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
     uint32_t l_offset = 0;
 
     helper::int16toUint8x2( obj->index, dataDist + l_offset); l_offset +=2;
     helper::int16toUint8x2( obj->objtypeid, dataDist + l_offset); l_offset +=2;
 
-    helper::floatToUint8x4( obj->position.x, dataDist + l_offset); l_offset +=4;
-    helper::floatToUint8x4( obj->position.y, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->getPosition().x, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->getPosition().y, dataDist + l_offset); l_offset +=4;
 
-    helper::floatToUint8x4( obj->velocity.x, dataDist + l_offset); l_offset +=4;
-    helper::floatToUint8x4( obj->velocity.y, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->getVelocity().x, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->getVelocity().y, dataDist + l_offset); l_offset +=4;
 
     dataDist[l_offset] = obj->action; l_offset +=1;
 
@@ -188,31 +199,24 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     l_entity->objtype = p_types->getById( l_type_id);
     l_entity->objtypeid = l_type_id;
 
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->position.x); l_offset +=4;
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->position.y); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getPositionPtr()->x); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getPositionPtr()->y); l_offset +=4;
 
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->velocity.x); l_offset +=4;
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->velocity.y); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getVelocityPtr()->x); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getVelocityPtr()->y); l_offset +=4;
 
     l_entity->action = dataDist[l_offset]; l_offset +=1;
 }
 
 void entity_handler::update( float dt, world *world) {
-    float l_friction = 0.25f; //todo woher kommt es? was beeinflusst es
-
     // Für Berechnungen wird diese Klasse verwendet
     engine::used_entity_handler = this;
+    p_hub.update( dt);
 
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         engine::entity *l_entity = p_entity[i];
         if( l_entity == NULL)
             continue;
-        // todo process
-        l_entity->position += l_entity->velocity * dt;
-        // friction
-        l_entity->velocity.x = helper::lerp( l_entity->velocity.x, 0, l_friction);
-        l_entity->velocity.y = helper::lerp( l_entity->velocity.y, 0, l_friction);
-        // todo collision
         script::function( "update", l_entity->lua_state, l_entity->index);
     }
 
@@ -224,8 +228,8 @@ void entity_handler::draw( engine::graphic_draw *graphic) {
     // depth sorting 
     struct {
         bool operator()( entity *a, entity *b) const {
-            return a->position.y+a->objtype->getAction(a->action)->size.y+a->objtype->getDepthSortingOffset().y
-                <  b->position.y+b->objtype->getAction(b->action)->size.y+b->objtype->getDepthSortingOffset().y;
+            return a->body->getPosition().y+a->objtype->getAction(a->action)->size.y+a->objtype->getDepthSortingOffset().y
+                <  b->body->getPosition().y+b->objtype->getAction(b->action)->size.y+b->objtype->getDepthSortingOffset().y;
         }
     } depthSorting;
     std::sort( p_draw_order.begin(), p_draw_order.end(), depthSorting);
@@ -245,7 +249,7 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
 
     // adjust animation speed to acceleration if wanted
     if( l_action->bind_velocity) {
-        l_time = powf( obj->velocity.normalize() / l_factor, -1);
+        l_time = powf( obj->body->getVelocity().normalize() / l_factor, -1);
         l_time *=l_action->ticks_for_next_image;
     } else {
         l_time = l_action->ticks_for_next_image;
@@ -257,7 +261,7 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     }
 
     graphic->draw(  obj->objtype->getImage(),
-                    obj->position.toVec(),
+                    obj->body->getPosition().toVec(),
                     l_action->size,
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
 }
