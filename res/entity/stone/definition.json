@@ -3,6 +3,8 @@
     "id": 3,
     "image": "graphic.bmp",
     "alpha-key": [ 68, 123, 134],
+    "collision-type": "rect",
+    "collision-data": [ 2, 2, 12, 12],
     "action": [
         {
             "name": "Idle",

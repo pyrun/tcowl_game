@@ -5,6 +5,8 @@
     "image": "graphic.bmp",
     "alpha-key": [ 68, 123, 134],
     "depth_sorting_offset": [ 0, -8],
+    "collision-type": "rect",
+    "collision-data": [ 4, 18, 8, 8],
     "action": [
         {
             "name": "Walk1",
