@@ -24,9 +24,6 @@ void lobby::draw( engine::graphic_draw *graphic) {
     if( !p_font)
         return;
     if( p_entity->get( 1)) {
-        float l_speed = 10.f;
-        //p_entity->get( 0)->velocity += p_input->axies*l_speed;
-        
         p_entity->get( 1)->change = true;
         p_entity->bindInput( p_entity->get( 1), p_input);
     }
