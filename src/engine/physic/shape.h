@@ -2,6 +2,7 @@
 #define PHYSIC_SHAPE_H
 
 #include "../vec.h"
+#include "../graphic.h"
 
 namespace physic {
     enum sharp_type {
@@ -11,23 +12,38 @@ namespace physic {
 
     class shape {
         public:
-            shape();
-            ~shape();
+            shape() {}
+            ~shape() {}
+
+            virtual void draw( engine::graphic_draw *graphic, engine::fvec2 position) = 0;
+
+            void setOffset( engine::fvec2 offset) { p_offset = offset;} 
+            engine::fvec2 getOffset() { return p_offset; }
+            virtual sharp_type getType() = 0;
+
         private:
+            engine::fvec2 p_offset;
     };
 
     class shape_rect : public shape {
         public:
-            shape_rect();
-            ~shape_rect();
+            shape_rect( engine::fvec2 rect) { p_rect = rect; }
+            ~shape_rect() {}
+
+            void draw( engine::graphic_draw *graphic, engine::fvec2 position) override;
+
+            sharp_type getType() override { return sharp_type_rect; }
         private:
             engine::fvec2 p_rect;
     };
 
     class sharp_circle : public shape {
         public:
-            sharp_circle();
-            ~sharp_circle();
+            sharp_circle( float size) { p_size = size; }
+            ~sharp_circle() {}
+
+            void draw( engine::graphic_draw *graphic, engine::fvec2 position) override;
+            sharp_type getType() override { return sharp_type_circle; }
         private:
             float p_size;
     };

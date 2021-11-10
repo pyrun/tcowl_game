@@ -20,6 +20,15 @@ void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) 
     p_displayed_elements_counter++;
 }
 
+void graphic_draw::setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    SDL_SetRenderDrawColor( p_renderer, r, g, b, a);
+}
+
+void graphic_draw::drawRect( vec2 pos, vec2 rect) {
+    SDL_Rect l_rect {pos.x, pos.y, rect.x, rect.y};
+    SDL_RenderDrawRect( p_renderer, &l_rect );
+}
+
 graphic::graphic() {
     p_window = NULL;
     p_renderer = NULL;
@@ -67,6 +76,7 @@ void graphic::reset() {
 
 void graphic::update( float dt) {
     //Clear screen
+    setDrawColor( 0, 0, 0, 255);
     SDL_RenderClear( p_renderer );
     p_displayed_elements = p_displayed_elements_counter;
     p_displayed_elements_counter = 0;

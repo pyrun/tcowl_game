@@ -13,11 +13,12 @@ using json = nlohmann::json;
 using namespace engine;
 
 type::type() {
-
+    p_shape = nullptr;
 }
 
-type::~type() {
-
+void type::cleanup() {
+    if( p_shape)
+        delete p_shape;
 }
 
 action *type::getAction( std::string name) {
@@ -136,6 +137,32 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
 
     // Set Folder path
     l_type->setFolderPath( folder);
+
+    // Physic data
+    float l_collision_data[8] = {0.0f};
+    if( !l_json["collision-data"].is_null() &&
+        l_json["collision-data"].is_array() &&
+        l_json["collision-data"].size() < 8) {
+        json l_json_collision_data = l_json["collision-data"];
+        for( uint8_t i = 0; i < l_json_collision_data.size(); i++)
+            l_collision_data[i] = l_json_collision_data[i].get<float>();
+    }
+
+    // Physic type/shape
+    physic::shape *l_shape = nullptr;
+    std::string l_collision_type;
+    if( !l_json["collision-type"].is_null() &&
+        l_json["collision-type"].is_string()) {
+        l_collision_type = l_json["collision-type"].get<std::string>();
+    }
+    if( l_collision_type == "circle") { // circle
+        l_shape = new physic::sharp_circle( l_collision_data[2]);
+    } else if(l_collision_type == "rect") { // rect
+        l_shape = new physic::shape_rect( { l_collision_data[2], l_collision_data[3]} );
+    }
+    if( l_shape)
+        l_shape->setOffset( { l_collision_data[0], l_collision_data[1]});
+    l_type->linkShape( l_shape);
 
     // Alle Aktionen laden und hinzufügen
     if( !l_json["action"].is_null() &&

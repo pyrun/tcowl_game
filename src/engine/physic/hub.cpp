@@ -27,6 +27,16 @@ void hub::update( float dt) {
     }
 }
 
+void hub::draw( engine::graphic_draw *graphic) {
+    // Render pipeline
+    graphic->setDrawColor( 0, 255, 0, 255);
+    for( uint32_t i = 0; i < p_bodys.size(); i++) {
+        body* l_body = p_bodys[i];
+        if( l_body->getShape())
+            l_body->getShape()->draw( graphic, l_body->getPosition());
+    }
+}
+
 void hub::del( body* body) {
     for( uint32_t i = 0; i < p_bodys.size(); i++) {
         if( p_bodys[i] == body) {

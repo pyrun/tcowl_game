@@ -25,6 +25,8 @@ namespace physic {
             
             engine::fvec2 *getPositionPtr() { return &p_position; }
             engine::fvec2 *getVelocityPtr() { return &p_velocity; }
+
+            shape *getShape() { return p_shape; }
         private:
             engine::fvec2 p_position;
             engine::fvec2 p_velocity;

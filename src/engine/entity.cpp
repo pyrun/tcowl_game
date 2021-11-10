@@ -83,6 +83,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     l_entity->objtypeid = objtype->getId();
 
     l_entity->body = new physic::body;
+    l_entity->body->linkShape( objtype->getShape());
     p_hub.add( l_entity->body);
 
     l_entity->action = 0;

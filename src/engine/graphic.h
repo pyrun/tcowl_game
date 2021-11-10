@@ -38,6 +38,9 @@ namespace engine {
 
             void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0});
 
+            void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+            void drawRect( vec2 pos, vec2 rect);
+
             uint32_t getDisplacedElements() { return p_displayed_elements; }
         public:
             SDL_Renderer *p_renderer;

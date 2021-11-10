@@ -28,6 +28,7 @@ void app::begin( bool server) {
     // draw order
     p_graphic.addObject( &p_world);
     p_graphic.addObject( &p_entity);
+    p_graphic.addObject( p_entity.getPhysicHub());
     p_graphic.addObject( &p_lobby);
 
     // load files
