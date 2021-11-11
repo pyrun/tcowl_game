@@ -26,10 +26,15 @@ namespace physic {
             engine::fvec2 *getPositionPtr() { return &p_position; }
             engine::fvec2 *getVelocityPtr() { return &p_velocity; }
 
+            bool getCollied() { return p_collision; }
+            void setCollied( bool set) { p_collision = set; }
+
             shape *getShape() { return p_shape; }
         private:
             engine::fvec2 p_position;
             engine::fvec2 p_velocity;
+
+            bool p_collision;
 
             shape *p_shape;
             float p_density;

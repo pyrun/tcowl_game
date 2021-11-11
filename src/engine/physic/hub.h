@@ -11,6 +11,8 @@ namespace physic {
             hub();
             ~hub();
 
+            bool testAABBAABB( const engine::fvec2 &rectPos1, const engine::fvec2 &rectSize1, const engine::fvec2 &rectPos2, const engine::fvec2 &rectSize2);
+
             void update( float dt);
             void draw( engine::graphic_draw *graphic) override;
 

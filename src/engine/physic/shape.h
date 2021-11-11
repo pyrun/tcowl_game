@@ -17,8 +17,12 @@ namespace physic {
 
             virtual void draw( engine::graphic_draw *graphic, engine::fvec2 position) = 0;
 
+            // für vorsotieren wird ein einfaches rechteck benötigt
+            virtual engine::fvec2 getAABB() = 0;
+
             void setOffset( engine::fvec2 offset) { p_offset = offset;} 
             engine::fvec2 getOffset() { return p_offset; }
+
             virtual sharp_type getType() = 0;
 
         private:
@@ -32,6 +36,8 @@ namespace physic {
 
             void draw( engine::graphic_draw *graphic, engine::fvec2 position) override;
 
+            engine::fvec2 getAABB() override;
+
             sharp_type getType() override { return sharp_type_rect; }
         private:
             engine::fvec2 p_rect;
@@ -43,6 +49,9 @@ namespace physic {
             ~sharp_circle() {}
 
             void draw( engine::graphic_draw *graphic, engine::fvec2 position) override;
+
+            engine::fvec2 getAABB() override;
+            
             sharp_type getType() override { return sharp_type_circle; }
         private:
             float p_size;
