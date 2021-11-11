@@ -4,6 +4,10 @@ project(TheCommemorationOfWhiteLight VERSION 0.1.0)
 set(JSON_INCLUDE_DIR ../json/include)
 include_directories(${JSON_INCLUDE_DIR})
 
+set(VOSK_API_INCLUDE_DIR ../vosk-api/src)
+include_directories(${VOSK_API_INCLUDE_DIR})
+link_directories(${VOSK_API_INCLUDE_DIR})
+
 
 set(SDL2_INCLUDE_DIR ../SDL2/include)
 set(SDL2_LIB_DIR ../SDL2/lib)
@@ -33,7 +37,7 @@ set_target_properties(TheCommemorationOfWhiteLight PROPERTIES LINK_FLAGS ${RESOU
 target_link_libraries( TheCommemorationOfWhiteLight mingw32 SDL2main SDL2 SDL2_net)
 target_link_libraries( TheCommemorationOfWhiteLight -static-libgcc -static-libstdc++)
 target_link_libraries( TheCommemorationOfWhiteLight lua53)
-
+target_link_libraries( TheCommemorationOfWhiteLight vosk)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
