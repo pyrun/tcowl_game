@@ -6,6 +6,7 @@
 #include "vec.h"
 
 #define ENGINE_INPUT_OFFSET_KEYS 127
+#define ENGINE_INPUT_VERBOSE_LEVEL 12
 
 namespace engine {
     struct input_event {
@@ -24,6 +25,8 @@ namespace engine {
         bool down;
         bool left;
         bool right;
+
+        bool verbose_level[ENGINE_INPUT_VERBOSE_LEVEL];
     };
 
     enum input_key_state {

@@ -68,7 +68,8 @@ namespace engine {
 
             void update( float dt);
 
-            void addObject( graphic_object* object) { p_graphic_objects.push_back( object); }
+            bool addObject( graphic_object* object);
+            bool delObject( graphic_object* object);
 
             graphic_config *getConfig() { return &p_config; }
         private:

@@ -28,7 +28,6 @@ void app::begin( bool server) {
     // draw order
     p_graphic.addObject( &p_world);
     p_graphic.addObject( &p_entity);
-    p_graphic.addObject( p_entity.getPhysicHub());
     p_graphic.addObject( &p_lobby);
 
     // load files
@@ -50,7 +49,7 @@ void app::begin( bool server) {
 
         
         l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 150, 102});
+        p_entity.setPosition( l_id, { 140, 102});
 
         l_id = p_entity.createObject(3);
         p_entity.setPosition( l_id, { 160, 100});
@@ -96,6 +95,10 @@ bool app::update() {
         p_input.getEvents()->windows_size_change = false;
         p_graphic.init();
     }
+    if( p_input.getInputMap()->verbose_level[0])
+        p_graphic.addObject( p_entity.getPhysicHub());
+    else
+        p_graphic.delObject( p_entity.getPhysicHub());
 
     if( p_serverorclient)
         p_server.update();

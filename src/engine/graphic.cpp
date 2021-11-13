@@ -90,3 +90,23 @@ void graphic::update( float dt) {
     //Update screen
     SDL_RenderPresent( p_renderer );
 }
+
+
+bool graphic::addObject( graphic_object* object) {
+    for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
+        if( p_graphic_objects[i] == object)
+            return false;
+    }
+    p_graphic_objects.push_back( object);
+    return true;
+}
+
+bool graphic::delObject( graphic_object* object) {
+    for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
+        if( p_graphic_objects[i] == object) {
+            p_graphic_objects.erase( p_graphic_objects.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}

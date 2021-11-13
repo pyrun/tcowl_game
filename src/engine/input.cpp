@@ -60,6 +60,9 @@ void input::reset() {
     p_map_input.right = false;
 
     p_map_input.axies = { 0.f, 0.f};
+
+    for( uint32_t i = 0; i < ENGINE_INPUT_VERBOSE_LEVEL; i++)
+        p_map_input.verbose_level[i] = false;
 }
 
 void input::key( input_key_state state, SDL_Keycode key) {
@@ -81,6 +84,15 @@ void input::key( input_key_state state, SDL_Keycode key) {
         case SDLK_d: {
             p_map_input.right = state == input_key_state::input_key_down;
             l_update_axis = true;
+        } break;
+        case SDLK_F1: {
+            p_map_input.verbose_level[0] = state == input_key_state::input_key_down;
+        } break;
+        case SDLK_F2: {
+            p_map_input.verbose_level[2] = state == input_key_state::input_key_down;
+        } break;
+        case SDLK_F3: {
+            p_map_input.verbose_level[3] = state == input_key_state::input_key_down;
         } break;
         default: break;
     }
