@@ -47,6 +47,10 @@ namespace engine {
             return *this;
         }
 
+        fvec2 operator*(const fvec2& rhs) {
+            return fvec2{ x*rhs.x, y*rhs.y};
+        }
+
         fvec2 operator*(const float rhs) {
             return fvec2{ x*rhs, y*rhs};
         }
