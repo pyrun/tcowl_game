@@ -1,0 +1,3 @@
+function intilisation( id)
+
+end
