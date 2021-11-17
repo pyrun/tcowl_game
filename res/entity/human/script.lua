@@ -1,7 +1,3 @@
---package.path = package.path .. ";entity/player/human/?.lua"
---package.path = package.path .. ";entity/?.lua"
--- require( "entity")
-
 local velocity_window = 0.1
 local walk_speed = 10.0
 
