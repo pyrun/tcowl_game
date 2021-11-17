@@ -3,7 +3,7 @@
 
 #include "graphic.h"
 #include "type.h"
-#include "world.h"
+#include "world/world.h"
 #include "script.h"
 #include "../network/network.h"
 #include "input.h"

@@ -58,6 +58,12 @@ void app::begin( bool server) {
         l_id = p_entity.createObject(3);
         p_entity.setPosition( l_id, { 120, 100});
 
+        l_id = p_entity.createObject(4);
+        p_entity.setPosition( l_id, { 150, 50});
+
+        l_id = p_entity.createObject(10);
+        p_entity.setPosition( l_id, { 50, 50});
+
         p_entity.deleteObject( 0);
 
         /*int16_t l_id = p_entity.createObject(2);

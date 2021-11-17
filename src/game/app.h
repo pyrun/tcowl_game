@@ -8,7 +8,7 @@
 #include "../engine/font.h"
 #include "../engine/type.h"
 #include "../engine/entity.h"
-#include "../engine/world.h"
+#include "../engine/world/world.h"
 #include "../network/server.h"
 #include "../network/client_connection.h"
 #include "lobby.h"
