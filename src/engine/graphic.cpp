@@ -75,7 +75,7 @@ void graphic::reset() {
 }
 
 void graphic::update( float dt) {
-    //Clear screen
+    // Clear screen
     setDrawColor( 0, 0, 0, 255);
     SDL_RenderClear( p_renderer );
     p_displayed_elements = p_displayed_elements_counter;
@@ -87,7 +87,7 @@ void graphic::update( float dt) {
         l_obj->draw( this);
     }
 
-    //Update screen
+    // Update screen
     SDL_RenderPresent( p_renderer );
 }
 

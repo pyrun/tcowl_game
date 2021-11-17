@@ -17,9 +17,9 @@ void image::setAlphaKey( uint8_t r, uint8_t g, uint8_t b) {
 }
 
 bool image::load( engine::graphic *graphic, std::string file) {
-    SDL_Surface *l_image = SDL_LoadBMP( file.c_str());
+    SDL_Surface *l_image = IMG_Load( file.c_str());
     if( l_image == NULL) {
-        engine::log( log_warn, "Error loading image \"%s\" %s", file.c_str(), SDL_GetError());
+        engine::log( log_warn, "Error loading image \"%s\" %s", file.c_str(), IMG_GetError());
         return false;
     }
     size.x = l_image->w;

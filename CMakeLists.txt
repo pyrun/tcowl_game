@@ -32,7 +32,7 @@ file(GLOB source_files
 add_executable(TheCommemorationOfWhiteLight ${source_files})
 set_target_properties(TheCommemorationOfWhiteLight PROPERTIES LINK_FLAGS ${RESOURCE_FILE} )
 
-target_link_libraries( TheCommemorationOfWhiteLight mingw32 SDL2main SDL2 SDL2_net)
+target_link_libraries( TheCommemorationOfWhiteLight mingw32 SDL2main SDL2 SDL2_net SDL2_image)
 target_link_libraries( TheCommemorationOfWhiteLight -static-libgcc -static-libstdc++)
 target_link_libraries( TheCommemorationOfWhiteLight lua53)
 
