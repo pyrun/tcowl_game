@@ -8,12 +8,11 @@
 #include "../engine/font.h"
 #include "../engine/type.h"
 #include "../engine/entity.h"
+#include "../engine/config.h"
 #include "../engine/world/world.h"
 #include "../network/server.h"
 #include "../network/client_connection.h"
 #include "lobby.h"
-
-#define GAME_APP_WINDOWSTITLE "The Commemoration of White Light"
 
 namespace game {
     class app {
@@ -29,6 +28,7 @@ namespace game {
         private:
             // Engine stuff
             engine::graphic p_graphic;
+            engine::config p_config;
             engine::input p_input;
             engine::font p_font;
             engine::font_setting p_font_setting;

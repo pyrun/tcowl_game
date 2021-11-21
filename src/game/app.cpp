@@ -1,8 +1,10 @@
 #include "app.h"
 
 #include <math.h>
+#include "../engine/vec.h"
 
 using namespace game;
+using json = nlohmann::json;
 
 app::app() {
 
@@ -14,10 +16,17 @@ app::~app() {
 
 void app::begin( bool server) {
     // settings
-    p_font_setting = { .size{ 7, 9} };
-    snprintf( p_graphic.getConfig()->titel, 64, GAME_APP_WINDOWSTITLE);
+    p_config.load();
+
+    json l_size_json = p_config.getJson()->at("font-size");
+    engine::vec2 l_size;
+    l_size.x = l_size_json.is_array()?l_size_json[0].get<uint32_t>():7;
+    l_size.y = l_size_json.is_array()?l_size_json[1].get<uint32_t>():9;
+    p_font_setting = { .size{ l_size} };
+
+    snprintf( p_graphic.getConfig()->titel, 64, p_config.getJson()->at("windows-title-name").get<std::string>().c_str());
     p_serverorclient = server;
-    p_framerate_cap = 16.6667f;
+    p_framerate_cap = p_config.getJson()->at("framerate-cap").get<float>();
 
     // statup
     p_graphic.init();
@@ -135,5 +144,6 @@ bool app::update() {
 }
 
 void app::close() {
+    p_config.save();
     p_server.close();
 }
