@@ -115,6 +115,8 @@ void hub::update( float dt) {
         // check collision annex aabb
         if( l_body->getShape()) {
             for( uint32_t n = 0; n < p_bodys.size(); n++) {
+                if( p_bodys[n]->getShape() == nullptr)
+                    continue;
                 if( testAABBAABB(   l_body->getPosition() + l_body->getShape()->getOffset() + (l_body->getVelocity() * dt), l_body->getShape()->getAABB(),
                                     p_bodys[n]->getPosition() + p_bodys[n]->getShape()->getOffset(), p_bodys[n]->getShape()->getAABB()) &&
                                     i != n) {// nicht gegen sich selbst
