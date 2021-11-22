@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <vector>
+#include <string>
 
 #include "vec.h"
 
@@ -71,7 +72,7 @@ namespace engine {
             bool addObject( graphic_object* object);
             bool delObject( graphic_object* object);
 
-            graphic_config *getConfig() { return &p_config; }
+            void setTitle( std::string title) { snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_LENGTH, title.c_str()); }
         private:
             SDL_Window *p_window;
             graphic_config p_config;
