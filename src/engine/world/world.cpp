@@ -9,8 +9,8 @@ world::~world() {
 }
 
 void world::begin( graphic *graphic, uint32_t seed) {
-    p_graphic = graphic;
     p_seed = seed;
+    p_graphic = graphic;
 
     // todo load folder with tilesets
     p_tileset.load( p_graphic, "tile/grass/graphic.bmp");
@@ -21,7 +21,7 @@ void world::createRoom( vec2 position) {
 
     l_room = new room();
     l_room->init(position);
-    
+
     p_rooms.push_back( l_room);
 }
 
