@@ -47,7 +47,7 @@ void app::begin( bool server) {
         int16_t l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
-        l_id = p_entity.createObject(10);
+        l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
         
