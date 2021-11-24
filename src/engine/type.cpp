@@ -6,6 +6,7 @@
 #include <dirent.h>
 
 #include "helper.h"
+#include "helper_json.h"
 #include "log.h"
 
 using json = nlohmann::json;
@@ -81,56 +82,42 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         return;
     }
 
+    // Load file
     json l_json;
     l_file >> l_json;
 
     type *l_type = createtype();
 
     // Name
-    if( !l_json["name"].is_null() &&
-        l_json["name"].is_string())
-        l_type->setName( l_json["name"].get<std::string>().c_str());
-    else
-        l_type->setName( "NoName");
+    l_type->setName( helper::json::getString( &l_json, "name", "noName").c_str());
 
     // Id
-    if( !l_json["id"].is_null() &&
-        l_json["id"].is_number_unsigned()) {
-        l_type->setId( l_json["id"].get<uint32_t>());
-    } else {
+    uint32_t l_id;
+    l_id = helper::json::getUint32( &l_json, "id", 0);
+    if( l_id == 0) { // keine Nummer vergeben
         removetype( l_type);
         return;
     }
+    l_type->setId( l_id);
 
     // Graphic
     std::string l_image_file;
-    if( !l_json["image"].is_null() &&
-        l_json["image"].is_string()) {
-         l_image_file = l_json["image"].get<std::string>();
-    } else {
+    l_image_file = helper::json::getString( &l_json, "image", "error");
+    if( l_image_file == "error") {// Datei nicht angegeben
         removetype( l_type);
         return;
     }
 
     // Alpha key
-    if( !l_json["alpha-key"].is_null() &&
-        l_json["alpha-key"].is_array() &&
-        l_json["alpha-key"].size() >= 3) {
-        json l_json_root_color = l_json["alpha-key"];
-        l_type->getImage()->setAlphaKey(    l_json_root_color[0].get<uint8_t>(),
-                                            l_json_root_color[1].get<uint8_t>(),
-                                            l_json_root_color[2].get<uint8_t>());
+    uint8_t *l_color_key;
+    l_color_key = helper::json::getNumberArrayN<uint8_t>( &l_json, "alpha-key", 3);
+    if( l_color_key) {
+        l_type->getImage()->setAlphaKey( l_color_key[0], l_color_key[1], l_color_key[2]);
+        delete l_color_key;
     }
 
     // depth_sorting_offset
-    if( !l_json["depth_sorting_offset"].is_null() &&
-        l_json["depth_sorting_offset"].is_array() &&
-        l_json["depth_sorting_offset"].size() >= 2) {
-        json l_json_depth_sorting_offset = l_json["depth_sorting_offset"];
-        l_type->setDepthSortingOffset( vec2{ l_json_depth_sorting_offset[0].get<int8_t>(), l_json_depth_sorting_offset[1].get<int8_t>()} );
-    } else {
-        l_type->setDepthSortingOffset( vec2{ 0, 0});
-    }
+    l_type->setDepthSortingOffset( helper::json::getVec2( &l_json, "depth_sorting_offset"));
 
     // Load image
     l_type->getImage()->load( graphic, folder + l_image_file);
@@ -139,22 +126,13 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     l_type->setFolderPath( folder);
 
     // Physic data
-    float l_collision_data[8] = {0.0f};
-    if( !l_json["collision-data"].is_null() &&
-        l_json["collision-data"].is_array() &&
-        l_json["collision-data"].size() < 8) {
-        json l_json_collision_data = l_json["collision-data"];
-        for( uint8_t i = 0; i < l_json_collision_data.size(); i++)
-            l_collision_data[i] = l_json_collision_data[i].get<float>();
-    }
+    float *l_collision_data = helper::json::getNumberArray<float>( &l_json, "collision-data", 8);
 
     // Physic type/shape
     physic::shape *l_shape = nullptr;
-    std::string l_collision_type;
-    if( !l_json["collision-type"].is_null() &&
-        l_json["collision-type"].is_string()) {
-        l_collision_type = l_json["collision-type"].get<std::string>();
-    }
+    std::string l_collision_type = helper::json::getString( &l_json, "collision-type", "");
+    if( !l_collision_data)
+        l_collision_type.clear();
     if( l_collision_type == "circle") { // circle
         l_shape = new physic::sharp_circle( l_collision_data[2]);
     } else if(l_collision_type == "rect") { // rect
