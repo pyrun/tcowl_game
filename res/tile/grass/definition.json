@@ -1,0 +1,13 @@
+{
+    "name": "grass",
+    "image": "graphic.bmp",
+    "alpha-key": [ 255, 255, 255],
+    "graphic": [
+        {
+            "name": "idle",
+            "position": [ 0, 0],
+            "length": 3,
+            "ticks-for-next-image": 100
+        }
+    ]
+}
