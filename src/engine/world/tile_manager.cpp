@@ -6,6 +6,7 @@
 #include <dirent.h>
 
 #include "../helper.h"
+#include "../helper_json.h"
 #include "../log.h"
 
 using json = nlohmann::json;
@@ -59,6 +60,23 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
     std::ifstream l_file( folder + ENGINE_TILE_FILE_DESCRIPTION);
     if( l_file.is_open() == false) {
         log( log_level::log_warn, "tile_manager::loadtype %s konnte nicht geoefnet werden", (folder + ENGINE_TILE_FILE_DESCRIPTION).c_str());
+        return;
+    }
+    
+    // Load file
+    json l_json;
+    l_file >> l_json;
+
+    tile *l_tile = createtype();
+
+    // Name
+    l_tile->setName( helper::json::getString( &l_json, "name", "noName").c_str());
+    
+    // Graphic
+    std::string l_image_file;
+    l_image_file = helper::json::getString( &l_json, "image", "error");
+    if( l_image_file == "error") {// Datei nicht angegeben
+        removetype( l_tile);
         return;
     }
 }
