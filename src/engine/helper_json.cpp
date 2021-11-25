@@ -2,6 +2,18 @@
 
 using namespace engine;
 
+uint32_t helper::json::getBool( nlohmann::json *json_ptr, std::string name, bool def) {
+    try {
+        nlohmann::json l_array = json_ptr->at(name);
+        if( l_array.is_boolean()) {
+            return l_array.get<bool>();
+        }
+    } catch (std::exception& e) {
+        return def;
+    }
+    return def;
+}
+
 uint32_t helper::json::getUint32( nlohmann::json *json_ptr, std::string name, uint32_t def) {
     try {
         nlohmann::json l_array = json_ptr->at(name);

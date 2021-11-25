@@ -7,6 +7,7 @@
 
 namespace helper {
     namespace json {
+        uint32_t getBool( nlohmann::json *json_ptr, std::string name, bool def);
         uint32_t getUint32( nlohmann::json *json_ptr, std::string name, uint32_t def = 0);
         
         template< class T>

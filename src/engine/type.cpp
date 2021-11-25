@@ -143,48 +143,19 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     l_type->linkShape( l_shape);
 
     // Alle Aktionen laden und hinzufügen
-    if( !l_json["action"].is_null() &&
-        l_json["action"].is_array()) {
-        
+    if( l_json["action"].is_array()) {
         json l_json_root_action = l_json["action"];
         for( uint32_t i = 0; i < l_json["action"].size(); i++) {
             json l_action_json = l_json_root_action[i];
             action l_action;
             l_action.id = i;
 
-            if( !l_action_json["name"].is_null())
-                l_action.name = l_action_json["name"].get<std::string>();
-            else
-                l_action.name = "NoName";
-
-            if( !l_action_json["position"].is_null()) {
-                l_action.postion = { l_action_json["position"][0].get<int32_t>(), l_action_json["position"][1].get<int32_t>() };
-            } else {
-                log( log_warn, "error loading action index %d, position", i);
-                continue;
-            }
-
-            if( !l_action_json["size"].is_null()) {
-                l_action.size = { l_action_json["size"][0].get<int32_t>(), l_action_json["size"][1].get<int32_t>() };
-            } else {
-                log( log_warn, "error loading action index %d, size", i);
-                continue;
-            }
-            
-            if( !l_action_json["length"].is_null())
-                l_action.length  = l_action_json["length"].get<uint32_t>();
-            else
-                l_action.length = 1;
-            
-            if( !l_action_json["ticks_for_next_image"].is_null())
-                l_action.ticks_for_next_image  = l_action_json["ticks_for_next_image"].get<uint32_t>();
-            else
-                l_action.ticks_for_next_image = 1;
-            
-            if( !l_action_json["bind_velocity"].is_null())
-                l_action.bind_velocity = l_action_json["bind_velocity"].get<bool>();
-            else
-                l_action.bind_velocity = false;
+            l_action.name = helper::json::getString( &l_action_json, "name", "noName");
+            l_action.postion = helper::json::getVec2( &l_action_json, "position");
+            l_action.size = helper::json::getVec2( &l_action_json, "size", vec2{ 32, 32});
+            l_action.length = helper::json::getUint32( &l_action_json, "length", 1);
+            l_action.ticks_for_next_image = helper::json::getUint32( &l_action_json, "ticks_for_next_image", 1);
+            l_action.bind_velocity = helper::json::getBool( &l_action_json, "bind_velocity", false);
 
             log( log_level::log_debug, "action '%s' %dx%d %dx%d length %d durration %d",
                                                                                         l_action.name.c_str(),
