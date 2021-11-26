@@ -158,13 +158,13 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
             l_action.bind_velocity = helper::json::getBool( &l_action_json, "bind_velocity", false);
 
             log( log_level::log_debug, "action '%s' %dx%d %dx%d length %d durration %d",
-                                                                                        l_action.name.c_str(),
-                                                                                        l_action.postion.x,
-                                                                                        l_action.postion.y,
-                                                                                        l_action.size.x,
-                                                                                        l_action.size.y,
-                                                                                        l_action.length,
-                                                                                        l_action.ticks_for_next_image);
+                l_action.name.c_str(),
+                l_action.postion.x,
+                l_action.postion.y,
+                l_action.size.x,
+                l_action.size.y,
+                l_action.length,
+                l_action.ticks_for_next_image);
 
             l_type->addAction( l_action);
         }

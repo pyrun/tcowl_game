@@ -35,6 +35,7 @@ void app::begin( bool server) {
 
     // load files
     p_types.loadFolder( &p_graphic, "entity");
+    p_tileset.loadFolder( &p_graphic, "tile");
     p_world.begin( &p_graphic);
 
     p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);

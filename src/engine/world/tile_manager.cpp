@@ -79,6 +79,42 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
         removetype( l_tile);
         return;
     }
+
+    // Load image
+    l_tile->getImage()->load( graphic, folder + l_image_file);
+
+    // Alpha key
+    uint8_t *l_color_key;
+    l_color_key = helper::json::getNumberArrayN<uint8_t>( &l_json, "alpha-key", 3);
+    if( l_color_key) {
+        l_tile->getImage()->setAlphaKey( l_color_key[0], l_color_key[1], l_color_key[2]);
+        delete l_color_key;
+    }
+
+    // Set Folder path
+    l_tile->setFolderPath( folder);
+
+    // Alle Grafiken/Animationen laden und hinzufügen
+    if( l_json["graphic"].is_array()) {
+        json l_json_root_graphic = l_json["graphic"];
+        for( uint32_t i = 0; i < l_json["graphic"].size(); i++) {
+            json l_graphic_json = l_json_root_graphic[i];
+            tile_graphic l_graphic;
+
+            // Laden der Werte
+            l_graphic.name = helper::json::getString( &l_graphic_json, "name", "noName");
+            l_graphic.position = helper::json::getVec2( &l_graphic_json, "position");
+            l_graphic.length = helper::json::getUint32( &l_graphic_json, "length", 1);
+            l_graphic.ticks = helper::json::getUint32( &l_graphic_json, "ticks_for_next_image", 0);
+
+            log( log_level::log_debug, "tile_graphic '%s' %dx%d length %d durration %d",
+                l_graphic.name.c_str(),
+                l_graphic.position.x,
+                l_graphic.position.y,
+                l_graphic.length,
+                l_graphic.ticks);
+        }
+    }
 }
 
 tile *tile_manager::createtype() {

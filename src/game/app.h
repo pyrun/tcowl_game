@@ -9,6 +9,7 @@
 #include "../engine/type.h"
 #include "../engine/entity.h"
 #include "../engine/config.h"
+#include "../engine/world/tile_manager.h"
 #include "../engine/world/world.h"
 #include "../network/server.h"
 #include "../network/client_connection.h"
@@ -34,6 +35,7 @@ namespace game {
             engine::font_setting p_font_setting;
             engine::type_handler p_types;
             engine::entity_handler p_entity;
+            engine::tile_manager p_tileset;
             engine::world p_world;
 
             // network
