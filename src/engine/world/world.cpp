@@ -19,7 +19,8 @@ void world::begin( graphic *graphic, tile_manager *tileset, uint32_t seed) {
 
     for( uint32_t x = 0; x < WORLD_SIZE; x++) {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            setTile( x, y, p_tileset->get(0));
+            uint32_t l_index = (uint32_t)(helper::perlin2d(x, y, 0.1, 4)*2);
+            setTile( x, y, p_tileset->get(l_index));
             world_tile *l_tile = getTile( x, y);
             engine::tile_graphic *l_tile_graphic = l_tile->bot->getGraphic(0);
             if( l_tile_graphic)

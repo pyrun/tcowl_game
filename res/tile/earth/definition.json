@@ -1,0 +1,13 @@
+{
+    "name": "earth",
+    "image": "graphic.png",
+    "alpha-key": [ 255, 255, 255],
+    "graphic": [
+        {
+            "name": "idle",
+            "position": [ 0, 0],
+            "length": 8,
+            "ticks-for-next-image": 0
+        }
+    ]
+}
