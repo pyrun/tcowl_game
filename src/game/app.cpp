@@ -36,7 +36,7 @@ void app::begin( bool server) {
     // load files
     p_types.loadFolder( &p_graphic, "entity");
     p_tileset.loadFolder( &p_graphic, "tile");
-    p_world.begin( &p_graphic);
+    p_world.begin( &p_graphic, &p_tileset);
 
     p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);
 
@@ -53,12 +53,12 @@ void app::begin( bool server) {
 
         
         l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 140, 102});
+        p_entity.setPosition( l_id, { 50, 102});
 
         l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 160, 100});
+        p_entity.setPosition( l_id, { 160, 50});
         l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 180, 100});
+        p_entity.setPosition( l_id, { 180, 30});
         l_id = p_entity.createObject(3);
         p_entity.setPosition( l_id, { 120, 100});
 

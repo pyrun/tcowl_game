@@ -7,14 +7,14 @@
 #define ENGINE_TILE_FILE_DESCRIPTION "definition.json"
 
 namespace engine {
-    class tile_manager{
+    class tile_manager {
         public:
             tile_manager();
             ~tile_manager();
 
             bool loadFolder( graphic *graphic, std::string path);
             void loadtype( graphic *graphic, std::string file);
-            
+
             uint32_t getAmount() { return (uint32_t)p_type.size(); }
             tile *get( uint32_t index) { return &p_type.at( index); }
             tile *getById( uint16_t id);

@@ -7,21 +7,40 @@
 #include "../graphic.h"
 
 #include "room.h"
+#include "tile.h"
+#include "tile_manager.h"
+
+#define WORLD_SIZE 128 // both axies
 
 namespace engine {
+    struct world_tile {
+        uint32_t ticks = 0;
+        uint32_t animation_tick = 0;
+
+        tile *top = nullptr;
+        tile *mid = nullptr;
+        tile *bot = nullptr;
+        tile *collision = nullptr;
+    };
+
     class world : public engine::graphic_object {
         public:
             world();
             ~world();
 
-            void begin( graphic *graphic, uint32_t seed = 0x0);
+            void begin( graphic *graphic, tile_manager *tilemananger,  uint32_t seed = 0x0);
+            void cleanup();
+
+            void setTile(int x, int y, tile *tiledata);
+            world_tile *getTile(int x, int y);
 
             void createRoom( vec2 position);
 
             void draw( engine::graphic_draw *graphic) override;
         private:
-            image p_tileset;
+            world_tile *p_world_data;
             uint32_t p_seed;
+            tile_manager *p_tileset;
 
             graphic *p_graphic;
 

@@ -18,6 +18,16 @@ namespace engine {
             this->y += rhs.y;
             return *this;
         }
+        
+        vec2 operator/(const vec2& rhs) {
+            return vec2{ x/rhs.x, y/rhs.y};
+        }
+
+        vec2& operator/=(const vec2 rhs){
+            this->x /= rhs.x;
+            this->y /= rhs.y;
+            return *this;
+        }
     };
 
     struct vec3 {

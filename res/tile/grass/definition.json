@@ -6,8 +6,8 @@
         {
             "name": "idle",
             "position": [ 0, 0],
-            "length": 3,
-            "ticks-for-next-image": 100
+            "length": 4,
+            "ticks-for-next-image": 0
         }
     ]
 }

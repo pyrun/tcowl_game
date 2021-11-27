@@ -43,6 +43,9 @@ namespace engine {
             void drawRect( vec2 pos, vec2 rect);
 
             uint32_t getDisplacedElements() { return p_displayed_elements; }
+
+            vec2 getCameraPosition() { return p_camera_position; }
+            vec2 getCameraSize() { return p_camera_size; }
         public:
             SDL_Renderer *p_renderer;
             vec2 p_camera_position;
