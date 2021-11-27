@@ -60,8 +60,8 @@ void world::draw( engine::graphic_draw *graphic) {
     vec2 l_length_tiles = graphic->getCameraSize();
     l_length_tiles = l_length_tiles / ENGINE_VEC2_TILE_SIZE;
 
-    for( int32_t x = 0; x < l_length_tiles.x; x++) {
-        for( int32_t y = 0; y < l_length_tiles.y; y++) {
+    for( int32_t x = 0; x < l_length_tiles.x+1; x++) {
+        for( int32_t y = 0; y < l_length_tiles.y+1; y++) {
             world_tile *l_data = getTile( x, y);
             if( !l_data)
                 continue;
