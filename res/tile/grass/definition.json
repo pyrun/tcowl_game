@@ -1,6 +1,6 @@
 {
     "name": "grass",
-    "image": "graphic.bmp",
+    "image": "graphic.png",
     "alpha-key": [ 255, 255, 255],
     "graphic": [
         {
