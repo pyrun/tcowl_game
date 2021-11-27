@@ -61,13 +61,15 @@ namespace engine {
             physic::shape *p_shape;
     };
 
-    class type_handler{
+    class type_handler {
         public:
             type_handler();
             ~type_handler();
 
             bool loadFolder( graphic *graphic, std::string path);
             void loadtype( graphic *graphic, std::string file);
+
+            void reload( graphic_draw *graphic);
             
             uint32_t getAmount() { return (uint32_t)p_type.size(); }
             type *get( uint32_t index) { return &p_type.at( index); }

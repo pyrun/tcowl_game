@@ -15,6 +15,7 @@ namespace physic {
             float sweptAABB( const engine::fvec2 &pos1, const engine::fvec2 &rect1, const engine::fvec2 &pos2, const engine::fvec2 &rect2, engine::fvec2 vel, engine::vec2 *normal);
 
             void update( float dt);
+            void reload( engine::graphic_draw *graphic) override { }
             void draw( engine::graphic_draw *graphic) override;
 
             void add( body* body) { p_bodys.push_back( body); }

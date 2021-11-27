@@ -56,6 +56,9 @@ world_tile *world::getTile(int x, int y) {
     return &p_world_data[WORLD_SIZE * x + y];  
 }
 
+void world::reload( graphic_draw *graphic) {
+    p_tileset->reload( graphic);
+}
 void world::draw( engine::graphic_draw *graphic) {
     vec2 l_length_tiles = graphic->getCameraSize();
     l_length_tiles = l_length_tiles / ENGINE_VEC2_TILE_SIZE;

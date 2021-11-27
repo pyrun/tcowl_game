@@ -173,6 +173,14 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     log( log_level::log_info, "Entity id:%d name:%s action:%d loaded", l_type->getId(), l_type->getName(), l_type->getAmountActions());
 }
 
+void type_handler::reload( graphic_draw *graphic) {
+    for( uint32_t i = 0; i < p_type.size(); i++) {
+        type *l_type = &p_type[i];
+        // reload image
+        l_type->getImage()->reload( graphic);
+    }
+}
+
 type *type_handler::createtype() {
     type l_type;
     p_type.push_back(l_type);

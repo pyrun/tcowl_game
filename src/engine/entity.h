@@ -57,6 +57,7 @@ namespace engine {
 
             void update( float dt, world *world);
 
+            void reload( engine::graphic_draw *graphic) override;
             void draw( engine::graphic_draw *graphic) override;
             void drawEntity( engine::graphic_draw *graphic, entity* obj);
 

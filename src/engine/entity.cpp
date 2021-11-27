@@ -226,6 +226,10 @@ void entity_handler::update( float dt, world *world) {
     engine::used_entity_handler = NULL;
 }
 
+void entity_handler::reload( engine::graphic_draw *graphic) {
+    p_types->reload( graphic);
+}
+
 void entity_handler::draw( engine::graphic_draw *graphic) {
     // depth sorting 
     struct {

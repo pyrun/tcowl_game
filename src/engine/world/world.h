@@ -36,6 +36,7 @@ namespace engine {
 
             void createRoom( vec2 position);
 
+            void reload( engine::graphic_draw *graphic) override;
             void draw( engine::graphic_draw *graphic) override;
         private:
             world_tile *p_world_data;

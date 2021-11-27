@@ -91,6 +91,14 @@ void graphic::update( float dt) {
     SDL_RenderPresent( p_renderer );
 }
 
+void graphic::reload() {
+    //  pipeline
+    for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
+        graphic_object *l_obj = p_graphic_objects[i];
+        l_obj->reload( this);
+    }
+}
+
 
 bool graphic::addObject( graphic_object* object) {
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
@@ -105,6 +113,15 @@ bool graphic::delObject( graphic_object* object) {
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
         if( p_graphic_objects[i] == object) {
             p_graphic_objects.erase( p_graphic_objects.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool graphic::checkObject( graphic_object* object) {
+    for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
+        if( p_graphic_objects[i] == object) {
             return true;
         }
     }

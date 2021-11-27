@@ -118,6 +118,14 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
     }
 }
 
+void tile_manager::reload( graphic_draw *graphic) {
+    for( uint32_t i = 0; i < p_type.size(); i++) {
+        tile *l_type = &p_type[i];
+        // reload image
+        l_type->getImage()->reload( graphic);
+    }
+}
+
 tile *tile_manager::createtype() {
     tile l_type;
     p_type.push_back(l_type);
