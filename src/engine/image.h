@@ -15,11 +15,13 @@ namespace engine {
             ~image();
 
             void setAlphaKey( uint8_t r, uint8_t g, uint8_t b);
-            bool load( engine::graphic *graphic, std::string file);
+            bool load( engine::graphic_draw *graphic, std::string file);
+            void reload( engine::graphic_draw *graphic);
 
             void clear();
         private:
             vec4 p_color_key;
+            std::string p_file;
     };
 };
 

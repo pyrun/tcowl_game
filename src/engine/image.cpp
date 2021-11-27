@@ -16,12 +16,15 @@ void image::setAlphaKey( uint8_t r, uint8_t g, uint8_t b) {
     p_color_key = { r, g, b, 1};
 }
 
-bool image::load( engine::graphic *graphic, std::string file) {
+bool image::load( engine::graphic_draw *graphic, std::string file) {
     SDL_Surface *l_image = IMG_Load( file.c_str());
     if( l_image == NULL) {
         engine::log( log_warn, "Error loading image \"%s\" %s", file.c_str(), IMG_GetError());
         return false;
     }
+
+    p_file = file;
+
     size.x = l_image->w;
     size.y = l_image->h;
 
@@ -39,6 +42,10 @@ bool image::load( engine::graphic *graphic, std::string file) {
     return true;
 }
 
+void image::reload( engine::graphic_draw *graphic) {
+    SDL_DestroyTexture( p_texture);
+    load( graphic, p_file);
+}
 
 void image::clear() {
     if( p_texture)
