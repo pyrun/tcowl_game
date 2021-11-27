@@ -21,8 +21,11 @@ void input::init() {
 }
 
 void input::update() {
+    // save old state
+    p_map_input_before = p_map_input;
+
     // Handle events on queue
-    while( SDL_PollEvent( &p_event ) != 0 ) {
+    while( SDL_PollEvent( &p_event )) {
         // User requests quit
         switch( p_event.type) {
             case SDL_QUIT: {
@@ -89,10 +92,10 @@ void input::key( input_key_state state, SDL_Keycode key) {
             p_map_input.verbose_level[0] = state == input_key_state::input_key_down;
         } break;
         case SDLK_F2: {
-            p_map_input.verbose_level[2] = state == input_key_state::input_key_down;
+            p_map_input.verbose_level[1] = state == input_key_state::input_key_down;
         } break;
         case SDLK_F3: {
-            p_map_input.verbose_level[3] = state == input_key_state::input_key_down;
+            p_map_input.verbose_level[2] = state == input_key_state::input_key_down;
         } break;
         default: break;
     }

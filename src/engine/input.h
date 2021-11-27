@@ -50,10 +50,12 @@ namespace engine {
 
             input_event *getEvents() { return &p_map_event; }
             input_map *getInputMap() { return &p_map_input; }
+            input_map *getInputMapBefore() { return &p_map_input_before; }
         private:
             SDL_Event p_event;
             input_event p_map_event;
             input_map p_map_input;
+            input_map p_map_input_before;
     };
 };
 
