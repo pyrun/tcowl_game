@@ -103,6 +103,7 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
 
             // Laden der Werte
             l_graphic.name = helper::json::getString( &l_graphic_json, "name", "noName");
+            l_graphic.type = (engine::tile_graphic_type)helper::json::getUint32( &l_graphic_json, "type", engine::tile_graphic_type::tile_graphic_type_dafault);
             l_graphic.position = helper::json::getVec2( &l_graphic_json, "position");
             l_graphic.length = helper::json::getUint32( &l_graphic_json, "length", 1);
             l_graphic.ticks = helper::json::getUint32( &l_graphic_json, "ticks-for-next-image", 0);
