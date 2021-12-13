@@ -23,10 +23,7 @@ namespace engine {
         tile_graphic_type_boder_nw,
     };
 
-    tile_graphic_type stringToTileGraphicType( std::string string) {
-        if( string == "n")
-            return tile_graphic_type_boder_n;
-    }
+    tile_graphic_type stringToTileGraphicType( std::string string);
 
     struct tile_graphic {
         std::string name;

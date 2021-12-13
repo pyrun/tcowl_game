@@ -4,6 +4,7 @@
     "alpha-key": [ 255, 255, 255],
     "graphic": [
         {
+            "type":"s",
             "name": "idle",
             "position": [ 0, 0],
             "length": 8,
