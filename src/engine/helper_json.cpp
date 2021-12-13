@@ -61,6 +61,8 @@ std::string helper::json::getString( nlohmann::json *json_ptr, std::string name,
         nlohmann::json l_array = json_ptr->at(name);
         if( l_array.is_string()) {
             return l_array.get<std::string>();
+        } else {
+            return def;
         }
     } catch (std::exception& e) {
         return def;
