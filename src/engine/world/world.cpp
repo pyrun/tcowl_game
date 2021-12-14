@@ -11,10 +11,11 @@ world::world() {
 world::~world() {
 }
 
-void world::begin( graphic *graphic, tile_manager *tileset, uint32_t seed) {
+void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_manager, uint32_t seed) {
     p_seed = seed;
     p_graphic = graphic;
     p_tileset = tileset;
+    p_biom_manager = biom_manager;
     p_world_data = new world_tile[WORLD_SIZE*WORLD_SIZE];
 
     for( uint32_t x = 0; x < WORLD_SIZE; x++) {

@@ -9,6 +9,7 @@
 #include "room.h"
 #include "tile.h"
 #include "tile_manager.h"
+#include "biom_manager.h"
 
 #define WORLD_SIZE 128 // both axies
 
@@ -28,7 +29,7 @@ namespace engine {
             world();
             ~world();
 
-            void begin( graphic *graphic, tile_manager *tilemananger,  uint32_t seed = 0x0);
+            void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
             void cleanup();
 
             void setTile(int x, int y, tile *tiledata);
@@ -42,6 +43,7 @@ namespace engine {
             world_tile *p_world_data;
             uint32_t p_seed;
             tile_manager *p_tileset;
+            biom_manager *p_biom_manager;
 
             graphic *p_graphic;
 
