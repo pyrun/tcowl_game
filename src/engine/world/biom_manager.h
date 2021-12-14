@@ -13,14 +13,14 @@ namespace engine {
             ~biom_manager();
 
             bool loadFolder( std::string path);
-            void loadtype( std::string file);
+            void loadType( std::string file);
+            bool loadScript( biom *biom);
 
             uint32_t getAmount() { return (uint32_t)p_biomes.size(); }
             biom *getById( uint16_t id);
-
         private:
-            biom *createtype();
-            bool removetype( biom *target);
+            biom *create();
+            bool remove( biom *target);
 
             std::vector<biom> p_biomes;
     };

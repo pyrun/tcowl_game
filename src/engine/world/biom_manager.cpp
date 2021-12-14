@@ -12,8 +12,10 @@
 using json = nlohmann::json;
 using namespace engine;
 
+biom_manager *used_biom_handler = NULL;
+
 biom_manager::biom_manager() {
-    p_type.clear();
+    p_biomes.clear();
 }
 
 biom_manager::~biom_manager() {
@@ -45,9 +47,9 @@ bool biom_manager::loadFolder( std::string path) {
         // Check if file or folder
         if( helper::isDirectory( l_path.c_str())) {
             // Check if folder has type inside
-            if( helper::file_exists( (l_path + "/" + ENGINE_TILE_FILE_DESCRIPTION).c_str()))
-                loadtype( graphic, l_path + "/");
-            loadFolder( graphic, l_path);
+            if( helper::file_exists( (l_path + "/" + ENGINE_BIOM_FILE_DESCRIPTION).c_str()))
+                loadType( l_path + "/");
+            loadFolder( l_path);
         }
     }
     closedir(l_dir);
@@ -55,10 +57,10 @@ bool biom_manager::loadFolder( std::string path) {
     return true;
 }
 
-void biom_manager::loadtype( std::string folder) {
-    std::ifstream l_file( folder + ENGINE_TILE_FILE_DESCRIPTION);
+void biom_manager::loadType( std::string folder) {
+    std::ifstream l_file( folder + ENGINE_BIOM_FILE_DESCRIPTION);
     if( l_file.is_open() == false) {
-        log( log_level::log_warn, "biom_manager::loadtype %s konnte nicht geoefnet werden", (folder + ENGINE_TILE_FILE_DESCRIPTION).c_str());
+        log( log_level::log_warn, "biom_manager::loadType %s konnte nicht geoefnet werden", (folder + ENGINE_BIOM_FILE_DESCRIPTION).c_str());
         return;
     }
 
@@ -69,20 +71,51 @@ void biom_manager::loadtype( std::string folder) {
     biom *l_biom = create();
 
     // Name
-    l_tile->setName( helper::json::getString( &l_json, "name", "noName").c_str());
+    l_biom->setName( helper::json::getString( &l_json, "name", "noName").c_str());
+    l_biom->setScriptName( folder + helper::json::getString( &l_json, "script", "noName").c_str());
+
+    if( !loadScript( l_biom)) {
+        remove( l_biom);
+        return;
+    }
+
+    log( log_trace, "biom_manager::loadType %s %s", l_biom->getName().c_str(), l_biom->getScriptName().c_str());
+}
+
+bool biom_manager::loadScript( biom *biom) {
+    std::string l_file;
+
+    // check for null
+    if( biom == NULL)
+        return false;
+    
+    // Delete existing script beforehand if it is existing
+    script::free( biom->getLuaState());
+
+    // try load script
+    biom->setLuaState( script::loadFile( biom->getScriptName().c_str()));
+    if( biom->getLuaState() == NULL)
+        return false;
+
+    // run once
+    used_biom_handler = this;
+    script::run( biom->getLuaState());
+    script::function( "intilisation", biom->getLuaState(), 0);
+    used_biom_handler = nullptr;
+    return true;
 }
 
 biom *biom_manager::create() {
     biom l_type;
-    p_type.push_back(l_type);
-    return &p_type.back();
+    p_biomes.push_back(l_type);
+    return &p_biomes.back();
 }
 
 bool biom_manager::remove( biom *target) {
-    for( uint32_t i = 0; i < p_type.size(); i++) {
-        tile *l_type = &p_type[i];
+    for( uint32_t i = 0; i < p_biomes.size(); i++) {
+        biom *l_type = &p_biomes[i];
         if( l_type == target) {
-            p_type.erase( p_type.begin()+i);
+            p_biomes.erase( p_biomes.begin()+i);
             return true;
         }
     }

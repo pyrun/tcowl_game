@@ -10,6 +10,7 @@
 #include "../engine/entity.h"
 #include "../engine/config.h"
 #include "../engine/world/tile_manager.h"
+#include "../engine/world/biom_manager.h"
 #include "../engine/world/world.h"
 #include "../network/server.h"
 #include "../network/client_connection.h"
@@ -36,6 +37,7 @@ namespace game {
             engine::type_handler p_types;
             engine::entity_handler p_entity;
             engine::tile_manager p_tileset;
+            engine::biom_manager p_bioms;
             engine::world p_world;
 
             // network
