@@ -69,7 +69,7 @@ void graphic::init() {
 }
 
 void graphic::reset() {
-    snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_LENGTH, "%s", ENGINE_GRAPHIC_DEFAULT_TITEL);
+    snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH, "%s", ENGINE_GRAPHIC_DEFAULT_TITEL);
     p_displayed_elements = 0;
     p_displayed_elements_counter = 0;
 }

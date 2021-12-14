@@ -8,7 +8,7 @@
 #include "vec.h"
 
 #define ENGINE_GRAPHIC_DEFAULT_TITEL    "NO_TITEL_SET"
-#define ENGINE_GRAPHIC_DEFAULT_LENGTH   256
+#define ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH   256
 
 #define ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_W 320
 #define ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_H 180
@@ -17,7 +17,7 @@
 
 namespace engine {
     struct graphic_config {
-        char titel[ENGINE_GRAPHIC_DEFAULT_LENGTH];
+        char titel[ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH];
         vec2 native_resolution = vec2{ ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_W, ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_H};
     };
 
@@ -80,7 +80,7 @@ namespace engine {
             bool delObject( graphic_object* object);
             bool checkObject( graphic_object* object);
 
-            void setTitle( std::string title) { snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_LENGTH, title.c_str()); }
+            void setTitle( std::string title) { snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH, title.c_str()); }
         private:
             SDL_Window *p_window;
             graphic_config p_config;
