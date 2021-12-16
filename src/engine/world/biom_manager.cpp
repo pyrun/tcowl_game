@@ -12,9 +12,9 @@
 using json = nlohmann::json;
 using namespace engine;
 
-biom_manager *used_biom_handler = NULL;
-
 biom_manager::biom_manager() {
+    p_init = false;
+
     p_biomes.clear();
 }
 
@@ -97,12 +97,19 @@ bool biom_manager::loadScript( biom *biom) {
     if( biom->getLuaState() == NULL)
         return false;
 
-    // run once
-    used_biom_handler = this;
-    script::run( biom->getLuaState());
-    script::function( "intilisation", biom->getLuaState(), 0);
-    used_biom_handler = nullptr;
+
     return true;
+}
+
+void biom_manager::init() {
+    p_init = true;
+
+    for( uint32_t i = 0; i < p_biomes.size(); i++) {
+        biom *l_type = &p_biomes[i];
+        // run once
+        script::run( l_type->getLuaState());
+        script::function( "intilisation", l_type->getLuaState());
+    }
 }
 
 biom *biom_manager::create() {
@@ -120,4 +127,9 @@ bool biom_manager::remove( biom *target) {
         }
     }
     return false;
+}
+
+void biom_manager::update() {
+    if( !p_init)
+        init();
 }

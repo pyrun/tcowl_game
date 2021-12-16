@@ -4,6 +4,7 @@
 #include "log.h"
 #include "type.h"
 
+#include "script/world_script.h"
 #include "script/entity_script.h"
 #include "script/global_script.h"
 
@@ -20,7 +21,7 @@ void engine::script::run( lua_State *state) {
     
 }
 
-void engine::script::function( std::string function, lua_State *state, int16_t number) {
+void engine::script::function( std::string function, lua_State *state, int16_t x, int16_t y) {
     if( state == NULL)
         return;
 
@@ -30,10 +31,11 @@ void engine::script::function( std::string function, lua_State *state, int16_t n
         lua_pop( state,1);
         return;
     }
-    lua_pushnumber( state, number);
+    lua_pushnumber( state, x);
+    lua_pushnumber( state, y);
 
     // call the function
-    if( lua_pcall( state, 1, 0, 0)) {
+    if( lua_pcall( state, 2, 0, 0)) {
         log( log_error, "engine::script::function %s", lua_tostring( state, -1));
     }
 }
@@ -66,6 +68,7 @@ lua_State *engine::script::loadFile( const char *file) {
     // add libs
     script::global_lib( l_state);
     script::entity_lib( l_state);
+    script::world_lib( l_state);
 
     // load the file and call its once
     uint32_t l_result = luaL_loadfile( l_state, file);

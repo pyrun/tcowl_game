@@ -14,7 +14,7 @@ namespace engine {
     namespace script {
         void run( lua_State *state);
 
-        void function( std::string function, lua_State *state, int16_t id);
+        void function( std::string function, lua_State *state, int16_t x = 0, int16_t y = 0);
 
         void free( lua_State *state);
         lua_State *loadFile( const char *file);

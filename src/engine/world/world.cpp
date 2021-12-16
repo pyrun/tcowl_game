@@ -5,6 +5,8 @@
 
 using namespace engine;
 
+world *engine::used_world_handler = NULL;
+
 world::world() {
 }
 
@@ -18,7 +20,7 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_biom_manager = biom_manager;
     p_world_data = new world_tile[WORLD_SIZE*WORLD_SIZE];
 
-    for( uint32_t x = 0; x < WORLD_SIZE; x++) {
+    /*for( uint32_t x = 0; x < WORLD_SIZE; x++) {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
             uint32_t l_index = (uint32_t)(helper::perlin2d(x, y, 0.1, 4)*2);
             setTile( x, y, p_tileset->get(l_index));
@@ -26,8 +28,9 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
             engine::tile_graphic *l_tile_graphic = l_tile->bot->getGraphic(0);
             if( l_tile_graphic)
                 l_tile->animation_tick = ((uint32_t)(helper::perlin2d(x*100, y*100, 0.1, 4)*l_tile_graphic->length));
+            
         }
-    }
+    }*/
 }
 
 void world::cleanup() {
@@ -54,7 +57,7 @@ void world::setTile(int x, int y, tile *tiledata) {
 world_tile *world::getTile(int x, int y) {
     if( WORLD_SIZE <= x ||
         WORLD_SIZE <= y)
-        return NULL;
+        return nullptr;
     return &p_world_data[WORLD_SIZE * x + y];  
 }
 
@@ -94,4 +97,22 @@ void world::draw( engine::graphic_draw *graphic) {
                             + engine::vec2{ (int32_t)l_data->animation_tick*ENGINE_TILE_SIZE, 0});
         }
     }
+}
+
+void world::update() {
+    engine::used_world_handler = this;
+
+    p_biom_manager->update();
+
+    for( uint32_t x = 0; x < WORLD_SIZE; x++) {
+        for( uint32_t y = 0; y < WORLD_SIZE; y++) {
+            if( getTile( x, y)->bot == nullptr) {
+                biom *l_biom = p_biom_manager->get( 0);
+                // run biom
+                script::function( "set", l_biom->getLuaState(), x, y);
+            }
+        }
+    }
+
+    engine::used_world_handler = nullptr;
 }

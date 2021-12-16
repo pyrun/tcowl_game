@@ -147,3 +147,10 @@ bool tile_manager::removetype( tile *target) {
     }
     return false;
 }
+
+tile *tile_manager::getByName( std::string name) {
+    for( uint32_t i = 0; i < p_type.size(); i++)
+        if( p_type[i].getName() == name)
+            return &p_type[i];
+    return NULL;
+}

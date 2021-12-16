@@ -39,6 +39,10 @@ namespace engine {
 
             void reload( engine::graphic_draw *graphic) override;
             void draw( engine::graphic_draw *graphic) override;
+
+            void update();
+
+            tile_manager *getTileManager() { return p_tileset; }
         private:
             world_tile *p_world_data;
             uint32_t p_seed;
@@ -49,5 +53,7 @@ namespace engine {
 
             std::vector<room*> p_rooms;
     };
+
+    extern world *used_world_handler;
 };
 #endif

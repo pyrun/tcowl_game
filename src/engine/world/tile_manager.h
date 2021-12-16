@@ -18,7 +18,7 @@ namespace engine {
 
             uint32_t getAmount() { return (uint32_t)p_type.size(); }
             tile *get( uint32_t index) { return &p_type.at( index); }
-            tile *getById( uint16_t id);
+            tile *getByName( std::string name);
         private:
             tile *createtype();
             bool removetype( tile *target);

@@ -9,3 +9,7 @@ biom::biom() {
 biom::~biom() {
 
 }
+
+void biom::update() {
+
+}

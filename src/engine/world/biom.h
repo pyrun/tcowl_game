@@ -17,6 +17,8 @@ namespace engine {
             std::string getScriptName() { return p_script_file; }
             void setLuaState( lua_State *state) { p_lua = state; }
             lua_State *getLuaState() { return p_lua; }
+
+            void update();
         private:
             std::string p_name;
 

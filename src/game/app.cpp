@@ -123,6 +123,9 @@ bool app::update() {
     else
         p_client.update();
     
+    // world
+    p_world.update();
+    
     // physics
     uint32_t l_physics_current = SDL_GetTicks();
     float l_delta = (l_physics_current - p_physics_lastime) / 1000.0f;
