@@ -35,7 +35,6 @@ vec2 config::getVec2( std::string name, vec2 def) {
     } else { // Datensatz ist falsch
         l_value = def;
     }
-    
     return l_value;
 }
 
