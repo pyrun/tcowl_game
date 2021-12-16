@@ -35,9 +35,7 @@ type_handler::type_handler() {
     p_type.clear();
 }
 
-type_handler::~type_handler() {
-
-}
+type_handler::~type_handler() { }
 
 bool type_handler::loadFolder(  graphic *graphic, std::string path) {
     DIR *l_dir;
@@ -46,7 +44,7 @@ bool type_handler::loadFolder(  graphic *graphic, std::string path) {
     // if folder dont end with '/' add the character
     if( path.c_str()[path.size()-1] != '/')
         path = path + '/';
-        
+
     // open dir
     l_dir = opendir( path.c_str());
     if ( l_dir == NULL) {
