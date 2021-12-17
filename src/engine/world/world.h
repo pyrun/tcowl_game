@@ -22,6 +22,8 @@ namespace engine {
         tile *mid = nullptr;
         tile *bot = nullptr;
         tile *collision = nullptr;
+
+        biom *biom = nullptr;
     };
 
     class world : public engine::graphic_object {
@@ -30,6 +32,7 @@ namespace engine {
             ~world();
 
             void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
+            void generate();
             void cleanup();
 
             void setTile(int x, int y, tile *tiledata);

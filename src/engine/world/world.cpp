@@ -20,17 +20,20 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_biom_manager = biom_manager;
     p_world_data = new world_tile[WORLD_SIZE*WORLD_SIZE];
 
-    /*for( uint32_t x = 0; x < WORLD_SIZE; x++) {
+    // set biom to map
+    generate();
+}
+
+void world::generate() {
+    uint32_t l_bioms_amount = p_biom_manager->getAmount();
+    for( uint32_t x = 0; x < WORLD_SIZE; x++) {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            uint32_t l_index = (uint32_t)(helper::perlin2d(x, y, 0.1, 4)*2);
-            setTile( x, y, p_tileset->get(l_index));
+            uint32_t l_biom_index = (uint32_t)(helper::perlin2d(x, y, 0.1, 4)*l_bioms_amount);
+            biom *l_biom = p_biom_manager->get( l_biom_index);
             world_tile *l_tile = getTile( x, y);
-            engine::tile_graphic *l_tile_graphic = l_tile->bot->getGraphic(0);
-            if( l_tile_graphic)
-                l_tile->animation_tick = ((uint32_t)(helper::perlin2d(x*100, y*100, 0.1, 4)*l_tile_graphic->length));
-            
+            l_tile->biom = l_biom;
         }
-    }*/
+    }
 }
 
 void world::cleanup() {
@@ -106,10 +109,9 @@ void world::update() {
 
     for( uint32_t x = 0; x < WORLD_SIZE; x++) {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            if( getTile( x, y)->bot == nullptr) {
-                biom *l_biom = p_biom_manager->get( 0);
-                // run biom
-                script::function( "set", l_biom->getLuaState(), x, y);
+            world_tile *l_tile = getTile( x, y);
+            if( l_tile->bot == nullptr && l_tile->biom) {
+                script::function( "set", l_tile->biom->getLuaState(), x, y);
             }
         }
     }
