@@ -17,12 +17,18 @@
 #include "lobby.h"
 
 namespace game {
+    enum app_config_network {
+        app_config_network_offline = 0,
+        app_config_network_server,
+        app_config_network_client
+    };
+
     class app {
         public:
             app();
             ~app();
 
-            void begin( bool server);
+            void begin();
 
             bool update();
 
@@ -41,10 +47,8 @@ namespace game {
             engine::world p_world;
 
             // network
-            // todo -> one class
-            bool p_serverorclient;
-            network::server p_server;
-            network::client_connection p_client;
+            // TODO: -> one class
+            network::interface *p_network;
 
             // Game logic
             game::lobby p_lobby;

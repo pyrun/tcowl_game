@@ -21,7 +21,7 @@ int main( int argc, char* args[] ) {
     }
 
     // startup
-    l_app.begin( l_start_server);
+    l_app.begin();
     
     // main loop
     while(l_app.update());

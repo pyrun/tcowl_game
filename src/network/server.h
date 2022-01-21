@@ -16,8 +16,8 @@ namespace network {
             server();
             ~server();
 
-            bool begin();
-            void sendPacket( packet packet, client *client);
+            bool begin() override;
+            void sendPacket( packet packet, client *client) override;
 
             void addSync( synchronisation *sync);
             bool delSync( synchronisation *sync);
@@ -26,9 +26,9 @@ namespace network {
             void delClient( client *client_ptr);
             uint8_t* recvData( client *client_ptr, uint16_t* length);
 
-            void update();
+            void update() override;
 
-            void close();
+            void close() override;
         private:
             int32_t getFreeClientIndex();
             client *getClient( uint32_t index) { return p_clients[index]; }

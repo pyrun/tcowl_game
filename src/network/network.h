@@ -35,9 +35,15 @@ namespace network {
             interface() {}
             ~interface() {}
 
+            virtual bool begin() = 0;
+            
             // Falls client == NULL wird es an alle versendet die verbunden sind
             virtual void sendPacket( packet packet, client *client) {}
 
+            virtual void update() = 0;
+
+            virtual void close() = 0;
+           
             void sendHeartbeat( client *client);
     };
 

@@ -12,8 +12,8 @@ namespace network {
             client_connection();
             ~client_connection();
     
-            bool begin();
-            void sendPacket( packet packet, client *client); //interface
+            bool begin() override;
+            void sendPacket( packet packet, client *client) override; //interface
 
             void addSync( synchronisation *sync);
             bool delSync( synchronisation *sync);
@@ -21,9 +21,9 @@ namespace network {
             uint8_t* recvData( uint16_t *length);
             void stream( uint8_t *data, uint32_t length);
 
-            void update();
+            void update() override;
 
-            void close();
+            void close() override;
         private:
             uint16_t p_port;
             std::string p_address;
