@@ -15,13 +15,20 @@ namespace engine {
             void load();
             void save();
 
+            // special types like arrays and vectors
             vec2 getVec2( std::string name, vec2 def = vec2{ 0, 0});
-            std::string getString( std::string name, std::string def = "NoTitleSet");
 
+            // normal types are handleable with it
             template< class T>
-            T get( std::string name) {
-                nlohmann::json l_array = p_json[name];
-                return l_array.get<T>();
+            T get( std::string name, T defaultValue) {
+                try {
+                    nlohmann::json l_obj = p_json.at(name);
+                    if( !l_obj.is_null())
+                        return l_obj.get<T>();
+                } catch (std::exception& e) {
+                    return defaultValue;
+                }
+                return defaultValue;
             }
 
             nlohmann::json *getJson() { return &p_json; }

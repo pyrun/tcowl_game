@@ -37,11 +37,3 @@ vec2 config::getVec2( std::string name, vec2 def) {
     }
     return l_value;
 }
-
-std::string config::getString( std::string name, std::string def) {
-    json l_array = p_json[name];
-    if( l_array.is_string()) {
-        return l_array.get<std::string>();
-    }
-    return def;
-}

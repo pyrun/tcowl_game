@@ -9,8 +9,8 @@ namespace helper {
     namespace json {
         uint32_t getBool( nlohmann::json *json_ptr, std::string name, bool def);
         uint32_t getUint32( nlohmann::json *json_ptr, std::string name, uint32_t def = 0);
-        
-        template< class T>
+
+        template<class T>
         T* getNumberArrayN( nlohmann::json *json_ptr, std::string name, uint32_t length = 1) {
             try {
                 nlohmann::json l_array = json_ptr->at(name);
@@ -26,8 +26,8 @@ namespace helper {
             }
             return NULL;
         }
-        
-        template< class T>
+
+        template<class T>
         T* getNumberArray( nlohmann::json *json_ptr, std::string name, uint32_t maxlength = 1) {
             try {
                 nlohmann::json l_array = json_ptr->at(name);
