@@ -17,7 +17,7 @@
 #include "lobby.h"
 
 namespace game {
-    enum app_config_network {
+    enum app_config_network : uint32_t {
         app_config_network_offline = 0,
         app_config_network_server,
         app_config_network_client
