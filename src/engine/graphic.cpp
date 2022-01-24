@@ -7,10 +7,10 @@
 using namespace engine;
 
 void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) {
-    if( p_camera_position.x > pos.x+size.x ||
-        p_camera_position.y > pos.y+size.y ||
-        p_camera_position.x+p_camera_size.x < pos.x ||
-        p_camera_position.y+p_camera_size.y < pos.y)
+    if( p_camera.getPosition().x > pos.x+size.x ||
+        p_camera.getPosition().y > pos.y+size.y ||
+        p_camera.getPosition().x+p_camera.getSize().x < pos.x ||
+        p_camera.getPosition().y+p_camera.getSize().y < pos.y)
         return; // Nicht anzeigen
 
     SDL_Rect l_srcrect = { shift.x, shift.y, size.x, size.y};
@@ -52,9 +52,8 @@ void graphic::init() {
         engine::log( engine::log_fatal, "Could not create window: %s\n", SDL_GetError());
         exit(1);
     }
-    p_camera_position = { 0, 0};
     //SDL_GetWindowSize( p_window, &p_camera_size.x, &p_camera_size.y);
-    p_camera_size = p_config.native_resolution;
+    p_camera.setSize( p_config.native_resolution);
     if( p_renderer == NULL)
         p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
     if( p_renderer == NULL ) {

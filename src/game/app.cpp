@@ -7,7 +7,7 @@ using namespace game;
 using json = nlohmann::json;
 
 app::app() {
-
+    p_network = NULL;
 }
 
 app::~app() {
@@ -18,8 +18,8 @@ void app::begin() {
     // settings
     p_config.load();
     p_font_setting = { .size{ p_config.getVec2("font-size", engine::vec2{ 7, 9}) } };
-    p_graphic.setTitle( p_config.getString( "windows-title-name", "The Commemoration of White Light"));
-    p_framerate_cap = p_config.get<float>("framerate-cap");
+    p_graphic.setTitle( p_config.get<std::string>( "windows-title-name", "The Commemoration of White Light"));
+    p_framerate_cap = p_config.get<float>("framerate-cap", 16.f);
 
     // statup
     p_graphic.init();
@@ -41,11 +41,9 @@ void app::begin() {
     p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);
 
     // network
-    if( p_config.get<app_config_network>("network_type") == app_config_network_server ) {
-        p_network = new network::server();
-        p_network->begin();
-        ((network::server*)p_network)->addSync( &p_entity);
-
+    app_config_network l_net_type = p_config.get<app_config_network>("network_type", app_config_network_offline);
+    if(  l_net_type == app_config_network_offline) {
+    
         int16_t l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
@@ -85,8 +83,17 @@ void app::begin() {
                 p_entity.get( l_test)->position = engine::vec2{ 10*(i%32), 10*n} + engine::vec2{ 30, 30};
         }*/
     }
-    if( p_config.get<app_config_network>("network_type") == app_config_network_client) {
+    if( l_net_type == app_config_network_server) {
+        p_network = new network::server();
+        p_network->begin();
+        ((network::server*)p_network)->addSync( &p_entity);
+    }
+    if( l_net_type == app_config_network_client) {
         p_network = new network::client_connection();
+        p_network->begin();
+    }
+
+    if( p_network) {
         p_network->begin();
         ((network::client_connection*)p_network)->addSync( &p_entity);
     }

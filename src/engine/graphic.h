@@ -6,6 +6,7 @@
 #include <string>
 
 #include "vec.h"
+#include "camera.h"
 
 #define ENGINE_GRAPHIC_DEFAULT_TITEL    "NO_TITEL_SET"
 #define ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH   256
@@ -42,17 +43,14 @@ namespace engine {
             void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a);
             void drawRect( vec2 pos, vec2 rect);
 
-
             uint32_t getDisplacedElements() { return p_displayed_elements; }
-
-            vec2 getCameraPosition() { return p_camera_position; }
-            vec2 getCameraSize() { return p_camera_size; }
+            camera *getCamera() { return &p_camera; }
         public:
             SDL_Renderer *p_renderer;
-            vec2 p_camera_position;
-            vec2 p_camera_size;
             uint32_t p_displayed_elements;
             uint32_t p_displayed_elements_counter;
+
+            camera p_camera;
     };
 
     class graphic_object {

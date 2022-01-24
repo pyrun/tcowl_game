@@ -68,7 +68,7 @@ void world::reload( graphic_draw *graphic) {
     p_tileset->reload( graphic);
 }
 void world::draw( engine::graphic_draw *graphic) {
-    vec2 l_length_tiles = graphic->getCameraSize();
+    vec2 l_length_tiles = graphic->getCamera()->getSize();
     l_length_tiles = l_length_tiles / ENGINE_VEC2_TILE_SIZE;
 
     for( int32_t x = 0; x < l_length_tiles.x+1; x++) {
