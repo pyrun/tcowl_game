@@ -252,7 +252,7 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     action *l_action = obj->objtype->getAction( obj->action);
     float l_time;
     float l_factor = 15.f; // TODO remove factor magic value
-    uint32_t l_magical_value_ticks_mul = 10: // TODO remove this value for ticks mul
+    uint32_t l_magical_value_ticks_mul = 10; // TODO remove this value for ticks mul
 
     // adjust animation speed to acceleration if wanted
     if( l_action->bind_velocity) {
