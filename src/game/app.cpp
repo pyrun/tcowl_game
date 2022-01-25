@@ -42,8 +42,7 @@ void app::begin() {
 
     // network
     app_config_network l_net_type = p_config.get<app_config_network>("network_type", app_config_network_offline);
-    if(  l_net_type == app_config_network_offline) {
-    
+    if( l_net_type == app_config_network_offline) {
         int16_t l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
@@ -67,21 +66,6 @@ void app::begin() {
         p_entity.setPosition( l_id, { 50, 50});
 
         p_entity.deleteObject( 0);
-
-        /*int16_t l_id = p_entity.createObject(2);
-        p_entity.get( l_id)->position = { 100, 100};
-
-        l_id = p_entity.createObject(1);
-        p_entity.get( l_id)->position = { 100, 40};
-        l_id = p_entity.createObject(1);
-        p_entity.get( l_id)->position = { 150, 50};
-        for( int32_t i = 0, n = 0; i < 10; i++) {
-            if( (i%32) == 0)
-                n++;
-            int16_t l_test = p_entity.createObject(1);
-            if( l_test > 0)
-                p_entity.get( l_test)->position = engine::vec2{ 10*(i%32), 10*n} + engine::vec2{ 30, 30};
-        }*/
     }
     if( l_net_type == app_config_network_server) {
         p_network = new network::server();
