@@ -251,7 +251,8 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     // todo get action
     action *l_action = obj->objtype->getAction( obj->action);
     float l_time;
-    float l_factor = 15.f;
+    float l_factor = 15.f; // TODO remove factor magic value
+    uint32_t l_magical_value_ticks_mul = 10: // TODO remove this value for ticks mul
 
     // adjust animation speed to acceleration if wanted
     if( l_action->bind_velocity) {
@@ -261,7 +262,8 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
         l_time = l_action->ticks_for_next_image;
     }
 
-    if( l_time < l_action->ticks_for_next_image*10 && helper::time::check( &obj->animation_time, l_time>l_action->ticks_for_next_image?l_time:l_action->ticks_for_next_image)) {
+    if( l_time < l_action->ticks_for_next_image*l_magical_value_ticks_mul &&
+        helper::time::check( &obj->animation_time, l_time>l_action->ticks_for_next_image?l_time:l_action->ticks_for_next_image)) {
         helper::time::reset( &obj->animation_time);
         obj->animation_tick++;
     }
@@ -303,7 +305,7 @@ bool entity_handler::newClientCallback( network::client *client, network::interf
 
         network_interface->sendPacket( l_packet, client);
     }
-    
+
     log( log_trace, "entity_handler::newClientCallback");
     return true;
 }
