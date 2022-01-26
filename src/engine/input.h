@@ -6,13 +6,23 @@
 #include "vec.h"
 
 #define ENGINE_INPUT_OFFSET_KEYS 127
-#define ENGINE_INPUT_VERBOSE_LEVEL 12
 
 namespace engine {
     struct input_event {
         bool quit;
         vec2 windows_callback_size;
         bool windows_size_change;
+    };
+
+    enum input_specials {
+        input_specials_1 = 0,
+        input_specials_2,
+        input_specials_3,
+        input_specials_4,
+        input_specials_5,
+        input_specials_6,
+        input_specials_7,
+        input_specials_8 ,
     };
 
     struct input_map {
@@ -26,7 +36,7 @@ namespace engine {
         bool left;
         bool right;
 
-        bool verbose_level[ENGINE_INPUT_VERBOSE_LEVEL];
+        uint32_t specials;
     };
 
     enum input_key_state {
@@ -47,6 +57,9 @@ namespace engine {
 
             void key( input_key_state state, SDL_Keycode key);
             void key_axis();
+
+            void setSpecials( uint32_t index, bool value);
+            bool checkSepcial( uint32_t index, input_map *map);
 
             input_event *getEvents() { return &p_map_event; }
             input_map *getInputMap() { return &p_map_input; }

@@ -98,16 +98,23 @@ bool app::update() {
         p_input.getEvents()->windows_size_change = false;
         p_graphic.init();
     }
-    if( p_input.getInputMap()->verbose_level[0] &&
-        !p_input.getInputMapBefore()->verbose_level[0]) {
+    if( p_input.checkSepcial(engine::input_specials_1, p_input.getInputMap()) &&
+        !p_input.checkSepcial(engine::input_specials_1, p_input.getInputMapBefore())) {
         if( p_graphic.checkObject(p_entity.getPhysicHub()))
             p_graphic.delObject( p_entity.getPhysicHub());
         else
             p_graphic.addObject( p_entity.getPhysicHub());
     }
+    if( p_input.checkSepcial(engine::input_specials_2, p_input.getInputMap()) &&
+        !p_input.checkSepcial(engine::input_specials_2, p_input.getInputMapBefore())) {
+        if( p_graphic.checkObject(&p_world))
+            p_graphic.delObject(&p_world);
+        else
+            p_graphic.addObject(&p_world);
+    }
     
-    if( p_input.getInputMap()->verbose_level[1] &&
-        !p_input.getInputMapBefore()->verbose_level[1]) {
+    if( p_input.checkSepcial(engine::input_specials_8, p_input.getInputMap()) &&
+        !p_input.checkSepcial(engine::input_specials_8, p_input.getInputMapBefore())) {
         p_graphic.reload();
     }
 

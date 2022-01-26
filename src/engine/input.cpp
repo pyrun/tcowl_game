@@ -64,8 +64,7 @@ void input::reset() {
 
     p_map_input.axies = { 0.f, 0.f};
 
-    for( uint32_t i = 0; i < ENGINE_INPUT_VERBOSE_LEVEL; i++)
-        p_map_input.verbose_level[i] = false;
+    p_map_input.specials = 0;
 }
 
 void input::key( input_key_state state, SDL_Keycode key) {
@@ -89,13 +88,28 @@ void input::key( input_key_state state, SDL_Keycode key) {
             l_update_axis = true;
         } break;
         case SDLK_F1: {
-            p_map_input.verbose_level[0] = state == input_key_state::input_key_down;
+            setSpecials( 0, state == input_key_state::input_key_down);
         } break;
         case SDLK_F2: {
-            p_map_input.verbose_level[1] = state == input_key_state::input_key_down;
+            setSpecials( 1, state == input_key_state::input_key_down);
         } break;
         case SDLK_F3: {
-            p_map_input.verbose_level[2] = state == input_key_state::input_key_down;
+            setSpecials( 2, state == input_key_state::input_key_down);
+        } break;
+        case SDLK_F4: {
+            setSpecials( 3, state == input_key_state::input_key_down);
+        } break;
+        case SDLK_F5: {
+            setSpecials( 4, state == input_key_state::input_key_down);
+        } break;
+        case SDLK_F6: {
+            setSpecials( 5, state == input_key_state::input_key_down);
+        } break;
+        case SDLK_F7: {
+            setSpecials( 6, state == input_key_state::input_key_down);
+        } break;
+        case SDLK_F8: {
+            setSpecials( 7, state == input_key_state::input_key_down);
         } break;
         default: break;
     }
@@ -118,4 +132,15 @@ void input::key_axis() {
     float l_arc = atan2( l_y, l_x);
     p_map_input.axies.y = sin(l_arc)*1;
     p_map_input.axies.x = cos(l_arc)*1;
+}
+
+void input::setSpecials( uint32_t index, bool value) {
+    if( value)
+        p_map_input.specials |= 1UL << index;
+    else
+        p_map_input.specials &= ~(1UL << index);
+}
+
+bool input::checkSepcial( uint32_t index, engine::input_map *map) {
+    return (map->specials >> index) & 1U;
 }
