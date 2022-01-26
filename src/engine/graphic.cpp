@@ -1,6 +1,7 @@
 #include "graphic.h"
 
 #include <string>
+#include <algorithm>
 
 #include "log.h"
 
@@ -105,6 +106,10 @@ bool graphic::addObject( graphic_object* object) {
             return false;
     }
     p_graphic_objects.push_back( object);
+
+    // sorting 
+    std::sort( p_graphic_objects.begin(), p_graphic_objects.end());
+
     return true;
 }
 
