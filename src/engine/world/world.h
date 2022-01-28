@@ -45,6 +45,7 @@ namespace engine {
 
             void update();
 
+            const uint32_t getPriority() override { return 32; }
             tile_manager *getTileManager() { return p_tileset; }
         private:
             world_tile *p_world_data;

@@ -19,6 +19,7 @@ namespace game {
             void draw( engine::graphic_draw *graphic) override;
 
             void update();
+            const uint32_t getPriority() override { return 256; }
         private:
             engine::font *p_font;
             engine::input_map *p_input;

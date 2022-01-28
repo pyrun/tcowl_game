@@ -92,7 +92,7 @@ void graphic::update( float dt) {
 }
 
 void graphic::reload() {
-    //  pipeline
+    // pipeline
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
         graphic_object *l_obj = p_graphic_objects[i];
         l_obj->reload( this);
@@ -108,7 +108,11 @@ bool graphic::addObject( graphic_object* object) {
     p_graphic_objects.push_back( object);
 
     // sorting 
-    std::sort( p_graphic_objects.begin(), p_graphic_objects.end());
+    std::sort( p_graphic_objects.begin(), p_graphic_objects.end(),
+        []( graphic_object *lhs, graphic_object *rhs) -> bool
+        {
+            return lhs->getPriority() < rhs->getPriority();
+        });
 
     return true;
 }

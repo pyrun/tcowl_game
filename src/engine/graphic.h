@@ -58,15 +58,9 @@ namespace engine {
             graphic_object() {}
             ~graphic_object() {}
 
-            uint32_t graphic_object_order = 0;
-
+            virtual const uint32_t getPriority() { return 1024; }
             virtual void reload( graphic_draw *graphic) = 0;
             virtual void draw( graphic_draw *graphic) = 0;
-
-            bool operator()( graphic_object *a, graphic_object *b) const {
-                return a->graphic_object_order
-                    <  b->graphic_object_order;
-            }
     };
 
     class graphic : public graphic_draw {
