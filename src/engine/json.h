@@ -1,19 +1,17 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef ENGINE_JSON_H
+#define ENGINE_JSON_H
 
 #include <nlohmann/json.hpp>
 #include "vec.h"
 
-#define CONFIG_FILE "config.json"
-
 namespace engine {
-    class config {
+    class json {
         public:
-            config();
-            ~config();
+            json();
+            ~json();
 
-            void load();
-            void save();
+            void load( std::string name);
+            void save( std::string name);
 
             // special types like arrays and vectors
             vec2 getVec2( std::string name, vec2 def = vec2{ 0, 0});

@@ -1,33 +1,32 @@
-#include "config.h"
+#include "json.h"
 
 #include <fstream>
 
-using json = nlohmann::json;
 using namespace engine;
 
-config::config() {
+json::json() {
 
 }
 
-config::~config() {
+json::~json() {
     
 }
 
-void config::load() {
-    std::ifstream l_ifs(CONFIG_FILE);
-    p_json = json::parse(l_ifs);
+void json::load( std::string name) {
+    std::ifstream l_ifs(name);
+    p_json = nlohmann::json::parse(l_ifs);
     l_ifs.close();
 }
 
-void config::save() {
-    std::ofstream l_file(CONFIG_FILE);
+void json::save( std::string name) {
+    std::ofstream l_file(name);
     l_file << p_json.dump(4) << std::endl;
     l_file.close();
 }
 
-vec2 config::getVec2( std::string name, vec2 def) {
+vec2 json::getVec2( std::string name, vec2 def) {
     vec2 l_value;
-    json l_array = p_json[name];
+    nlohmann::json l_array = p_json[name];
     if( l_array.is_array() &&
         l_array.size() >= 2) {
         l_value.x = l_array[0].get<int32_t>();

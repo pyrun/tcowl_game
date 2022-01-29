@@ -12,13 +12,10 @@
 int main( int argc, char* args[] ) {
     sdl::init();
     game::app l_app;
-    bool l_start_server = false;
 
     // check args
-    for( uint32_t i = 0; i < argc; i++) {
-        if( strcmp( args[i], "server") == 0)
-            l_start_server = true;
-    }
+    if( argc > 1)
+        l_app.loadAgrs( args[1]);
 
     // startup
     l_app.begin();

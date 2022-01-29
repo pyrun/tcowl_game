@@ -16,7 +16,7 @@ app::~app() {
 
 void app::begin() {
     // settings
-    p_config.load();
+    p_config.load( APP_CONFIG_FILE);
     p_font_setting = { .size{ p_config.getVec2("font-size", engine::vec2{ 7, 9}) } };
     p_graphic.setTitle( p_config.get<std::string>( "windows-title-name", "The Commemoration of White Light"));
     p_framerate_cap = p_config.get<float>("framerate-cap", 16.f);
@@ -41,8 +41,9 @@ void app::begin() {
     p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);
 
     // network
-    app_config_network l_net_type = p_config.get<app_config_network>("network_type", app_config_network_offline);
-    if( l_net_type == app_config_network_offline) {
+    app_config_network l_net_type = p_argv.get<app_config_network>("network_type", app_config_network_offline);
+    if( l_net_type == app_config_network_offline ||
+        l_net_type == app_config_network_server) {
         int16_t l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
@@ -69,17 +70,15 @@ void app::begin() {
     }
     if( l_net_type == app_config_network_server) {
         p_network = new network::server();
-        p_network->begin();
         ((network::server*)p_network)->addSync( &p_entity);
     }
     if( l_net_type == app_config_network_client) {
         p_network = new network::client_connection();
-        p_network->begin();
+        ((network::client_connection*)p_network)->addSync( &p_entity);
     }
 
     if( p_network) {
         p_network->begin();
-        ((network::client_connection*)p_network)->addSync( &p_entity);
     }
 
     p_physics_lastime = SDL_GetTicks();
@@ -148,7 +147,7 @@ bool app::update() {
 }
 
 void app::close() {
-    p_config.save();
+    p_config.save( APP_CONFIG_FILE);
     if( p_network)
         p_network->close();
 }

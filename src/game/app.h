@@ -8,13 +8,15 @@
 #include "../engine/font.h"
 #include "../engine/type.h"
 #include "../engine/entity.h"
-#include "../engine/config.h"
+#include "../engine/json.h"
 #include "../engine/world/tile_manager.h"
 #include "../engine/world/biom_manager.h"
 #include "../engine/world/world.h"
 #include "../network/server.h"
 #include "../network/client_connection.h"
 #include "lobby.h"
+
+#define APP_CONFIG_FILE "config.json"
 
 namespace game {
     enum app_config_network : uint32_t {
@@ -28,6 +30,7 @@ namespace game {
             app();
             ~app();
 
+            void loadAgrs( std::string file) { p_argv.load( file); }
             void begin();
 
             bool update();
@@ -36,7 +39,7 @@ namespace game {
         private:
             // Engine stuff
             engine::graphic p_graphic;
-            engine::config p_config;
+            engine::json p_config, p_argv;
             engine::input p_input;
             engine::font p_font;
             engine::font_setting p_font_setting;

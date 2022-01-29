@@ -1,2 +1,2 @@
-..\build\TheCommemorationOfWhiteLight.exe server
+..\build\TheCommemorationOfWhiteLight.exe server.json
 pause
