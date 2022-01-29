@@ -51,7 +51,7 @@ namespace game {
 
             // network
             // TODO: -> one class
-            network::interface *p_network;
+            network::service *p_network;
 
             // Game logic
             game::lobby p_lobby;

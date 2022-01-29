@@ -11,7 +11,7 @@
 #define NETWORK_SERVER_PACKETSIZE 256
 
 namespace network {
-    class server : public interface {
+    class server : public service {
         public:
             server();
             ~server();
@@ -19,8 +19,8 @@ namespace network {
             bool begin() override;
             void sendPacket( packet packet, client *client) override;
 
-            void addSync( synchronisation *sync);
-            bool delSync( synchronisation *sync);
+            void addSync( synchronisation *sync) override;
+            bool delSync( synchronisation *sync) override;
 
             bool addClient( TCPsocket socket);
             void delClient( client *client_ptr);

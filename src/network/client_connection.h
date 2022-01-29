@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace network {
-    class client_connection : public interface {
+    class client_connection : public service {
         public:
             client_connection();
             ~client_connection();
@@ -15,8 +15,8 @@ namespace network {
             bool begin() override;
             void sendPacket( packet packet, client *client) override; //interface
 
-            void addSync( synchronisation *sync);
-            bool delSync( synchronisation *sync);
+            void addSync( synchronisation *sync) override;
+            bool delSync( synchronisation *sync) override;
 
             uint8_t* recvData( uint16_t *length);
             void stream( uint8_t *data, uint32_t length);

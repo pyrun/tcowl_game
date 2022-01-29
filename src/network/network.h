@@ -43,7 +43,7 @@ namespace network {
             virtual void update() = 0;
 
             virtual void close() = 0;
-           
+
             void sendHeartbeat( client *client);
     };
 
@@ -55,6 +55,12 @@ namespace network {
             virtual void network_update( network::interface *network_interface) {}
             virtual bool newClientCallback( client *client, interface *network_interface) { return true; }
             virtual void recvPacket( packet packet) {}
+    };
+
+    class service : public synchronisation, public interface {
+        public:
+            virtual void addSync( synchronisation *sync) = 0;
+            virtual bool delSync( synchronisation *sync) = 0;
     };
 
     uint8_t getCRC8( packet packet);

@@ -68,17 +68,14 @@ void app::begin() {
 
         p_entity.deleteObject( 0);
     }
-    if( l_net_type == app_config_network_server) {
+    if( l_net_type == app_config_network_server)
         p_network = new network::server();
-        ((network::server*)p_network)->addSync( &p_entity);
-    }
-    if( l_net_type == app_config_network_client) {
+    if( l_net_type == app_config_network_client)
         p_network = new network::client_connection();
-        ((network::client_connection*)p_network)->addSync( &p_entity);
-    }
 
     if( p_network) {
         p_network->begin();
+        p_network->addSync( &p_entity);
     }
 
     p_physics_lastime = SDL_GetTicks();
