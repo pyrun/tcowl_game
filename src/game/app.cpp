@@ -38,6 +38,7 @@ void app::begin() {
     p_bioms.loadFolder( "biom");
     p_world.begin( &p_graphic, &p_tileset, &p_bioms);
 
+    // lobby
     p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);
 
     // network

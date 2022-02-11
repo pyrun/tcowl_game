@@ -21,7 +21,7 @@ void camera::update() {
         case camera_mode_rect: {
             p_position = p_target;
         } break;
-        case camera_mode_rect_center: { 
+        case camera_mode_rect_center: {
             p_position = p_target;
         } break;
         default: {

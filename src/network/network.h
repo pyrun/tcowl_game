@@ -18,13 +18,14 @@ namespace network {
         bool ready;
     };
 
-    enum packet_type {
-        network_type_heartbeat = 0,
-        network_type_object_data,
+    // 0...127 system
+    // 128-255 user
+    enum packet_type : uint32_t {
+        network_type_heartbeat = 0
     };
 
     struct packet {
-        packet_type type;
+        uint32_t type; // packet_type
         uint8_t data[NETWORK_PACKET_MAX_SIZE];
         uint32_t length;
         uint8_t crc;

@@ -4,6 +4,7 @@
 #include "log.h"
 #include "timer.h"
 #include "helper.h"
+#include "network_ids.h"
 
 #include <cstdint>
 #include <algorithm>
@@ -282,7 +283,7 @@ void entity_handler::network_update( network::interface *network_interface) {
             l_entity->change == false)
             continue;
 
-        l_packet.type = network::packet_type::network_type_object_data;
+        l_packet.type = engine::network_id::network_id_object_data;
         l_packet.length = outNetworkData( l_entity, l_packet.data);
         l_packet.crc = network::getCRC8( l_packet);
         l_entity->change = false;
@@ -299,7 +300,7 @@ bool entity_handler::newClientCallback( network::client *client, network::interf
         if( l_entity == NULL)
             continue;
 
-        l_packet.type = network::packet_type::network_type_object_data;
+        l_packet.type = engine::network_id::network_id_object_data;
         l_packet.length = outNetworkData( l_entity, l_packet.data);
         l_packet.crc = network::getCRC8( l_packet);
 
@@ -312,6 +313,6 @@ bool entity_handler::newClientCallback( network::client *client, network::interf
 
 void entity_handler::recvPacket( network::packet packet) {
     // todo check okay
-    if( packet.type == network::packet_type::network_type_object_data)
+    if( packet.type == engine::network_id::network_id_object_data)
         inNetworkData( packet.data);
 }
