@@ -28,9 +28,12 @@ void app::begin() {
     p_entity.init( &p_types);
 
     // draw order
-    p_graphic.addObject( &p_world);
-    p_graphic.addObject( &p_entity);
-    p_graphic.addObject( &p_lobby);
+    if( !p_argv.get<bool>("hide_world", false))
+        p_graphic.addObject( &p_world);
+    if( !p_argv.get<bool>("hide_entity", false))
+        p_graphic.addObject( &p_entity);
+    if( !p_argv.get<bool>("hide_lobby", false))
+        p_graphic.addObject( &p_lobby);
 
     // load files
     p_types.loadFolder( &p_graphic, "entity");
@@ -115,10 +118,10 @@ bool app::update() {
         p_graphic.reload();
     }
 
+    // Update
+    p_lobby.update();
     if( p_network)
         p_network->update();
-    
-    // world
     p_world.update();
     
     // physics
