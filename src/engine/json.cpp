@@ -5,7 +5,7 @@
 using namespace engine;
 
 json::json() {
-
+    p_change = false;
 }
 
 json::~json() {
@@ -16,12 +16,16 @@ void json::load( std::string name) {
     std::ifstream l_ifs(name);
     p_json = nlohmann::json::parse(l_ifs);
     l_ifs.close();
+    p_change = false;
 }
 
 void json::save( std::string name) {
-    std::ofstream l_file(name);
-    l_file << p_json.dump(4) << std::endl;
-    l_file.close();
+    if( p_change) {
+        std::ofstream l_file(name);
+        l_file << p_json.dump(4) << std::endl;
+        l_file.close();
+        p_change = false;
+    }
 }
 
 vec2 json::getVec2( std::string name, vec2 def) {

@@ -32,6 +32,7 @@ namespace engine {
             nlohmann::json *getJson() { return &p_json; }
         private:
             nlohmann::json p_json;
+            bool p_change;
     };
 };
 
