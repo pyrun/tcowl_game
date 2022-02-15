@@ -8,6 +8,7 @@ namespace physic {
     enum sharp_type {
         sharp_type_rect,
         sharp_type_circle,
+        sharp_type_line,
     };
 
     class shape {
@@ -55,6 +56,20 @@ namespace physic {
             sharp_type getType() override { return sharp_type_circle; }
         private:
             float p_size;
+    };
+
+    class sharp_line : public shape {
+        public:
+            sharp_line( engine::fvec2 offsetTarget) { p_offsetpoint = offsetTarget; }
+            ~sharp_line() {}
+
+            void draw( engine::graphic_draw *graphic, engine::fvec2 position) override;
+
+            engine::fvec2 getAABB() override;
+            
+            sharp_type getType() override { return sharp_type_line; }
+        private:
+            engine::fvec2 p_offsetpoint; // offset from position
     };
 }
 

@@ -11,9 +11,17 @@ engine::fvec2 shape_rect::getAABB() {
 }
 
 void sharp_circle::draw( engine::graphic_draw *graphic, engine::fvec2 position) {
-    // todo
+    // TODO: draw circle
 }
 
 engine::fvec2 sharp_circle::getAABB() {
-    return { 10.f, 10.f};
+    return { p_size, p_size};
+}
+
+engine::fvec2 sharp_line::getAABB() {
+    return p_offsetpoint;
+}
+
+void sharp_line::draw( engine::graphic_draw *graphic, engine::fvec2 position) {
+    // TODO: draw line
 }
