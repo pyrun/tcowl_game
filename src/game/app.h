@@ -3,7 +3,7 @@
 
 #include "../engine/graphic.h"
 #include "../engine/log.h"
-#include "../engine/input.h"
+#include "../engine/input_keyboard.h"
 #include "../engine/image.h"
 #include "../engine/font.h"
 #include "../engine/type.h"
@@ -40,7 +40,7 @@ namespace game {
             // Engine stuff
             engine::graphic p_graphic;
             engine::json p_config, p_argv;
-            engine::input p_input;
+            engine::input_handler p_input;
             engine::font p_font;
             engine::font_setting p_font_setting;
             engine::type_handler p_types;

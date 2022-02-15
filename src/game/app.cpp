@@ -24,6 +24,7 @@ void app::begin() {
     // statup
     p_graphic.init();
     p_input.init();
+    p_input.add( new engine::input_keyboard);
     p_font.init( &p_graphic, p_font_setting);
     p_entity.init( &p_types);
 
@@ -42,7 +43,7 @@ void app::begin() {
     p_world.begin( &p_graphic, &p_tileset, &p_bioms);
 
     // lobby
-    p_lobby.init( &p_font, p_input.getInputMap(), &p_entity);
+    p_lobby.init( &p_font, p_input.get(0), &p_entity);
 
     // network
     app_config_network l_net_type = p_argv.get<app_config_network>("network_type", app_config_network_offline);
@@ -98,23 +99,20 @@ bool app::update() {
         p_input.getEvents()->windows_size_change = false;
         p_graphic.init();
     }
-    if( p_input.checkSepcial(engine::input_specials_1, p_input.getInputMap()) &&
-        !p_input.checkSepcial(engine::input_specials_1, p_input.getInputMapBefore())) {
+    if( p_input.get(0)->edgeDetection( engine::input_key_edge_detection_down, engine::input_buttons::input_buttons_special_0)) {
         if( p_graphic.checkObject(p_entity.getPhysicHub()))
             p_graphic.delObject( p_entity.getPhysicHub());
         else
             p_graphic.addObject( p_entity.getPhysicHub());
     }
-    if( p_input.checkSepcial(engine::input_specials_2, p_input.getInputMap()) &&
-        !p_input.checkSepcial(engine::input_specials_2, p_input.getInputMapBefore())) {
+    if( p_input.get(0)->edgeDetection( engine::input_key_edge_detection_down, engine::input_buttons::input_buttons_special_1)) {
         if( p_graphic.checkObject(&p_world))
             p_graphic.delObject(&p_world);
         else
             p_graphic.addObject(&p_world);
     }
     
-    if( p_input.checkSepcial(engine::input_specials_8, p_input.getInputMap()) &&
-        !p_input.checkSepcial(engine::input_specials_8, p_input.getInputMapBefore())) {
+    if( p_input.get(0)->edgeDetection( engine::input_key_edge_detection_down, engine::input_buttons::input_buttons_special_7)) {
         p_graphic.reload();
     }
 

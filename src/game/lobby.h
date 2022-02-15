@@ -13,7 +13,7 @@ namespace game {
             lobby();
             ~lobby();
 
-            void init( engine::font *font, engine::input_map *input, engine::entity_handler *entity);
+            void init( engine::font *font, engine::input *input, engine::entity_handler *entity);
 
             void reload( engine::graphic_draw *graphic) override {}
             void draw( engine::graphic_draw *graphic) override;
@@ -22,7 +22,7 @@ namespace game {
             const uint32_t getPriority() override { return 256; }
         private:
             engine::font *p_font;
-            engine::input_map *p_input;
+            engine::input *p_input;
             engine::entity_handler *p_entity;
     };
 };
