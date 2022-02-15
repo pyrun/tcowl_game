@@ -12,7 +12,7 @@ namespace physic {
             ~hub();
 
             bool testAABBAABB( const engine::fvec2 &rectPos1, const engine::fvec2 &rectSize1, const engine::fvec2 &rectPos2, const engine::fvec2 &rectSize2);
-            float sweptAABB( const engine::fvec2 &pos1, const engine::fvec2 &rect1, const engine::fvec2 &pos2, const engine::fvec2 &rect2, engine::fvec2 vel, engine::vec2 *normal);
+            engine::fvec2 sweptAABB( const engine::fvec2 &pos1, const engine::fvec2 &rect1, const engine::fvec2 &pos2, const engine::fvec2 &rect2, engine::fvec2 vel, engine::vec2 *normal);
 
             void update( float dt);
             void reload( engine::graphic_draw *graphic) override { }
