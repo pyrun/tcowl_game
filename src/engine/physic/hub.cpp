@@ -33,6 +33,7 @@ float hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &rect1,
                         engine::vec2 *normal) {
     engine::fvec2 l_delta_entry;
     engine::fvec2 l_delta_exit;
+    *normal = { 0, 0};
 
     // find the distance between the objects on the near and far sides for both x and y 
     if ( velocity.x > 0.0f) {
@@ -74,39 +75,28 @@ float hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &rect1,
     float l_entryTime = std::max( l_time_entry.x, l_time_entry.y);
     float l_exitTime = std::min( l_time_exit.x, l_time_exit.y);
 
-    // if there was no collision
+    // if there was no collision -> cancel
     if ( l_entryTime > l_exitTime || l_time_entry.x < 0.0f && l_time_entry.y < 0.0f || l_time_entry.x > 1.0f || l_time_entry.y > 1.0f) {
-        normal->x = 0;
-        normal->y = 0;
         return 1.0f; 
-    } else {// if there was a collision
-        engine::log( engine::log_error, "hub::sweptAABB OBJ   %.2f %.2f %.2f %.2f", pos1.x, pos1.y, rect1.x, rect1.y);
-        engine::log( engine::log_error, "hub::sweptAABB OTHER %.2f %.2f %.2f %.2f", pos2.x, pos2.y, rect2.x, rect2.y);
-        engine::log( engine::log_error, "hub::sweptAABB velocity %.8f %.8f", velocity.x, velocity.y);
-        engine::log( engine::log_error, "hub::sweptAABB delta %.2f %.2f", l_delta_entry.x, l_delta_entry.y);
-        engine::log( engine::log_error, "hub::sweptAABB time %.2f %.2f", l_time_entry.x, l_time_entry.y);
-        engine::log( engine::log_error, "hub::sweptAABB entryTime %.8f", l_entryTime);
-        engine::log( engine::log_error, "hub::sweptAABB exitTime %.8f", l_exitTime);
-        // calculate normal of collided surface
-        if( l_time_entry.x > l_time_entry.y) {
-            if ( l_delta_entry.x < 0.0f) {
-                normal->x = 1;
-                normal->y = 0; 
-            } else {
-                normal->x = -1; 
-                normal->y = 0;
-            }
-        } else {
-            if ( l_delta_entry.y < 0.0f) {
-                normal->x = 0; 
-                normal->y = 1; 
-            } else {
-                normal->x = 0; 
-                normal->y = -1; 
-            }
-        }
-    }
-    return fabs(l_entryTime); 
+    } // else there was a collision
+    
+    engine::log( engine::log_debug, "hub::sweptAABB OBJ   %.2f %.2f %.2f %.2f", pos1.x, pos1.y, rect1.x, rect1.y);
+    engine::log( engine::log_debug, "hub::sweptAABB OTHER %.2f %.2f %.2f %.2f", pos2.x, pos2.y, rect2.x, rect2.y);
+    engine::log( engine::log_debug, "hub::sweptAABB velocity %.8f %.8f", velocity.x, velocity.y);
+    engine::log( engine::log_debug, "hub::sweptAABB delta %.8f %.8f", l_delta_entry.x, l_delta_entry.y);
+    engine::log( engine::log_debug, "hub::sweptAABB time %.2f %.2f", l_time_entry.x, l_time_entry.y);
+    engine::log( engine::log_debug, "hub::sweptAABB entryTime %.10f", l_entryTime);
+    engine::log( engine::log_debug, "hub::sweptAABB exitTime %.10f", l_exitTime);
+
+    // calculate normal of collided surface
+    engine::fvec2 *l_collide_factor = &l_delta_entry;
+    if( l_entryTime < 1e-7f) // Special case if near l_entryTime zero. Happens as soon as the collision position is equal to the position of the object.
+        l_collide_factor = &velocity; // This results delta is zero and leads to calculation error
+    if( l_time_entry.x > l_time_entry.y) // check if x or y
+        normal->x = (l_collide_factor->x<0.f)? 1: -1;
+    else
+        normal->y = (l_collide_factor->y<0.f)? 1: -1;    
+    return l_entryTime;
 }
 
 void hub::update( float dt) {
@@ -114,9 +104,9 @@ void hub::update( float dt) {
     engine::vec2 l_normal;
 
     for( uint32_t i = 0; i < p_bodys.size(); i++) {
-        float l_collisiontime = 1.0f;
+        float l_nearest_collisiontime = 1.0f;
         l_normal = { 0, 0};
-        engine::vec2 l_face = { 0, 0};
+        engine::vec2 l_collision_face = { 0, 0};
         body* l_body = p_bodys[i];
 
         l_body->setCollied( false);
@@ -124,46 +114,46 @@ void hub::update( float dt) {
         // check collision annex aabb
         if( l_body->getShape()) {
             for( uint32_t n = 0; n < p_bodys.size(); n++) {
-                if( p_bodys[n]->getShape() == nullptr)
+                physic::body *l_body_other = p_bodys[n];
+                if( l_body_other->getShape() == nullptr)
                     continue;
                 if( i == n) // nicht gegen sich selbst
                     continue;
-                if( testAABBAABB(   l_body->getPosition() + l_body->getShape()->getOffset() + (l_body->getVelocity() * dt), l_body->getShape()->getAABB(),
-                                    p_bodys[n]->getPosition() + p_bodys[n]->getShape()->getOffset(), p_bodys[n]->getShape()->getAABB())) {
-                    l_body->setCollied( true);
-                    float l_collisiontime2 = sweptAABB( l_body->getPosition() + l_body->getShape()->getOffset(), l_body->getShape()->getAABB(),
-                                                        p_bodys[n]->getPosition() + p_bodys[n]->getShape()->getOffset(), p_bodys[n]->getShape()->getAABB(),
-                                                        l_body->getVelocity() * dt,
-                                                        &l_normal);
-                    
-                    // Prüfen ob relavant
-                    if( l_collisiontime > l_collisiontime2) {
-                        l_collisiontime  = l_collisiontime2;
-                        
-                        // wert behandeln
-                        l_face.x = l_normal.x==0.f?l_face.x:l_normal.x;
-                        l_face.y = l_normal.y==0.f?l_face.y:l_normal.y;
+                engine::fvec2 l_position_other = l_body_other->getPosition() + l_body_other->getShape()->getOffset();
+                engine::fvec2 l_rect_other = l_body_other->getShape()->getAABB();
 
-                        engine::log( engine::log_error, "hub::update %d %d", l_normal.x, l_normal.y);
+                // check collision simple
+                if( testAABBAABB(   l_body->getPosition() + l_body->getShape()->getOffset() + (l_body->getVelocity() * dt), l_body->getShape()->getAABB(),
+                                    l_position_other, l_rect_other)) {
+                    l_body->setCollied( true);
+                    // calculate collision
+                    float l_collisiontime = sweptAABB( l_body->getPosition() + l_body->getShape()->getOffset(), l_body->getShape()->getAABB(), // obj
+                                                        l_position_other, l_rect_other, // other obj
+                                                        l_body->getVelocity() * dt, // vel
+                                                        &l_normal); // return normal
+                    
+                    // check if this collison is earlier than the previous one, if yes give them priority
+                    if( l_nearest_collisiontime > l_collisiontime) {
+                        l_nearest_collisiontime  = l_collisiontime;
+
+                        l_collision_face.x = l_normal.x==0.f?l_collision_face.x:l_normal.x;
+                        l_collision_face.y = l_normal.y==0.f?l_collision_face.y:l_normal.y;
+
+                        engine::log( engine::log_debug, "hub::update %d %d", l_normal.x, l_normal.y);
                     }
                 }
             }
         }
 
         // velocity
-        l_body->addPosition( { l_body->getVelocity().x * dt * (fabs(l_normal.x)==0.f?1.f:l_collisiontime), 
-                               l_body->getVelocity().y * dt * (fabs(l_normal.y)==0.f?1.f:l_collisiontime)} );
+        l_body->addPosition( { l_body->getVelocity().x * dt * (fabs(l_collision_face.x)==0.f?1.f:l_nearest_collisiontime), 
+                               l_body->getVelocity().y * dt * (fabs(l_collision_face.y)==0.f?1.f:l_nearest_collisiontime)} );
 
-        //l_body->addPosition( l_body->getVelocity() * dt * l_collisiontime);
+        //l_body->addPosition( l_body->getVelocity() * dt * l_nearest_collisiontime);
 
         // Auf face reagieren
-        l_body->setVelocity( {  l_face.x?0.f:l_body->getVelocity().x,
-                                l_face.y?0.f:l_body->getVelocity().y} );
-        /*float l_remainingTime = 1.0 - l_collisiontime;
-        if (l_remainingTime > 0.0f) {
-            float l_dotProduct = (l_body->getVelocity().x * l_face.y + l_body->getVelocity().y * l_face.x) * l_remainingTime;
-            l_body->setVelocity( l_body->getVelocity() * l_dotProduct);
-        }*/
+        l_body->setVelocity( {  l_collision_face.x?0.f:l_body->getVelocity().x,
+                                l_collision_face.y?0.f:l_body->getVelocity().y} );
 
         // friction
         l_body->setVelocity( {  helper::lerp( l_body->getVelocity().x, 0, l_friction),
