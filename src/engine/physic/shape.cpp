@@ -11,11 +11,12 @@ engine::fvec2 shape_rect::getAABB() {
 }
 
 void sharp_circle::draw( engine::graphic_draw *graphic, engine::fvec2 position) {
-    // TODO: draw circle
+    engine::fvec2 l_size = { p_size, p_size};
+    graphic->drawellipse( position.toVec() + getOffset().toVec() + l_size.toVec(), l_size );
 }
 
 engine::fvec2 sharp_circle::getAABB() {
-    return { p_size, p_size};
+    return { p_size*2, p_size*2};
 }
 
 engine::fvec2 sharp_line::getAABB() {
@@ -23,5 +24,5 @@ engine::fvec2 sharp_line::getAABB() {
 }
 
 void sharp_line::draw( engine::graphic_draw *graphic, engine::fvec2 position) {
-    // TODO: draw line
+    drawLine( { 10, 10}, {50, 50});
 }

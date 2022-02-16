@@ -71,6 +71,9 @@ void app::begin() {
         l_id = p_entity.createObject(10);
         p_entity.setPosition( l_id, { 50, 50});
 
+        l_id = p_entity.createObject(5);
+        p_entity.setPosition( l_id, { 100, 150});
+
         p_entity.deleteObject( 0);
     }
     if( l_net_type == app_config_network_server)

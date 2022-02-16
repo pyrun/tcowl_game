@@ -135,6 +135,8 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         l_shape = new physic::sharp_circle( l_collision_data[2]);
     } else if(l_collision_type == "rect") { // rect
         l_shape = new physic::shape_rect( { l_collision_data[2], l_collision_data[3]} );
+    } else if(l_collision_type == "line") { // line
+        l_shape = new physic::shape_line( { l_collision_data[2], l_collision_data[3]} );
     }
     if( l_shape)
         l_shape->setOffset( { l_collision_data[0], l_collision_data[1]});
