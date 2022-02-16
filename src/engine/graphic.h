@@ -8,6 +8,10 @@
 #include "vec.h"
 #include "camera.h"
 
+#ifndef M_PI_2
+#define M_PI_2 (M_PI/2.f)
+#endif
+
 #define ENGINE_GRAPHIC_DEFAULT_TITEL    "NO_TITEL_SET"
 #define ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH   256
 
@@ -15,6 +19,9 @@
 #define ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_H 180
 #define ENGINE_GRAPHIC_DEFAULT_W        640
 #define ENGINE_GRAPHIC_DEFAULT_H        360
+
+#define ENGINE_GRAPHIC_ARC_PRECISION_VALUE 20.f // precision value, value of 1 will draw a diamond, 27 makes smooth circles
+#define ENGINE_GRAPHIC_ARC_PRECISION_SPEP (M_PI_2/ENGINE_GRAPHIC_ARC_PRECISION_VALUE)
 
 namespace engine {
     struct graphic_config {
@@ -42,6 +49,8 @@ namespace engine {
 
             void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a);
             void drawRect( vec2 pos, vec2 rect);
+            void drawEllipse( vec2 pos, fvec2 radius);
+            void drawLine( vec2 pos, vec2 dest);
 
             uint32_t getDisplacedElements() { return p_displayed_elements; }
             camera *getCamera() { return &p_camera; }

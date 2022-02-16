@@ -1,6 +1,7 @@
 #include "graphic.h"
 
 #include <string>
+#include <math.h>
 #include <algorithm>
 
 #include "log.h"
@@ -28,6 +29,43 @@ void graphic_draw::setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 void graphic_draw::drawRect( vec2 pos, vec2 rect) {
     SDL_Rect l_rect {pos.x, pos.y, rect.x, rect.y};
     SDL_RenderDrawRect( p_renderer, &l_rect );
+}
+
+void graphic_draw::drawellipse( vec2 pos, fvec2 radius) { //draw one quadrant arc, and mirror the other 4 quadrants
+    float l_theta = 0; // angle that will be increased each loop
+
+    //starting point
+    vec2 l_location = { (int32_t)(radius.x * cos(l_theta)), (int32_t)(radius.y * sin(l_theta))};
+    vec2 l_new_location = l_location;
+
+    //repeat until theta >= 90;
+    for( l_theta = ENGINE_GRAPHIC_ARC_PRECISION_SPEP;  l_theta <= M_PI_2;  l_theta += ENGINE_GRAPHIC_ARC_PRECISION_SPEP) {//step through only a 90 arc (1 quadrant)
+        //get new point location
+        l_new_location.x = radius.x * cosf(l_theta) + 0.5; //new point (+.5 is a quick rounding method)
+        l_new_location.y = radius.y * sinf(l_theta) + 0.5; //new point (+.5 is a quick rounding method)
+
+        //draw line from previous point to new point, ONLY if point incremented
+        if( (l_location.x != l_new_location.x) || (l_location.y != l_new_location.y) ) {//only draw if coordinate changed
+            SDL_RenderDrawLine(p_renderer, pos.x + l_location.x, pos.y - l_location.y,    pos.x + l_new_location.x, pos.y - l_new_location.y );//quadrant TR
+            SDL_RenderDrawLine(p_renderer, pos.x - l_location.x, pos.y - l_location.y,    pos.x - l_new_location.x, pos.y - l_new_location.y );//quadrant TL
+            SDL_RenderDrawLine(p_renderer, pos.x - l_location.x, pos.y + l_location.y,    pos.x - l_new_location.x, pos.y + l_new_location.y );//quadrant BL
+            SDL_RenderDrawLine(p_renderer, pos.x + l_location.x, pos.y + l_location.y,    pos.x + l_new_location.x, pos.y + l_new_location.y );//quadrant BR
+        }
+        //save previous points
+        l_location = l_new_location;
+    }
+    //arc did not finish because of rounding, so finish the arc
+    if( l_location.x != 0) {
+        l_location.x = 0;
+        SDL_RenderDrawLine(p_renderer, pos.x + l_location.x, pos.y - l_location.y,    pos.x + l_new_location.x, pos.y - l_new_location.y );//quadrant TR
+        SDL_RenderDrawLine(p_renderer, pos.x - l_location.x, pos.y - l_location.y,    pos.x - l_new_location.x, pos.y - l_new_location.y );//quadrant TL
+        SDL_RenderDrawLine(p_renderer, pos.x - l_location.x, pos.y + l_location.y,    pos.x - l_new_location.x, pos.y + l_new_location.y );//quadrant BL
+        SDL_RenderDrawLine(p_renderer, pos.x + l_location.x, pos.y + l_location.y,    pos.x + l_new_location.x, pos.y + l_new_location.y );//quadrant BR
+    }
+}
+
+void graphic_draw::drawLine( vec2 pos, vec2 vector) {
+    SDL_RenderDrawLine( p_renderer, pos.x, pos.y, pos.x+vector.x, pos.y+vector.y);
 }
 
 graphic::graphic() {
@@ -80,7 +118,7 @@ void graphic::update( float dt) {
     SDL_RenderClear( p_renderer );
     p_displayed_elements = p_displayed_elements_counter;
     p_displayed_elements_counter = 0;
-
+    
     // Render pipeline
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
         graphic_object *l_obj = p_graphic_objects[i];
