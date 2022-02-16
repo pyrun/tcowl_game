@@ -1,0 +1,17 @@
+{
+    "name": "barrel",
+    "id": 5,
+    "image": "graphic.bmp",
+    "alpha-key": [ 68, 123, 134],
+    "collision-type": "circle",
+    "collision-data": [ 1, 6, 3],
+    "action": [
+        {
+            "name": "Idle",
+            "position": [ 0, 0],
+            "size": [ 9, 13],
+            "length": 1,
+            "ticks_for_next_image": 0
+        }
+    ]
+}
