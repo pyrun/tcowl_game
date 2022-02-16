@@ -18,6 +18,10 @@ void input_handler::init() {
 }
 
 void input_handler::update() {
+    // Update
+    for( uint32_t i = 0; i < p_input.size(); i++)
+        p_input[i]->update();
+
     // handle events on queue
     while( SDL_PollEvent( &p_event )) {
         switch( p_event.window.event) {
