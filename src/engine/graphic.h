@@ -45,9 +45,9 @@ namespace engine {
             graphic_draw() {}
             ~graphic_draw() {}
 
-            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0});
-
             void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
+            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0});
             void drawRect( vec2 pos, vec2 rect);
             void drawEllipse( vec2 pos, fvec2 radius);
             void drawLine( vec2 pos, vec2 dest);

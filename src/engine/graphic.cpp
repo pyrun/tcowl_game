@@ -8,6 +8,10 @@
 
 using namespace engine;
 
+void graphic_draw::setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    SDL_SetRenderDrawColor( p_renderer, r, g, b, a);
+}
+
 void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) {
     if( p_camera.getPosition().x > pos.x+size.x ||
         p_camera.getPosition().y > pos.y+size.y ||
@@ -22,16 +26,12 @@ void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) 
     p_displayed_elements_counter++;
 }
 
-void graphic_draw::setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-    SDL_SetRenderDrawColor( p_renderer, r, g, b, a);
-}
-
 void graphic_draw::drawRect( vec2 pos, vec2 rect) {
     SDL_Rect l_rect {pos.x, pos.y, rect.x, rect.y};
     SDL_RenderDrawRect( p_renderer, &l_rect );
 }
 
-void graphic_draw::drawellipse( vec2 pos, fvec2 radius) { //draw one quadrant arc, and mirror the other 4 quadrants
+void graphic_draw::drawEllipse( vec2 pos, fvec2 radius) { //draw one quadrant arc, and mirror the other 4 quadrants
     float l_theta = 0; // angle that will be increased each loop
 
     //starting point
