@@ -5,10 +5,10 @@
 #include "../graphic.h"
 
 namespace physic {
-    enum sharp_type {
-        sharp_type_rect,
-        sharp_type_circle,
-        sharp_type_line,
+    enum shape_type {
+        shape_type_rect,
+        shape_type_circle,
+        shape_type_line,
     };
 
     class shape {
@@ -24,7 +24,7 @@ namespace physic {
             void setOffset( engine::fvec2 offset) { p_offset = offset;} 
             engine::fvec2 getOffset() { return p_offset; }
 
-            virtual sharp_type getType() = 0;
+            virtual shape_type getType() = 0;
 
         private:
             engine::fvec2 p_offset;
@@ -39,35 +39,35 @@ namespace physic {
 
             engine::fvec2 getAABB() override;
 
-            sharp_type getType() override { return sharp_type_rect; }
+            shape_type getType() override { return shape_type_rect; }
         private:
             engine::fvec2 p_rect;
     };
 
-    class sharp_circle : public shape {
+    class shape_circle : public shape {
         public:
-            sharp_circle( float size) { p_size = size; }
-            ~sharp_circle() {}
+            shape_circle( float size) { p_size = size; }
+            ~shape_circle() {}
 
             void draw( engine::graphic_draw *graphic, engine::fvec2 position) override;
 
             engine::fvec2 getAABB() override;
             
-            sharp_type getType() override { return sharp_type_circle; }
+            shape_type getType() override { return shape_type_circle; }
         private:
             float p_size;
     };
 
-    class sharp_line : public shape {
+    class shape_line : public shape {
         public:
-            sharp_line( engine::fvec2 offsetTarget) { p_offsetpoint = offsetTarget; }
-            ~sharp_line() {}
+            shape_line( engine::fvec2 offsetTarget) { p_offsetpoint = offsetTarget; }
+            ~shape_line() {}
 
             void draw( engine::graphic_draw *graphic, engine::fvec2 position) override;
 
             engine::fvec2 getAABB() override;
             
-            sharp_type getType() override { return sharp_type_line; }
+            shape_type getType() override { return shape_type_line; }
         private:
             engine::fvec2 p_offsetpoint; // offset from position
     };

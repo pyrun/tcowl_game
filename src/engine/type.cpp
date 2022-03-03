@@ -132,7 +132,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     if( !l_collision_data)
         l_collision_type.clear();
     if( l_collision_type == "circle") { // circle
-        l_shape = new physic::sharp_circle( l_collision_data[2]);
+        l_shape = new physic::shape_circle( l_collision_data[2]);
     } else if(l_collision_type == "rect") { // rect
         l_shape = new physic::shape_rect( { l_collision_data[2], l_collision_data[3]} );
     } else if(l_collision_type == "line") { // line
