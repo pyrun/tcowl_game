@@ -1,0 +1,6 @@
+{
+    "hide_world": true,
+    "hide_entity": false,
+    "hide_lobby": true,
+    "packs": [ "default" ]
+}

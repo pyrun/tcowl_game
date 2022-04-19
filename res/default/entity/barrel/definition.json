@@ -4,7 +4,7 @@
     "image": "graphic.bmp",
     "alpha-key": [ 68, 123, 134],
     "collision-type": "circle",
-    "collision-data": [ 1, 6, 3],
+    "collision-data": [ 0, 5, 4],
     "action": [
         {
             "name": "Idle",
