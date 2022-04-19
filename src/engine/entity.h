@@ -49,7 +49,7 @@ namespace engine {
             bool loadScriptFile( entity *entity);
             bool bindInput( entity *entity, engine::input_map *input_obj);
 
-            entity *get( int16_t index) { return p_entity[ (uint16_t)index]; }
+            entity *get( int16_t index) { return index>=0&&index<ENGINE_ENTITY_MAX_AMOUNT?p_entity[ (uint16_t)index]:nullptr; }
             void setPosition( int16_t index, fvec2 pos);
 
             uint32_t outNetworkData( entity *obj, uint8_t *dataDist);

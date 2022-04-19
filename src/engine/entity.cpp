@@ -161,7 +161,9 @@ bool entity_handler::bindInput( entity *entity, input_map *input_obj) {
 void entity_handler::setPosition( int16_t index, fvec2 pos) {
     entity *l_entity;
     l_entity = get(index);
-    if( !l_entity)
+    if( l_entity == nullptr)
+        return;
+    if( l_entity->body == nullptr)
         return;
     l_entity->body->setPosition( pos);
 }
