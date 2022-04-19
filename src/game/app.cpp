@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include "../engine/vec.h"
+#include "../engine/helper_json.h"
 
 using namespace game;
 using json = nlohmann::json;
@@ -36,10 +37,20 @@ void app::begin() {
     if( !p_argv.get<bool>("hide_lobby", false))
         p_graphic.addObject( &p_lobby);
 
-    // load files
-    p_types.loadFolder( &p_graphic, "entity");
-    p_tileset.loadFolder( &p_graphic, "tile");
-    p_bioms.loadFolder( "biom");
+    // loads packs
+    std::string *l_name = helper::json::getNumberArray<std::string>( p_argv.getJson(), "packs", 0xFF);
+    uint32_t l_index = 0;
+    while( l_name &&
+           !l_name[l_index].empty()) {
+        std::string l_folder = l_name[l_index];
+        l_index++;
+        // load files
+        p_types.loadFolder( &p_graphic, l_folder +"/"+ "entity");
+        p_tileset.loadFolder( &p_graphic, l_folder +"/"+ "tile");
+        p_bioms.loadFolder( l_folder +"/"+ "biom");
+    }
+
+    // first world init
     p_world.begin( &p_graphic, &p_tileset, &p_bioms);
 
     // lobby
