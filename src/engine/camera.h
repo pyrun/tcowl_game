@@ -19,7 +19,9 @@ namespace engine {
 
             void setMode( camera_mode mode) { p_mode = mode; }
             vec2 getPosition() { return p_position; }
-            void setTarget( vec2 targetPos) { p_target = targetPos; }
+
+            // centre of screen
+            void setTarget( vec2 targetPos) { p_target = targetPos - ( p_size / vec2{ 2, 2} ); }
             void setSize( vec2 size) { p_size = size; }
             vec2 getSize() { return p_size; }
         private:
