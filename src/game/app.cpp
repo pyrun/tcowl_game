@@ -34,8 +34,6 @@ void app::begin() {
         p_graphic.addObject( &p_world);
     if( !p_argv.get<bool>("hide_entity", false))
         p_graphic.addObject( &p_entity);
-    if( !p_argv.get<bool>("hide_lobby", false))
-        p_graphic.addObject( &p_lobby);
 
     // loads packs
     std::string *l_name = helper::json::getNumberArray<std::string>( p_argv.getJson(), "packs", 0xFF);
@@ -52,9 +50,6 @@ void app::begin() {
 
     // first world init
     p_world.begin( &p_graphic, &p_tileset, &p_bioms);
-
-    // lobby
-    p_lobby.init( &p_font, p_input.get(0), &p_entity);
 
     // network
     app_config_network l_net_type = p_argv.get<app_config_network>("network_type", app_config_network_offline);
@@ -99,6 +94,10 @@ void app::begin() {
 
     p_physics_lastime = SDL_GetTicks();
     p_animation_lasttime = SDL_GetTicks();
+
+    // player
+    p_player.begin( &p_font, p_input.get(0), &p_entity);
+    p_graphic.addObject( &p_player);
 }
 
 bool app::update() {
@@ -131,7 +130,7 @@ bool app::update() {
     }
 
     // Update
-    p_lobby.update();
+    p_player.update();
     if( p_network)
         p_network->update();
     p_world.update();

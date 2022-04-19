@@ -14,7 +14,7 @@
 #include "../engine/world/world.h"
 #include "../network/server.h"
 #include "../network/client_connection.h"
-#include "lobby.h"
+#include "player.h"
 
 #define APP_CONFIG_FILE "config.json"
 
@@ -54,7 +54,7 @@ namespace game {
             network::service *p_network;
 
             // Game logic
-            game::lobby p_lobby;
+            game::player p_player;
             float p_framerate_cap; // ms
             uint32_t p_physics_lastime;
             uint32_t p_animation_lasttime;
