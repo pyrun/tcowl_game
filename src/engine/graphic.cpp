@@ -18,6 +18,9 @@ void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) 
         p_camera.getPosition().x+p_camera.getSize().x < pos.x ||
         p_camera.getPosition().y+p_camera.getSize().y < pos.y)
         return; // Nicht anzeigen
+    
+    // Camera Position
+    pos = pos - p_camera.getPosition();
 
     SDL_Rect l_srcrect = { shift.x, shift.y, size.x, size.y};
     SDL_Rect l_dstrect = { pos.x, pos.y, size.x, size.y};
@@ -27,12 +30,15 @@ void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) 
 }
 
 void graphic_draw::drawRect( vec2 pos, vec2 rect) {
-    SDL_Rect l_rect {pos.x, pos.y, rect.x, rect.y};
+    SDL_Rect l_rect {pos.x - p_camera.getPosition().x, pos.y - p_camera.getPosition().y, rect.x, rect.y};
     SDL_RenderDrawRect( p_renderer, &l_rect );
 }
 
 void graphic_draw::drawEllipse( vec2 pos, fvec2 radius) { //draw one quadrant arc, and mirror the other 4 quadrants
     float l_theta = 0; // angle that will be increased each loop
+
+    // Camera Position
+    pos = pos - p_camera.getPosition();
 
     // starting point
     vec2 l_location = { (int32_t)(radius.x * cos(l_theta)), (int32_t)(radius.y * sin(l_theta))};
@@ -65,6 +71,7 @@ void graphic_draw::drawEllipse( vec2 pos, fvec2 radius) { //draw one quadrant ar
 }
 
 void graphic_draw::drawLine( vec2 pos, vec2 vector) {
+    pos = pos - p_camera.getPosition();
     SDL_RenderDrawLine( p_renderer, pos.x, pos.y, pos.x+vector.x, pos.y+vector.y);
 }
 
@@ -118,6 +125,9 @@ void graphic::update( float dt) {
     SDL_RenderClear( p_renderer );
     p_displayed_elements = p_displayed_elements_counter;
     p_displayed_elements_counter = 0;
+
+    // Update Camera
+    p_camera.update();
     
     // Render pipeline
     for( uint32_t i = 0; i < p_graphic_objects.size(); i++) {
