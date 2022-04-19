@@ -16,7 +16,7 @@ namespace helper {
                 nlohmann::json l_array = json_ptr->at(name);
                 if( l_array.is_array() &&
                     l_array.size() >= length) {
-                    T *l_values = new T[length];
+                    T *l_values = new T[length]();
                     for( uint32_t i = 0; i < length; i++)
                         l_values[i] = l_array[i].get<T>();
                     return l_values;
@@ -32,7 +32,7 @@ namespace helper {
             try {
                 nlohmann::json l_array = json_ptr->at(name);
                 if( l_array.is_array()) {
-                    T *l_values = new T[maxlength];
+                    T *l_values = new T[maxlength]();
                     for( uint32_t i = 0; i < l_array.size(); i++) {
                         if( i == maxlength)
                             return l_values;
