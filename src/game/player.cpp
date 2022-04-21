@@ -36,7 +36,9 @@ void player::draw( engine::graphic_draw *graphic) {
     if( p_player) {
         action *l_action = p_player->objtype->getAction( p_player->action);
 
-        graphic->getCamera()->setTarget( p_player->body->getPosition().toVec() + ( l_action->size / vec2{ 2, 2} ));
+        engine::fvec2 l_pos = p_player->body->getPosition() + ( fvec2{ (float)l_action->size.x, (float)l_action->size.y} / fvec2{ 2.f, 2.f} );
+
+        graphic->getCamera()->setTarget( l_pos);
     }
 }
 

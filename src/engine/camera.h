@@ -18,18 +18,20 @@ namespace engine {
             void update();
 
             void setMode( camera_mode mode) { p_mode = mode; }
-            vec2 getPosition() { return p_position; }
+            vec2 getPosition() { return p_position.toVec(); }
 
             // centre of screen
-            void setTarget( vec2 targetPos) { p_target = targetPos - ( p_size / vec2{ 2, 2} ); }
+            void setTarget( fvec2 targetPos) { p_target = targetPos - fvec2{ (float)(p_size.x/2), (float)(p_size.y/2)}; }
             void setSize( vec2 size) { p_size = size; }
             vec2 getSize() { return p_size; }
         private:
-            vec2 p_position;
+            fvec2 p_position;
             vec2 p_size;
 
-            vec2 p_target;
+            fvec2 p_target;
             camera_mode p_mode;
+
+            float p_speed;
     };
 }
 

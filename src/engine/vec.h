@@ -55,6 +55,10 @@ namespace engine {
             return fvec2{ x+rhs.x, y+rhs.y};
         }
 
+        fvec2 operator-(const fvec2 rhs) {
+            return fvec2{ x-rhs.x, y-rhs.y};
+        }
+
         fvec2& operator+=(const fvec2& rhs){
             this->x += rhs.x;
             this->y += rhs.y;
@@ -63,6 +67,10 @@ namespace engine {
 
         fvec2 operator*(const fvec2& rhs) {
             return fvec2{ x*rhs.x, y*rhs.y};
+        }
+
+        fvec2 operator/(const fvec2& rhs) {
+            return fvec2{ x/rhs.x, y/rhs.y};
         }
 
         fvec2 operator*(const float rhs) {
