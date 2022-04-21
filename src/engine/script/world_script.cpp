@@ -11,7 +11,7 @@ extern "C"{
 #endif
 
 static int lua_setTile( lua_State *state) {
-    if( !lua_isstring( state, 1) || !lua_isnumber( state, 2) || !lua_isnumber( state, 3)) {
+    if( !lua_isnumber( state, 1) || !lua_isnumber( state, 2) || !lua_isnumber( state, 3)) {
         log( log_warn, "lua_setTile call wrong argument");
         return 0;
     }
@@ -20,7 +20,7 @@ static int lua_setTile( lua_State *state) {
         log( log_warn, "lua_setTile tile_manager is null");
         return 0;
     }
-    tile *l_tile = l_tilem->getByName( lua_tostring( state, 1));
+    tile *l_tile = l_tilem->getById( lua_tonumber( state, 1));
     if( l_tile == nullptr) {
         log( log_warn, "lua_setTile tile is null");
         return 0;

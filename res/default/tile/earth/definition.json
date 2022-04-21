@@ -1,5 +1,5 @@
 {
-    "name": "earth",
+    "id": 2,
     "image": "graphic.png",
     "alpha-key": [ 255, 255, 255],
     "graphic": [

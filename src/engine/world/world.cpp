@@ -41,6 +41,31 @@ void world::cleanup() {
         delete[] p_world_data;
 }
 
+bool world::readRawData( uint8_t *buffer, size_t length) {
+    return false;
+}
+
+std::vector<uint8_t> world::getRawData() {
+    std::vector<uint8_t> l_data;
+    size_t l_size = WORLD_SIZE*WORLD_SIZE*WORLD_STRUCT_SIZE;
+
+    l_data.reserve(l_size);
+
+    for( uint32_t i = 0; i < WORLD_SIZE*WORLD_SIZE; i++) {
+        // id
+        l_data.push_back( (p_world_data[i].bot->getId()>>8));
+        l_data.push_back( (p_world_data[i].bot->getId()));
+        
+        // biom
+        l_data.push_back( (p_world_data[i].biom->getId()>>8));
+        l_data.push_back( (p_world_data[i].biom->getId()));
+
+        // tick
+        l_data.push_back( p_world_data[i].animation_tick);
+    }
+    return l_data;
+}
+
 void world::createRoom( vec2 position) {
     room *l_room;
 
@@ -54,7 +79,12 @@ void world::setTile(int x, int y, tile *tiledata) {
     if( WORLD_SIZE <= x ||
         WORLD_SIZE <= y)
         return;
-    p_world_data[WORLD_SIZE * x + y].bot = tiledata;  
+    world_tile *l_tile = &p_world_data[WORLD_SIZE * x + y];
+    l_tile->bot = tiledata;
+
+    // set face
+    engine::tile_graphic *l_tile_graphic = l_tile->bot->getGraphic(0);
+    l_tile->animation_tick = rand()%l_tile_graphic->length;
 }
 
 world_tile *world::getTile(int x, int y) {

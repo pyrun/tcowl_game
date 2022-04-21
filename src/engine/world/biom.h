@@ -10,6 +10,9 @@ namespace engine {
             biom();
             ~biom();
 
+            void setId(uint16_t id) { p_id = id; }
+            uint16_t getId() { return p_id; }
+
             void setName( std::string name) { p_name = name; }
             std::string getName() { return p_name; }
 
@@ -20,6 +23,7 @@ namespace engine {
 
             void update();
         private:
+            uint16_t p_id;
             std::string p_name;
 
             std::string p_script_file;

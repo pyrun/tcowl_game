@@ -71,6 +71,7 @@ void biom_manager::loadType( std::string folder) {
     biom *l_biom = create();
 
     // Name
+    l_biom->setId( helper::json::getUint32( &l_json, "id"));
     l_biom->setName( helper::json::getString( &l_json, "name", "noName").c_str());
     l_biom->setScriptName( folder + helper::json::getString( &l_json, "script", "noName").c_str());
 

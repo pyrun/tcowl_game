@@ -11,17 +11,15 @@
 #include "tile_manager.h"
 #include "biom_manager.h"
 
-#define WORLD_SIZE 128 // both axies
+#define WORLD_SIZE 64 // both axies
+#define WORLD_STRUCT_SIZE 5 // ID 2byte + Biom 2byte + Tick 1byte
 
 namespace engine {
     struct world_tile {
         uint32_t ticks = 0;
         uint32_t animation_tick = 0;
 
-        tile *top = nullptr;
-        tile *mid = nullptr;
         tile *bot = nullptr;
-        tile *collision = nullptr;
 
         biom *biom = nullptr;
     };
@@ -34,6 +32,9 @@ namespace engine {
             void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
             void generate();
             void cleanup();
+
+            bool readRawData( uint8_t *buffer, size_t length);
+            std::vector<uint8_t> getRawData();
 
             void setTile(int x, int y, tile *tiledata);
             world_tile *getTile(int x, int y);

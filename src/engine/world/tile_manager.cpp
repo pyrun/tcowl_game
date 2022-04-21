@@ -70,7 +70,7 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
     tile *l_tile = createtype();
 
     // Name
-    l_tile->setName( helper::json::getString( &l_json, "name", "noName").c_str());
+    l_tile->setId( helper::json::getUint32( &l_json, "id"));
     
     // Graphic
     std::string l_image_file;
@@ -148,9 +148,9 @@ bool tile_manager::removetype( tile *target) {
     return false;
 }
 
-tile *tile_manager::getByName( std::string name) {
+tile *tile_manager::getById( uint16_t id) {
     for( uint32_t i = 0; i < p_type.size(); i++)
-        if( p_type[i].getName() == name)
+        if( p_type[i].getId() == id)
             return &p_type[i];
     return NULL;
 }

@@ -3,5 +3,5 @@ function intilisation( try)
 end
 
 function set( x, y, value)
-    world.setTile( "earth", x, y)
+    world.setTile( 2, x, y)
 end
