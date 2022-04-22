@@ -89,7 +89,9 @@ void world::setTile(int x, int y, tile *tiledata) {
 
 world_tile *world::getTile(int x, int y) {
     if( WORLD_SIZE <= x ||
-        WORLD_SIZE <= y)
+        WORLD_SIZE <= y ||
+        x < 0 ||
+        y < 0)
         return nullptr;
     return &p_world_data[WORLD_SIZE * x + y];  
 }
@@ -98,11 +100,11 @@ void world::reload( graphic_draw *graphic) {
     p_tileset->reload( graphic);
 }
 void world::draw( engine::graphic_draw *graphic) {
-    vec2 l_length_tiles = graphic->getCamera()->getSize();
-    l_length_tiles = l_length_tiles / ENGINE_VEC2_TILE_SIZE;
+    vec2 l_length_tiles = ( (graphic->getCamera()->getSize()+fvec2{ ENGINE_TILE_SIZE, ENGINE_TILE_SIZE}) / fvec2{ ENGINE_TILE_SIZE, ENGINE_TILE_SIZE}).toVec();
+    vec2 l_pos_tiles = graphic->getCamera()->getPosition().toVec() / ENGINE_VEC2_TILE_SIZE;
 
-    for( int32_t x = 0; x < l_length_tiles.x+1; x++) {
-        for( int32_t y = 0; y < l_length_tiles.y+1; y++) {
+    for( int32_t x = l_pos_tiles.x; x < l_length_tiles.x+1+l_pos_tiles.x; x++) {
+        for( int32_t y = l_pos_tiles.y; y < l_length_tiles.y+1+l_pos_tiles.y; y++) {
             world_tile *l_data = getTile( x, y);
             if( !l_data)
                 continue;

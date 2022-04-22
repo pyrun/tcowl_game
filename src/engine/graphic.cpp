@@ -20,7 +20,7 @@ void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) 
         return; // Nicht anzeigen
     
     // Camera Position
-    pos = pos - p_camera.getPosition();
+    pos = pos - p_camera.getPosition().toVec();
 
     SDL_Rect l_srcrect = { shift.x, shift.y, size.x, size.y};
     SDL_Rect l_dstrect = { pos.x, pos.y, size.x, size.y};
@@ -38,7 +38,7 @@ void graphic_draw::drawEllipse( vec2 pos, fvec2 radius) { //draw one quadrant ar
     float l_theta = 0; // angle that will be increased each loop
 
     // Camera Position
-    pos = pos - p_camera.getPosition();
+    pos = pos - p_camera.getPosition().toVec();
 
     // starting point
     vec2 l_location = { (int32_t)(radius.x * cos(l_theta)), (int32_t)(radius.y * sin(l_theta))};
@@ -71,7 +71,7 @@ void graphic_draw::drawEllipse( vec2 pos, fvec2 radius) { //draw one quadrant ar
 }
 
 void graphic_draw::drawLine( vec2 pos, vec2 vector) {
-    pos = pos - p_camera.getPosition();
+    pos = pos - p_camera.getPosition().toVec();
     SDL_RenderDrawLine( p_renderer, pos.x, pos.y, pos.x+vector.x, pos.y+vector.y);
 }
 
@@ -99,7 +99,7 @@ void graphic::init() {
         exit(1);
     }
     //SDL_GetWindowSize( p_window, &p_camera_size.x, &p_camera_size.y);
-    p_camera.setSize( p_config.native_resolution);
+    p_camera.setSize( { (float)p_config.native_resolution.x, (float)p_config.native_resolution.y});
     if( p_renderer == NULL)
         p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
     if( p_renderer == NULL ) {
