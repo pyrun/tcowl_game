@@ -100,11 +100,11 @@ void world::reload( graphic_draw *graphic) {
     p_tileset->reload( graphic);
 }
 void world::draw( engine::graphic_draw *graphic) {
-    vec2 l_length_tiles = ( (graphic->getCamera()->getSize()+fvec2{ ENGINE_TILE_SIZE, ENGINE_TILE_SIZE}) / fvec2{ ENGINE_TILE_SIZE, ENGINE_TILE_SIZE}).toVec();
+    vec2 l_length_tiles = ( (graphic->getCamera()->getSize()+fvec2{ ENGINE_TILE_SIZE*2, ENGINE_TILE_SIZE*2}) / fvec2{ ENGINE_TILE_SIZE, ENGINE_TILE_SIZE}).toVec();
     vec2 l_pos_tiles = graphic->getCamera()->getPosition().toVec() / ENGINE_VEC2_TILE_SIZE;
 
-    for( int32_t x = l_pos_tiles.x; x < l_length_tiles.x+1+l_pos_tiles.x; x++) {
-        for( int32_t y = l_pos_tiles.y; y < l_length_tiles.y+1+l_pos_tiles.y; y++) {
+    for( int32_t x = l_pos_tiles.x; x < l_length_tiles.x+l_pos_tiles.x; x++) {
+        for( int32_t y = l_pos_tiles.y; y < l_length_tiles.y+l_pos_tiles.y; y++) {
             world_tile *l_data = getTile( x, y);
             if( !l_data)
                 continue;
