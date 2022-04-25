@@ -20,13 +20,15 @@ namespace engine {
             void setMode( camera_mode mode) { p_mode = mode; }
             fvec2 getPosition() { return p_position; }
 
-            // centre of screen
-            void setTarget( fvec2 targetPos) { p_target = targetPos - fvec2{ (float)(p_size.x/2), (float)(p_size.y/2)}; }
+            void setTarget( fvec2 targetPos);
             void setSize( fvec2 size) { p_size = size; }
             fvec2 getSize() { return p_size; }
+
+            void setBorder( fvec2 border) { p_border = border; }
         private:
             fvec2 p_position;
             fvec2 p_size;
+            fvec2 p_border;
 
             fvec2 p_target;
             camera_mode p_mode;

@@ -30,7 +30,8 @@ void graphic_draw::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift) 
 }
 
 void graphic_draw::drawRect( vec2 pos, vec2 rect) {
-    SDL_Rect l_rect {pos.x - p_camera.getPosition().x, pos.y - p_camera.getPosition().y, rect.x, rect.y};
+    pos = pos - p_camera.getPosition().toVec();
+    SDL_Rect l_rect {pos.x, pos.y, rect.x, rect.y};
     SDL_RenderDrawRect( p_renderer, &l_rect );
 }
 

@@ -20,6 +20,8 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_biom_manager = biom_manager;
     p_world_data = new world_tile[WORLD_SIZE*WORLD_SIZE];
 
+    graphic->getCamera()->setBorder( { WORLD_SIZE, WORLD_SIZE});
+
     // set biom to map
     generate();
 }
