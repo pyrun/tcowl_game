@@ -15,10 +15,30 @@ void engine::script::run( lua_State *state) {
     
     l_return = lua_pcall( state, 0, 0, 0);
     if( l_return != 0) {
-        log( log_error, "engine::script::run LUA_ERROR: %s", lua_tostring( state, -1));
+        switch( l_return){
+            case LUA_ERRFILE: {
+                log( log_error, "engine::script::run couldn't open the given file");
+            } break;
+            case LUA_ERRSYNTAX: {
+                log( log_error, "engine::script::runsyntax error during pre-compilation");
+                luaL_traceback( state, state, NULL, 1);
+                log( log_error, "engine::script::run %s\n", lua_tostring( state, -1));
+            } break;
+            case LUA_ERRMEM: {
+                log( log_error, "engine::script::run memory allocation error");
+            } break;
+            case LUA_ERRRUN: {
+                log( log_error, "engine::script::run %s\n", lua_tostring( state, -1));
+            } break;
+            case LUA_ERRERR: {
+                log( log_error, "engine::script::run error while running the error handler function");
+            } break;
+            default: {
+                log( log_error, "engine::script::run unknown error %i", l_return);
+            } break;
+        }
+        lua_pop( state, 1);
     }
-
-    
 }
 
 void engine::script::function( std::string function, lua_State *state, int16_t x, int16_t y) {
