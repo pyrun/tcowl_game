@@ -29,12 +29,23 @@ static int lua_setTile( lua_State *state) {
     return 0;
 }
 
+
+static int lua_getSize( lua_State *state) {
+    engine::vec2 l_size = engine::used_world_handler->getWorldSize();
+
+    lua_pushnumber( state, l_size.x);
+    lua_pushnumber( state, l_size.y);
+
+    return 2;
+}
+
 #ifdef __cplusplus
 }
 #endif
 
 static const struct luaL_Reg world_lib_funcs[] = {
     {"setTile", lua_setTile},
+    {"getSize", lua_getSize},
     {NULL, NULL}
     };
 

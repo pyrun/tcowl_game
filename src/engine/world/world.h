@@ -30,7 +30,7 @@ namespace engine {
             ~world();
 
             void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
-            void generate();
+            void generate(biom *biom);
             void cleanup();
 
             bool readRawData( uint8_t *buffer, size_t length);
@@ -48,6 +48,7 @@ namespace engine {
 
             const uint32_t getPriority() override { return 32; }
             tile_manager *getTileManager() { return p_tileset; }
+            vec2 getWorldSize() { return { WORLD_SIZE, WORLD_SIZE}; }
         private:
             world_tile *p_world_data;
             uint32_t p_seed;

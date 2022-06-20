@@ -22,18 +22,16 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
 
     graphic->getCamera()->setBorder( { WORLD_SIZE, WORLD_SIZE});
 
-    // set biom to map
-    generate();
+    // set up map
+    biom *l_biom = p_biom_manager->get( 0/* rand()%p_biom_manager->getAmount()*/);
+    generate( l_biom);
 }
 
-void world::generate() {
-    uint32_t l_bioms_amount = p_biom_manager->getAmount();
+void world::generate( biom *biom) {
     for( uint32_t x = 0; x < WORLD_SIZE; x++) {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            uint32_t l_biom_index = (uint32_t)(helper::perlin2d(x, y, 0.1, 4)*l_bioms_amount);
-            biom *l_biom = p_biom_manager->get( l_biom_index);
             world_tile *l_tile = getTile( x, y);
-            l_tile->biom = l_biom;
+            l_tile->biom = biom;
         }
     }
 }
@@ -79,7 +77,9 @@ void world::createRoom( vec2 position) {
 
 void world::setTile(int x, int y, tile *tiledata) {
     if( WORLD_SIZE <= x ||
-        WORLD_SIZE <= y)
+        WORLD_SIZE <= y ||
+        x < 0 ||
+        y < 0)
         return;
     world_tile *l_tile = &p_world_data[WORLD_SIZE * x + y];
     l_tile->bot = tiledata;
@@ -101,6 +101,7 @@ world_tile *world::getTile(int x, int y) {
 void world::reload( graphic_draw *graphic) {
     p_tileset->reload( graphic);
 }
+
 void world::draw( engine::graphic_draw *graphic) {
     vec2 l_length_tiles = ( (graphic->getCamera()->getSize()+fvec2{ ENGINE_TILE_SIZE*2, ENGINE_TILE_SIZE*2}) / fvec2{ ENGINE_TILE_SIZE, ENGINE_TILE_SIZE}).toVec();
     vec2 l_pos_tiles = graphic->getCamera()->getPosition().toVec() / ENGINE_VEC2_TILE_SIZE;
