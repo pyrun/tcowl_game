@@ -1,5 +1,5 @@
 {
-    "hide_world": true,
+    "hide_world": false,
     "hide_entity": false,
     "packs": [ "default" ]
 }
