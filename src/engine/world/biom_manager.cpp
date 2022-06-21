@@ -109,7 +109,7 @@ void biom_manager::init() {
         biom *l_type = &p_biomes[i];
         // run once
         script::run( l_type->getLuaState());
-        script::function( "intilisation", l_type->getLuaState());
+        script::function( "Intilisation", l_type->getLuaState());
     }
 }
 
