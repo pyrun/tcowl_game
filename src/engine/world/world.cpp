@@ -146,7 +146,7 @@ void world::update() {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
             world_tile *l_tile = getTile( x, y);
             if( l_tile->bot == nullptr && l_tile->biom) {
-                script::function( "set", l_tile->biom->getLuaState(), x, y);
+                script::function( "Set", l_tile->biom->getLuaState(), x, y);
             }
         }
     }
