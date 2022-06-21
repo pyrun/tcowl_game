@@ -145,7 +145,7 @@ bool entity_handler::loadScriptFile( entity *entity) {
     // run once
     engine::used_entity_handler = this;
     script::run( entity->lua_state);
-    script::function( "intilisation", entity->lua_state, entity->index);
+    script::function( "Intilisation", entity->lua_state, entity->index);
     engine::used_entity_handler = NULL;
     
     return true;
@@ -222,7 +222,7 @@ void entity_handler::update( float dt, world *world) {
         engine::entity *l_entity = p_entity[i];
         if( l_entity == NULL)
             continue;
-        script::function( "update", l_entity->lua_state, l_entity->index);
+        script::function( "Update", l_entity->lua_state, l_entity->index);
     }
 
     // Freigeben
