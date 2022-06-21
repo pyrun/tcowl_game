@@ -8,6 +8,10 @@
 #include "script/entity_script.h"
 #include "script/global_script.h"
 
+static luaL_Reg const core_funcs [] = { // TODO Version
+    { NULL, NULL }
+};
+
 void engine::script::run( lua_State *state) {
     int32_t l_return;
     if( state == NULL)
@@ -84,6 +88,10 @@ lua_State *engine::script::loadFile( const char *file) {
 
     // standard libraries
     luaL_openlibs( l_state);
+
+    // core
+    luaL_newlib( l_state, core_funcs);
+    lua_setglobal( l_state, "tcowl");
 
     // add libs
     script::global_lib( l_state);
