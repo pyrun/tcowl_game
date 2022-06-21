@@ -88,6 +88,14 @@ lua_State *engine::script::loadFile( const char *file) {
 
     // standard libraries
     luaL_openlibs( l_state);
+    
+    // remove some standard libs
+    lua_pushnil( l_state);
+    lua_setglobal( l_state, "io");
+    lua_pushnil( l_state);
+    lua_setglobal( l_state, "os");
+    lua_pushnil( l_state);
+    lua_setglobal( l_state, "debug");
 
     // core
     luaL_newlib( l_state, core_funcs);
