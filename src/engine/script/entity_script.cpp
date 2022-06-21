@@ -142,9 +142,9 @@ static const struct luaL_Reg entity_lib_funcs[] = {
     };
 
 LUALIB_API int engine::script::entity_lib( lua_State *L) {
-
+    lua_getglobal(L, "tcowl");
     luaL_newlib( L, entity_lib_funcs);
-	lua_setglobal( L, "entity");
+    lua_setfield(L, -2, "entity");
 
     return 1;
 }
