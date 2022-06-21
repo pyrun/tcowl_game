@@ -50,8 +50,9 @@ static const struct luaL_Reg world_lib_funcs[] = {
     };
 
 LUALIB_API int engine::script::world_lib( lua_State *L) {
+    lua_getglobal(L, "tcowl");
     luaL_newlib( L, world_lib_funcs);
-	lua_setglobal( L, "world");
+    lua_setfield(L, -2, "world");
 
     return 1;
 }
