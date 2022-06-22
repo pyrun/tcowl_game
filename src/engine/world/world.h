@@ -5,6 +5,8 @@
 
 #include "../image.h"
 #include "../graphic.h"
+#include "../physic/body.h"
+#include "../physic/hub.h"
 
 #include "room.h"
 #include "tile.h"
@@ -12,6 +14,7 @@
 #include "biom_manager.h"
 
 #define WORLD_SIZE 64 // both axies
+#define WORLD_PHYSIC_BODYS (WORLD_SIZE*WORLD_SIZE)/4 // bodys - we don't need many, but in the worst case scenario.
 #define WORLD_STRUCT_SIZE 5 // ID 2byte + Biom 2byte + Tick 1byte
 
 namespace engine {
@@ -31,6 +34,7 @@ namespace engine {
 
             void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
             void generate(biom *biom);
+            void generate_collisionmap( physic::hub *hub);
             void cleanup();
 
             bool readRawData( uint8_t *buffer, size_t length);
@@ -51,6 +55,9 @@ namespace engine {
             vec2 getWorldSize() { return { WORLD_SIZE, WORLD_SIZE}; }
         private:
             world_tile *p_world_data;
+            physic::body *p_collision_tiles;
+            physic::shape_rect *p_tile_shape;
+
             uint32_t p_seed;
             tile_manager *p_tileset;
             biom_manager *p_biom_manager;

@@ -11,6 +11,9 @@ body::body() {
     p_shape = nullptr;
 }
 
+body::~body() {
+}
+
 void body::cleanup() {
     if( p_shape)
         delete p_shape;

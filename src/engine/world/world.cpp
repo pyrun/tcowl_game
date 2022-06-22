@@ -20,11 +20,18 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_biom_manager = biom_manager;
     p_world_data = new world_tile[WORLD_SIZE*WORLD_SIZE];
 
+    p_tile_shape = new physic::shape_rect( {ENGINE_TILE_SIZE, ENGINE_TILE_SIZE});
+    p_tile_shape->setOffset( { 0, 0});
+    p_collision_tiles = new physic::body[WORLD_PHYSIC_BODYS];
+    for( uint32_t i = 0; i < WORLD_PHYSIC_BODYS; i++)
+        p_collision_tiles[i].linkShape( p_tile_shape);
+
     graphic->getCamera()->setBorder( { WORLD_SIZE, WORLD_SIZE});
 
     // set up map
     biom *l_biom = p_biom_manager->get( 0/* rand()%p_biom_manager->getAmount()*/);
     generate( l_biom);
+
 }
 
 void world::generate( biom *biom) {
@@ -32,6 +39,35 @@ void world::generate( biom *biom) {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
             world_tile *l_tile = getTile( x, y);
             l_tile->biom = biom;
+        }
+    }
+
+    // once
+    update();
+}
+
+void world::generate_collisionmap( physic::hub *hub) {
+    uint32_t l_index = 0;
+    for( uint32_t x = 0; x < WORLD_SIZE; x++) {
+        for( uint32_t y = 0; y < WORLD_SIZE; y++) {
+            uint8_t l_air = 0;
+
+            for( int32_t i  = -1; i < 1; i++) {
+                for( int32_t j  = -1; j < 1; j++) {
+                    if( i==j)
+                        continue;
+                    world_tile *l_tile = getTile( x+i, y+j);
+                    if( l_tile && l_tile->bot && l_tile->bot->getId() == 2)
+                        l_air++;
+                }
+            }
+            if( l_air > 2) {
+                p_collision_tiles[l_index].setPosition( { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE} );
+                hub->add( &p_collision_tiles[l_index]);
+                l_index++;
+                if( l_index >= WORLD_PHYSIC_BODYS)
+                    return;
+            }
         }
     }
 }
