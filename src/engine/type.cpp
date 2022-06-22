@@ -115,7 +115,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     }
 
     // depth_sorting_offset
-    l_type->setDepthSortingOffset( helper::json::getVec2( &l_json, "depth_sorting_offset"));
+    l_type->setDepthSortingOffset( helper::json::getVec2( &l_json, "depth-sorting-offset"));
 
     // Load image
     l_type->getImage()->load( graphic, folder + l_image_file);
@@ -154,8 +154,8 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
             l_action.postion = helper::json::getVec2( &l_action_json, "position");
             l_action.size = helper::json::getVec2( &l_action_json, "size", vec2{ 32, 32});
             l_action.length = helper::json::getUint32( &l_action_json, "length", 1);
-            l_action.ticks_for_next_image = helper::json::getUint32( &l_action_json, "ticks_for_next_image", 1);
-            l_action.bind_velocity = helper::json::getBool( &l_action_json, "bind_velocity", false);
+            l_action.delay = helper::json::getUint32( &l_action_json, "delay", 1);
+            l_action.bind_velocity = helper::json::getBool( &l_action_json, "bind-velocity", false);
 
             log( log_level::log_debug, "action '%s' %dx%d %dx%d length %d durration %d",
                 l_action.name.c_str(),
@@ -164,7 +164,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
                 l_action.size.x,
                 l_action.size.y,
                 l_action.length,
-                l_action.ticks_for_next_image);
+                l_action.delay);
 
             l_type->addAction( l_action);
         }

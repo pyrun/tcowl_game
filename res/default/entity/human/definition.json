@@ -13,32 +13,32 @@
             "position": [ 0, 0],
             "size": [ 16, 32],
             "length": 4,
-            "ticks_for_next_image": 100,
-            "bind_velocity": true
+            "delay": 100,
+            "bind-velocity": true
         },
         {
             "name": "Walk2",
             "position": [ 0, 32],
             "size": [ 16, 32],
             "length": 4,
-            "ticks_for_next_image": 100,
-            "bind_velocity": true
+            "delay": 100,
+            "bind-velocity": true
         },
         {
             "name": "Walk3",
             "position": [ 0, 64],
             "size": [ 16, 32],
             "length": 4,
-            "ticks_for_next_image": 100,
-            "bind_velocity": true
+            "delay": 100,
+            "bind-velocity": true
         },
         {
             "name": "Walk4",
             "position": [ 0, 96],
             "size": [ 16, 32],
             "length": 4,
-            "ticks_for_next_image": 100,
-            "bind_velocity": true
+            "delay": 100,
+            "bind-velocity": true
         }
     ]
 }

@@ -20,8 +20,11 @@ namespace physic {
 
             void add( body* body) { p_bodys.push_back( body); }
             void del( body* body);
+
+            void setDebugLevel( uint8_t level) { p_debug_level = level; }
         private:
             std::vector<body*> p_bodys;
+            uint8_t p_debug_level; // Zero = disabled
     };
 }
 

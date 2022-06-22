@@ -11,7 +11,7 @@
             "position": [ 0, 0],
             "size": [ 32, 32],
             "length": 1,
-            "ticks_for_next_image": 0
+            "delay": 0
         }
     ]
 }

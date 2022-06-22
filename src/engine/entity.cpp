@@ -260,13 +260,13 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     // adjust animation speed to acceleration if wanted
     if( l_action->bind_velocity) {
         l_time = powf( obj->body->getVelocity().normalize() / l_factor, -1);
-        l_time *=l_action->ticks_for_next_image;
+        l_time *=l_action->delay;
     } else {
-        l_time = l_action->ticks_for_next_image;
+        l_time = l_action->delay;
     }
 
-    if( l_time < l_action->ticks_for_next_image*l_magical_value_ticks_mul &&
-        helper::time::check( &obj->animation_time, l_time>l_action->ticks_for_next_image?l_time:l_action->ticks_for_next_image)) {
+    if( l_time < l_action->delay*l_magical_value_ticks_mul &&
+        helper::time::check( &obj->animation_time, l_time>l_action->delay?l_time:l_action->delay)) {
         helper::time::reset( &obj->animation_time);
         obj->animation_tick++;
     }

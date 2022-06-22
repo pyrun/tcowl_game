@@ -28,11 +28,12 @@ void app::begin() {
     p_input.add( new engine::input_keyboard);
     p_font.init( &p_graphic, p_font_setting);
     p_entity.init( &p_types);
+    p_entity.getPhysicHub()->setDebugLevel( p_config.get<uint8_t>("physic_hub_debuglevel", 0));
 
     // draw order
-    if( !p_argv.get<bool>("hide_world", false))
+    if( !p_argv.get<bool>("hide-world", false))
         p_graphic.addObject( &p_world);
-    if( !p_argv.get<bool>("hide_entity", false))
+    if( !p_argv.get<bool>("hide-entity", false))
         p_graphic.addObject( &p_entity);
 
     // loads packs
@@ -52,7 +53,7 @@ void app::begin() {
     p_world.begin( &p_graphic, &p_tileset, &p_bioms);
 
     // network
-    app_config_network l_net_type = p_argv.get<app_config_network>("network_type", app_config_network_offline);
+    app_config_network l_net_type = p_argv.get<app_config_network>("network-type", app_config_network_offline);
     if( l_net_type == app_config_network_offline ||
         l_net_type == app_config_network_server) {
         int16_t l_id = p_entity.createObject(1);

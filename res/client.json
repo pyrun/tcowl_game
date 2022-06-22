@@ -1,4 +1,4 @@
 {
-    "network_type": 2,
+    "network-type": 2,
     "packs": [ "default" ]
 }

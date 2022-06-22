@@ -9,7 +9,7 @@
 using namespace physic;
 
 hub::hub() {
-
+    setDebugLevel(0);
 }
 
 hub::~hub() {
@@ -80,13 +80,15 @@ engine::fvec2 hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &
         return { 1.f, 1.f};
     } // else there was a collision
     
-    engine::log( engine::log_debug, "hub::sweptAABB OBJ   %.2f %.2f %.2f %.2f", pos1.x, pos1.y, rect1.x, rect1.y);
-    engine::log( engine::log_debug, "hub::sweptAABB OTHER %.2f %.2f %.2f %.2f", pos2.x, pos2.y, rect2.x, rect2.y);
-    engine::log( engine::log_debug, "hub::sweptAABB velocity %.8f %.8f", velocity.x, velocity.y);
-    engine::log( engine::log_debug, "hub::sweptAABB delta %.8f %.8f", l_delta_entry.x, l_delta_entry.y);
-    engine::log( engine::log_debug, "hub::sweptAABB time %.2f %.2f", l_time_entry.x, l_time_entry.y);
-    engine::log( engine::log_debug, "hub::sweptAABB entryTime %.10f", l_entryTime);
-    engine::log( engine::log_debug, "hub::sweptAABB exitTime %.10f", l_exitTime);
+    if( p_debug_level > 0) {
+        engine::log( engine::log_debug, "hub::sweptAABB OBJ   %.2f %.2f %.2f %.2f", pos1.x, pos1.y, rect1.x, rect1.y);
+        engine::log( engine::log_debug, "hub::sweptAABB OTHER %.2f %.2f %.2f %.2f", pos2.x, pos2.y, rect2.x, rect2.y);
+        engine::log( engine::log_debug, "hub::sweptAABB velocity %.8f %.8f", velocity.x, velocity.y);
+        engine::log( engine::log_debug, "hub::sweptAABB delta %.8f %.8f", l_delta_entry.x, l_delta_entry.y);
+        engine::log( engine::log_debug, "hub::sweptAABB time %.2f %.2f", l_time_entry.x, l_time_entry.y);
+        engine::log( engine::log_debug, "hub::sweptAABB entryTime %.10f", l_entryTime);
+        engine::log( engine::log_debug, "hub::sweptAABB exitTime %.10f", l_exitTime);
+    }
 
     // calculate normal of collided surface
     engine::fvec2 *l_collide_factor = &l_delta_entry;
@@ -144,7 +146,8 @@ void hub::update( float dt) {
                     l_collision_face.x = l_normal.x==0.f?l_collision_face.x:l_normal.x;
                     l_collision_face.y = l_normal.y==0.f?l_collision_face.y:l_normal.y;
 
-                    engine::log( engine::log_debug, "hub::update %d %d", l_normal.x, l_normal.y);
+                    if( p_debug_level > 0)
+                        engine::log( engine::log_debug, "hub::update %d %d", l_normal.x, l_normal.y);
                 }
             }
         }

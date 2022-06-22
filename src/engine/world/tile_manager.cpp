@@ -109,7 +109,7 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
             
             l_graphic.position = helper::json::getVec2( &l_graphic_json, "position");
             l_graphic.length = helper::json::getUint32( &l_graphic_json, "length", 1);
-            l_graphic.ticks = helper::json::getUint32( &l_graphic_json, "ticks-for-next-image", 0);
+            l_graphic.ticks = helper::json::getUint32( &l_graphic_json, "delay", 0);
 
             log( log_level::log_debug, "tile_graphic '%s' %dx%d length %d durration %d type %s",
                 l_graphic.name.c_str(),

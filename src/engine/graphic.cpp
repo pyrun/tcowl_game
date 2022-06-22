@@ -100,6 +100,7 @@ void graphic::init() {
         exit(1);
     }
     //SDL_GetWindowSize( p_window, &p_camera_size.x, &p_camera_size.y);
+    p_camera.setMode( engine::camera_mode::camera_mode_rect);
     p_camera.setSize( { (float)p_config.native_resolution.x, (float)p_config.native_resolution.y});
     if( p_renderer == NULL)
         p_renderer = SDL_CreateRenderer( p_window, -1, SDL_RENDERER_ACCELERATED);
