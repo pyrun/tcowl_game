@@ -13,8 +13,8 @@
 #include "tile_manager.h"
 #include "biom_manager.h"
 
-#define WORLD_SIZE 64 // both axies
-#define WORLD_PHYSIC_BODYS (WORLD_SIZE*WORLD_SIZE)/4 // bodys - we don't need many, but in the worst case scenario.
+#define WORLD_SIZE 32 // both axies
+#define WORLD_PHYSIC_BODYS 1024 // bodys - we don't need many, but in the worst case scenario.
 #define WORLD_STRUCT_SIZE 5 // ID 2byte + Biom 2byte + Tick 1byte
 
 namespace engine {

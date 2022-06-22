@@ -2,6 +2,7 @@
 #include "../noise.h"
 #include "../helper.h"
 #include "../timer.h"
+#include "../log.h"
 
 using namespace engine;
 
@@ -47,29 +48,44 @@ void world::generate( biom *biom) {
 }
 
 void world::generate_collisionmap( physic::hub *hub) {
-    uint32_t l_index = 0;
+    uint32_t l_index = 0, l_time;
+    helper::time::reset( &l_time);
+
+    for( uint32_t i = 0; i < WORLD_PHYSIC_BODYS; i++)
+        hub->del( &p_collision_tiles[i]);
+
     for( uint32_t x = 0; x < WORLD_SIZE; x++) {
         for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            uint8_t l_air = 0;
+            uint8_t l_solid = 0;
 
-            for( int32_t i  = -1; i < 1; i++) {
-                for( int32_t j  = -1; j < 1; j++) {
-                    if( i==j)
-                        continue;
-                    world_tile *l_tile = getTile( x+i, y+j);
-                    if( l_tile && l_tile->bot && l_tile->bot->getId() == 2)
-                        l_air++;
-                }
+            world_tile *l_tile_stay = getTile( x, y);
+
+            if( l_tile_stay->bot->getId() == 1)
+                continue;
+
+            vec2 l_array[] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+            for( int32_t i  = 0; i < 4; i++) {
+                world_tile *l_tile = getTile( x+l_array[i].x, y+l_array[i].y);
+                if( l_tile == nullptr)
+                    l_solid++;
+                else if( l_tile->bot &&
+                    l_tile->bot->getId() == 2)
+                    l_solid++;
             }
-            if( l_air > 2) {
+
+            // TODO: Connect collsionstiles
+            if( l_solid != 4) {
                 p_collision_tiles[l_index].setPosition( { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE} );
                 hub->add( &p_collision_tiles[l_index]);
                 l_index++;
-                if( l_index >= WORLD_PHYSIC_BODYS)
+                if( l_index >= WORLD_PHYSIC_BODYS) {
+                    engine::log( log_debug, "world::generate_collisionmap reach max! %d %d", x, y);
                     return;
+                }
             }
         }
     }
+    engine::log( log_debug, "world::generate_collisionmap %dbodys %dms", l_index, helper::time::getDurrent( &l_time));
 }
 
 void world::cleanup() {
