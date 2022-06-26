@@ -1,5 +1,5 @@
 local velocity_window = 0.1
-local walk_speed = 10.0
+local walk_speed = 100.0
 
 function Update( id)
 	local l_velX, l_velY

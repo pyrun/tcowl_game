@@ -28,7 +28,7 @@ void app::begin() {
     p_input.add( new engine::input_keyboard);
     p_font.init( &p_graphic, p_font_setting);
     p_entity.init( &p_types);
-    p_entity.getPhysicHub()->setDebugLevel( p_config.get<uint8_t>("physic_hub_debuglevel", 0));
+    p_entity.getPhysicHub()->setDebugLevel( p_argv.get<uint8_t>("physic-hub-debuglevel", 0));
 
     // draw order
     if( !p_argv.get<bool>("hide-world", false))

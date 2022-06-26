@@ -92,8 +92,6 @@ engine::fvec2 hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &
 
     // calculate normal of collided surface
     engine::fvec2 *l_collide_factor = &l_delta_entry;
-    if( l_entryTime < 1e-7f) // Special case if l_entryTime near zero. Happens as soon as the collision position is equal to the position of the object.
-        l_collide_factor = &velocity; // This results delta is near zero and leads to calculation error
     if( l_time_entry.x > l_time_entry.y) {// check if x or y
         normal->x = (l_collide_factor->x<0.f)? -1: 1;
         return { l_entryTime, 1.f};

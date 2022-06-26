@@ -1,5 +1,6 @@
 {
     "hide-world": false,
     "hide-entity": false,
+    "physic-hub-debuglevel": 1,
     "packs": [ "default" ]
 }

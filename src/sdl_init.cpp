@@ -31,7 +31,7 @@ bool sdl::init() {
     }
 
     // pseudo random generator
-    srand( time( NULL ) );
+    //srand( time( NULL ) );
 
     return true;
 }
