@@ -69,42 +69,55 @@ void world::generate_collisionmap( physic::hub *hub) {
     uint32_t l_index = 0, l_time;
     helper::time::reset( &l_time);
 
+    // TODO cleanup
     for( uint32_t i = 0; i < WORLD_PHYSIC_BODYS; i++)
         hub->del( &p_physic_bodys[i].body);
 
-    std::vector<vec2> l_skip_list; // tiles that alrdy has collision boxes
+    std::vector<vec2> l_skip_list; // tiles that alrdy has collision boxes get to this list
+    auto checkSkip = []( std::vector<vec2> list, int x, int y) {
+        bool l_skip = false;
+            for( int i = 0; i < list.size(); i++) {
+                if( list[i] == vec2{ x, y})
+                    l_skip = true;
+            }
+        return l_skip;
+    };
 
+    // Create physical bodies only on accessible tiles
     for( int32_t x = 0; x < WORLD_SIZE; x++) {
         for( int32_t y = 0; y < WORLD_SIZE; y++) {
-            bool l_skip = false;
-            for( int i = 0; i < l_skip_list.size(); i++)
-                if( l_skip_list[i] == vec2{ x, y})
-                    l_skip = true;
-            if( l_skip)
+            if( checkSkip( l_skip_list, x, y))
                 continue;
-
             if( checkSolidTileReachable( { x, y}) ) {
                 int32_t l_row = 1, l_line = 1;
-                while( checkSolidTileReachable( { x, y+l_row})) { l_row++; };
 
+                // check y
+                while( checkSolidTileReachable( { x, y+l_row})) {
+                    if( checkSkip( l_skip_list, x, y+l_row))
+                        break;
+                    l_skip_list.push_back({ x, y+l_row});
+                    l_row++;
+                };
+
+                // if only one tile size in y check x
                 if( l_row == 1) {
                     while( checkSolidTileReachable( { x+l_line, y})) {
+                        if( checkSkip( l_skip_list, x+l_line, y))
+                            break;
                         l_skip_list.push_back({ x+l_line, y});
                         l_line++;
                     };
                 }
 
                 physic::body *l_body = &p_physic_bodys[l_index].body;
+                if( p_physic_bodys[l_index].shape != nullptr)
+                    delete p_physic_bodys[l_index].shape;
                 p_physic_bodys[l_index].shape = new physic::shape_rect( { (float)(ENGINE_TILE_SIZE*l_line), (float)(ENGINE_TILE_SIZE*l_row) });
-
                 l_body->linkShape( p_physic_bodys[l_index].shape);
                 l_body->setPosition( { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE} );
+                hub->add( l_body); // add to the hub
 
-                hub->add( l_body);
-
-                // skip some tiles
-                y += l_row - 1;
-
+                // check amount of tiles
                 l_index++;
                 if( l_index >= WORLD_PHYSIC_BODYS) {
                     engine::log( log_debug, "world::generate_collisionmap reach max! %d %d", x, y);
