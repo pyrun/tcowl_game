@@ -47,11 +47,11 @@ function Intilisation( try)
 end
 
 function Set( x, y, value)
-    tcowl.world.setTile( 2, x, y)
+    tcowl.world.setTile( 3, x, y)
 
     for i, room in pairs(rooms) do
         if (room.x <= x and room.y <= y and room.x+room.w > x and room.y+room.h > y) then
-            tcowl.world.setTile( 1, x, y)
+            tcowl.world.setTile( 2, x, y)
         end
     end
 end
