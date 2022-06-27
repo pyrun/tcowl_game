@@ -32,6 +32,10 @@ namespace engine {
             this->y /= rhs.y;
             return *this;
         }
+        
+        bool operator==(const vec2 rhs){
+            return (rhs.x == this->x) && (rhs.y == this->y);
+        }
     };
 
     struct vec3 {
