@@ -10,6 +10,7 @@ using namespace physic;
 
 hub::hub() {
     setDebugLevel(0);
+    p_dt = 0;
 }
 
 hub::~hub() {
@@ -102,6 +103,22 @@ engine::fvec2 hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &
 }
 
 void hub::update( float dt) {
+    // dt normalisieren
+    p_dt += dt;
+    if( p_dt > ENGINE_PHYSIC_TIME) {
+        float l_dt = 0;
+
+        // Länge ermitteln
+        while( l_dt < p_dt)
+            l_dt += ENGINE_PHYSIC_TIME;
+        
+        // ausführen
+        calcPhysic( l_dt);
+        p_dt -= l_dt;
+    }
+}
+
+void hub::calcPhysic( float dt) {
     float l_friction = 0.25f; //todo woher kommt es? was beeinflusst es
     engine::vec2 l_normal;
 
@@ -144,7 +161,7 @@ void hub::update( float dt) {
                     l_collision_face.x = l_normal.x==0.f?l_collision_face.x:l_normal.x;
                     l_collision_face.y = l_normal.y==0.f?l_collision_face.y:l_normal.y;
 
-                    if( p_debug_level > 0)
+                    if( p_debug_level > 1)
                         engine::log( engine::log_debug, "hub::update %d %d", l_normal.x, l_normal.y);
                 }
             }

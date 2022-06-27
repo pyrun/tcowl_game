@@ -5,6 +5,8 @@
 #include <vector>
 #include "../graphic.h"
 
+#define ENGINE_PHYSIC_TIME 0.005f
+
 namespace physic {
     class hub : public engine::graphic_object{
         public:
@@ -15,6 +17,7 @@ namespace physic {
             engine::fvec2 sweptAABB( const engine::fvec2 &pos1, const engine::fvec2 &rect1, const engine::fvec2 &pos2, const engine::fvec2 &rect2, engine::fvec2 vel, engine::vec2 *normal);
 
             void update( float dt);
+            void calcPhysic( float dt);
             void reload( engine::graphic_draw *graphic) override { }
             void draw( engine::graphic_draw *graphic) override;
 
@@ -25,6 +28,7 @@ namespace physic {
         private:
             std::vector<body*> p_bodys;
             uint8_t p_debug_level; // Zero = disabled
+            float p_dt;
     };
 }
 
