@@ -27,6 +27,11 @@ namespace engine {
         biom *biom = nullptr;
     };
 
+    struct world_physic_body {
+        physic::body body;
+        physic::shape_rect *shape;
+    };
+
     class world : public engine::graphic_object {
         public:
             world();
@@ -34,6 +39,7 @@ namespace engine {
 
             void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
             void generate(biom *biom);
+            bool checkSolidTileReachable( vec2 position);
             void generate_collisionmap( physic::hub *hub);
             void cleanup();
 
@@ -55,8 +61,7 @@ namespace engine {
             vec2 getWorldSize() { return { WORLD_SIZE, WORLD_SIZE}; }
         private:
             world_tile *p_world_data;
-            physic::body *p_collision_tiles;
-            physic::shape_rect *p_tile_shape;
+            world_physic_body *p_physic_bodys;
 
             uint32_t p_seed;
             tile_manager *p_tileset;

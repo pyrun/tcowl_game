@@ -21,11 +21,7 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_biom_manager = biom_manager;
     p_world_data = new world_tile[WORLD_SIZE*WORLD_SIZE];
 
-    p_tile_shape = new physic::shape_rect( {ENGINE_TILE_SIZE, ENGINE_TILE_SIZE});
-    p_tile_shape->setOffset( { 0, 0});
-    p_collision_tiles = new physic::body[WORLD_PHYSIC_BODYS];
-    for( uint32_t i = 0; i < WORLD_PHYSIC_BODYS; i++)
-        p_collision_tiles[i].linkShape( p_tile_shape);
+    p_physic_bodys = new world_physic_body[WORLD_PHYSIC_BODYS];
 
     graphic->getCamera()->setBorder( { WORLD_SIZE, WORLD_SIZE});
 
@@ -47,36 +43,68 @@ void world::generate( biom *biom) {
     update();
 }
 
+bool world::checkSolidTileReachable( vec2 position) {
+    static vec2 l_array[] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    uint8_t l_solid = 0;
+    
+    world_tile *l_tile_stay = getTile( position.x, position.y);
+    if( l_tile_stay == nullptr || l_tile_stay->bot->solid == false)
+        return false; // tile not solid or nullptr
+
+    for( int32_t i  = 0; i < 4; i++) {
+        world_tile *l_tile = getTile( position.x+l_array[i].x, position.y+l_array[i].y);
+        if( l_tile == nullptr)
+            l_solid++;
+        else if( l_tile->bot &&
+            l_tile->bot->solid)
+            l_solid++;
+    }
+
+    if( l_solid != 4)
+        return true; // one side is exposed
+    return false; // surrounded  with solid blocks
+}
+
 void world::generate_collisionmap( physic::hub *hub) {
     uint32_t l_index = 0, l_time;
     helper::time::reset( &l_time);
 
     for( uint32_t i = 0; i < WORLD_PHYSIC_BODYS; i++)
-        hub->del( &p_collision_tiles[i]);
+        hub->del( &p_physic_bodys[i].body);
 
-    for( uint32_t x = 0; x < WORLD_SIZE; x++) {
-        for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            uint8_t l_solid = 0;
+    std::vector<vec2> l_skip_list; // tiles that alrdy has collision boxes
 
-            world_tile *l_tile_stay = getTile( x, y);
-
-            if( l_tile_stay->bot->getId() == 1)
+    for( int32_t x = 0; x < WORLD_SIZE; x++) {
+        for( int32_t y = 0; y < WORLD_SIZE; y++) {
+            bool l_skip = false;
+            for( int i = 0; i < l_skip_list.size(); i++)
+                if( l_skip_list[i] == vec2{ x, y})
+                    l_skip = true;
+            if( l_skip)
                 continue;
 
-            vec2 l_array[] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-            for( int32_t i  = 0; i < 4; i++) {
-                world_tile *l_tile = getTile( x+l_array[i].x, y+l_array[i].y);
-                if( l_tile == nullptr)
-                    l_solid++;
-                else if( l_tile->bot &&
-                    l_tile->bot->getId() == 2)
-                    l_solid++;
-            }
+            if( checkSolidTileReachable( { x, y}) ) {
+                int32_t l_row = 1, l_line = 1;
+                while( checkSolidTileReachable( { x, y+l_row})) { l_row++; };
 
-            // TODO: Connect collsionstiles
-            if( l_solid != 4) {
-                p_collision_tiles[l_index].setPosition( { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE} );
-                hub->add( &p_collision_tiles[l_index]);
+                if( l_row == 1) {
+                    while( checkSolidTileReachable( { x+l_line, y})) {
+                        l_skip_list.push_back({ x+l_line, y});
+                        l_line++;
+                    };
+                }
+
+                physic::body *l_body = &p_physic_bodys[l_index].body;
+                p_physic_bodys[l_index].shape = new physic::shape_rect( { (float)(ENGINE_TILE_SIZE*l_line), (float)(ENGINE_TILE_SIZE*l_row) });
+
+                l_body->linkShape( p_physic_bodys[l_index].shape);
+                l_body->setPosition( { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE} );
+
+                hub->add( l_body);
+
+                // skip some tiles
+                y += l_row - 1;
+
                 l_index++;
                 if( l_index >= WORLD_PHYSIC_BODYS) {
                     engine::log( log_debug, "world::generate_collisionmap reach max! %d %d", x, y);
@@ -105,8 +133,8 @@ std::vector<uint8_t> world::getRawData() {
 
     for( uint32_t i = 0; i < WORLD_SIZE*WORLD_SIZE; i++) {
         // id
-        l_data.push_back( (p_world_data[i].bot->getId()>>8));
-        l_data.push_back( (p_world_data[i].bot->getId()));
+        l_data.push_back( (p_world_data[i].bot->id>>8));
+        l_data.push_back( (p_world_data[i].bot->id));
         
         // biom
         l_data.push_back( (p_world_data[i].biom->getId()>>8));
@@ -137,7 +165,7 @@ void world::setTile(int x, int y, tile *tiledata) {
     l_tile->bot = tiledata;
 
     // set face
-    engine::tile_graphic *l_tile_graphic = l_tile->bot->getGraphic(0);
+    engine::tile_graphic *l_tile_graphic = &l_tile->bot->graphic[0]; // TODO check
     l_tile->animation_tick = rand()%l_tile_graphic->length;
 }
 
@@ -167,7 +195,7 @@ void world::draw( engine::graphic_draw *graphic) {
             if( !l_tile)
                 continue;
 
-            engine::tile_graphic *l_tile_graphic = l_tile->getGraphic(0);
+            engine::tile_graphic *l_tile_graphic = &l_tile->graphic[0]; // TODO check
             if( !l_tile_graphic)
                 continue;
 
@@ -180,7 +208,7 @@ void world::draw( engine::graphic_draw *graphic) {
                      l_data->animation_tick-=l_tile_graphic->length;
             }
 
-            graphic->draw(  l_tile->getImage(),
+            graphic->draw(  &l_tile->image,
                             engine::vec2{ ENGINE_TILE_SIZE*x, ENGINE_TILE_SIZE*y},
                             ENGINE_VEC2_TILE_SIZE,
                             l_tile_graphic->position

@@ -70,7 +70,7 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
     tile *l_tile = createtype();
 
     // Name
-    l_tile->setId( helper::json::getUint32( &l_json, "id"));
+    l_tile->id = helper::json::getUint32( &l_json, "id");
     
     // Graphic
     std::string l_image_file;
@@ -80,19 +80,22 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
         return;
     }
 
+    // Solid
+    l_tile->solid = helper::json::getBool( &l_json, "solid", false);
+
     // Load image
-    l_tile->getImage()->load( graphic, folder + l_image_file);
+    l_tile->image.load( graphic, folder + l_image_file);
 
     // Alpha key
     uint8_t *l_color_key;
     l_color_key = helper::json::getNumberArrayN<uint8_t>( &l_json, "alpha-key", 3);
     if( l_color_key) {
-        l_tile->getImage()->setAlphaKey( l_color_key[0], l_color_key[1], l_color_key[2]);
+        l_tile->image.setAlphaKey( l_color_key[0], l_color_key[1], l_color_key[2]);
         delete l_color_key;
     }
 
     // Set Folder path
-    l_tile->setFolderPath( folder);
+    l_tile->folder = folder;
 
     // Alle Grafiken/Animationen laden und hinzufügen
     if( l_json["graphic"].is_array()) {
@@ -118,8 +121,16 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
                 l_graphic.length,
                 l_graphic.ticks,
                 l_type.c_str());
-            l_tile->addGraphic( l_graphic);
+            l_tile->graphic.push_back( l_graphic);
         }
+    } else { // default
+        tile_graphic l_graphic;
+        l_graphic.length = 1;
+        l_graphic.name = "idle";
+        l_graphic.position = vec2{ 0, 0};
+        l_graphic.ticks = 1;
+        l_graphic.type = engine::tile_graphic_type::tile_graphic_type_dafault;
+        l_tile->graphic.push_back( l_graphic);
     }
 }
 
@@ -127,7 +138,7 @@ void tile_manager::reload( graphic_draw *graphic) {
     for( uint32_t i = 0; i < p_type.size(); i++) {
         tile *l_type = &p_type[i];
         // reload image
-        l_type->getImage()->reload( graphic);
+        l_type->image.reload( graphic);
     }
 }
 
@@ -150,7 +161,7 @@ bool tile_manager::removetype( tile *target) {
 
 tile *tile_manager::getById( uint16_t id) {
     for( uint32_t i = 0; i < p_type.size(); i++)
-        if( p_type[i].getId() == id)
+        if( p_type[i].id == id)
             return &p_type[i];
     return NULL;
 }

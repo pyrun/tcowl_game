@@ -2,12 +2,6 @@
 
 using namespace engine;
 
-tile::tile() {
-}
-
-tile::~tile() {
-}
-
 tile_graphic_type engine::stringToTileGraphicType( std::string string) {
     if( string == "special")
         return tile_graphic_type_special;

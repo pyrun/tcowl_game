@@ -33,26 +33,13 @@ namespace engine {
         uint32_t ticks;
     };
 
-    class tile {
-        public:
-            tile();
-            ~tile();
+    struct tile {
+            uint16_t id;
+            image image;
+            bool solid;
+            std::string folder;
 
-            void setFolderPath( std::string folder) { p_folder = folder; }
-            std::string getFolderPath() { return p_folder; }
-
-            void setId(uint16_t id) { p_id = id; }
-            uint16_t getId() { return p_id; }
-            image *getImage() { return &p_image; }
-
-            void addGraphic( tile_graphic tileg) { p_graphic.push_back(tileg); }
-            tile_graphic *getGraphic( uint32_t i) { return &p_graphic[i]; }
-        private:
-            uint16_t p_id;
-            image p_image;
-            std::string p_folder;
-
-            std::vector<tile_graphic> p_graphic;
+            std::vector<tile_graphic> graphic;
     };
 };
 
