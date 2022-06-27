@@ -51,3 +51,10 @@ function tcowl.entity.isInputPresent( id) end
 ---@return number x # x axie -1 to 1
 ---@return number y # y axie -1 to 1
 function tcowl.entity.getInputAxies( id) end
+
+---
+---Get input buttons
+---
+---@param id? number # object id
+---@return boolean attack # button attack
+function tcowl.entity.getInputAxies( id) end

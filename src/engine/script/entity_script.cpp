@@ -127,6 +127,21 @@ static int lua_getInputAxies( lua_State *state) {
     return 2;
 }
 
+static int lua_getInputButtons( lua_State *state) {
+    entity *l_obj;
+    int l_id;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    if( !l_obj->input)
+        return 0;
+
+    lua_pushnumber( state, l_obj->input->buttons[ input_buttons::input_buttons_attack]);
+    return 1;
+}
+
 #ifdef __cplusplus
 }
 #endif
@@ -138,6 +153,7 @@ static const struct luaL_Reg entity_lib_funcs[] = {
     {"doVelocity", lua_doVelocity},
     {"isInputPresent", lua_isInputPresent},
     {"getInputAxies", lua_getInputAxies},
+    {"getInputButtons", lua_getInputButtons},
     {NULL, NULL}
     };
 
