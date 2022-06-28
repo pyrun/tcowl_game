@@ -19,17 +19,13 @@ hub::~hub() {
 
 bool hub::testAABBAABB( const engine::fvec2 &rectPos1, const engine::fvec2 &rectSize1,
                         const engine::fvec2 &rectPos2, const engine::fvec2 &rectSize2) {
-    if( rectPos1.x < rectPos2.x + rectSize2.x &&
-        rectPos1.x + rectSize1.x > rectPos2.x &&
-        rectPos1.y < rectPos2.y + rectSize2.y &&
-        rectPos1.y + rectSize1.y > rectPos2.y)
-        return true;
+    return !(rectPos1.x + rectSize1.x < rectPos2.x || rectPos1.x > rectPos2.x + rectSize2.x || rectPos1.y + rectSize1.y < rectPos2.y || rectPos1.y > rectPos2.y + rectSize2.y); 
     return false;
 };
 
 // SweptAABB(Box b1, Box b2, float& normalx, float& normaly)
-engine::fvec2 hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &rect1,
-                        const engine::fvec2 &pos2, const engine::fvec2 &rect2,
+engine::fvec2 hub::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
+                        engine::fvec2 pos2, engine::fvec2 rect2,
                         engine::fvec2 velocity,
                         engine::vec2 *normal) {
     engine::fvec2 l_delta_entry;
@@ -56,7 +52,7 @@ engine::fvec2 hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &
     engine::fvec2 l_time_entry;
     engine::fvec2 l_time_exit;
 
-    if( velocity.x == 0.00f) {
+    if( velocity.x == 0.f) {
         l_time_entry.x = -std::numeric_limits<float>::infinity(); 
         l_time_exit.x = std::numeric_limits<float>::infinity(); 
     } else {
@@ -64,7 +60,7 @@ engine::fvec2 hub::sweptAABB(   const engine::fvec2 &pos1, const engine::fvec2 &
         l_time_exit.x = l_delta_exit.x / velocity.x; 
     }
 
-    if( velocity.y == 0.00f)  {
+    if( velocity.y == 0.f)  {
         l_time_entry.y = -std::numeric_limits<float>::infinity(); 
         l_time_exit.y = std::numeric_limits<float>::infinity(); 
     } else {
@@ -141,28 +137,44 @@ void hub::calcPhysic( float dt) {
                 engine::fvec2 l_position_other = l_body_other->getPosition() + l_body_other->getShape()->getOffset();
                 engine::fvec2 l_rect_other = l_body_other->getShape()->getAABB();
 
+                engine::fvec2 l_vel_dt = l_body->getVelocity() * dt;
+
+                if( l_body->getVelocity().x == 0.f && l_body->getVelocity().y == 0.f)
+                    continue;
+
                 // check collision simple
-                if( testAABBAABB(   l_body->getPosition() + l_body->getShape()->getOffset() + (l_body->getVelocity() * dt), l_body->getShape()->getAABB(),
+                if( testAABBAABB(   l_body->getPosition() + l_body->getShape()->getOffset() + engine::fvec2{ l_vel_dt.x<0.f?l_vel_dt.x:0.f, l_vel_dt.y<0.f?l_vel_dt.y:0.f },
+                                    l_body->getShape()->getAABB() + engine::fvec2{ l_vel_dt.x>0.f?l_vel_dt.x:0.f, l_vel_dt.y>0.f?l_vel_dt.y:0.f },
                                     l_position_other, l_rect_other)) {
                     l_body->setCollied( true);
                     // calculate collision
-                    engine::fvec2 l_collisiontime = sweptAABB( l_body->getPosition() + l_body->getShape()->getOffset(), l_body->getShape()->getAABB(), // obj
-                                                        l_position_other, l_rect_other, // other obj
+                    engine::fvec2 l_collisiontime = sweptAABB( l_body->getPosition() + l_body->getShape()->getOffset(), // pos
+                                                        l_body->getShape()->getAABB(), // size
+                                                        l_position_other, // pos obj
+                                                        l_rect_other, // size obj
                                                         l_body->getVelocity() * dt, // vel
                                                         &l_normal); // return normal
                     
                     // check if this collison is earlier than the previous one, if yes give them priority
-                    if( l_nearest_collisiontime.x >= l_collisiontime.x)
-                        l_nearest_collisiontime.x  = l_collisiontime.x;
-                    if( l_nearest_collisiontime.y >= l_collisiontime.y)
-                        l_nearest_collisiontime.y  = l_collisiontime.y;
+                    bool l_collision = false;
+
+
+                    if( l_nearest_collisiontime.x > l_collisiontime.x) {
+                        l_nearest_collisiontime.x  = l_collisiontime.x*0.99f;
+                        l_collision = true;
+                    }
+                    if( l_nearest_collisiontime.y > l_collisiontime.y) {
+                        l_nearest_collisiontime.y  = l_collisiontime.y*0.99f;
+                        l_collision = true;
+                    }
                     
                     // see which side is affected and set it
-                    l_collision_face.x = l_normal.x==0.f?l_collision_face.x:l_normal.x;
-                    l_collision_face.y = l_normal.y==0.f?l_collision_face.y:l_normal.y;
+                    if( l_collision) {
+                        l_collision_face = l_normal;
 
-                    if( p_debug_level > 1)
-                        engine::log( engine::log_debug, "hub::update %d %d", l_normal.x, l_normal.y);
+                        if( p_debug_level)
+                            engine::log( engine::log_debug, "hub::update %d %d %d with %d", l_normal.x, l_normal.y, i, n);
+                    }
                 }
             }
         }

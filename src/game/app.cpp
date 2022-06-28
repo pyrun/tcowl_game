@@ -62,7 +62,7 @@ void app::begin() {
         l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
-        l_id = p_entity.createObject(3);
+        /*l_id = p_entity.createObject(3);
         p_entity.setPosition( l_id, { 50, 102});
 
         l_id = p_entity.createObject(3);
@@ -79,7 +79,7 @@ void app::begin() {
         p_entity.setPosition( l_id, { 50, 50});
 
         l_id = p_entity.createObject(5);
-        p_entity.setPosition( l_id, { 100, 150});
+        p_entity.setPosition( l_id, { 100, 150});*/
 
         p_entity.deleteObject( 0);
     }
