@@ -29,8 +29,8 @@ function Intilisation( try)
 
     local world_size_x, world_size_y = tcowl.world.getSize()
 
-    local room_min_length = 2
-    local room_max_length = 10
+    local room_min_length = 4
+    local room_max_length = 20
 
     for i = 1, 5000 do
         local room = {}
