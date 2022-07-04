@@ -91,6 +91,7 @@ void app::begin() {
     if( p_network) {
         p_network->begin();
         p_network->addSync( &p_entity);
+        p_network->addSync( &p_world);
     }
 
     p_physics_lastime = SDL_GetTicks();

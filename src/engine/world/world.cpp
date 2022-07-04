@@ -230,6 +230,68 @@ void world::draw( engine::graphic_draw *graphic) {
     }
 }
 
+uint32_t world::outNetworkData( world_tile *tile, vec2 pos, uint8_t *dataDist) {
+    uint32_t l_offset = 0;
+
+    helper::int16toUint8x2( tile->biom->getId(), dataDist + l_offset); l_offset +=2;
+    helper::int16toUint8x2( tile->bot->id, dataDist + l_offset); l_offset +=2;
+    helper::int16toUint8x2( tile->animation_tick, dataDist + l_offset); l_offset +=2;
+    helper::int16toUint8x2( pos.x, dataDist + l_offset); l_offset +=2;
+    helper::int16toUint8x2( pos.y, dataDist + l_offset); l_offset +=2;
+
+    return l_offset;
+}
+
+void world::inNetworkData( uint8_t *dataDist) {
+    uint32_t l_offset = 0;
+    int16_t l_id_biom, l_id, l_animation_tick;
+    int16_t l_x, l_y;
+
+    helper::uint8x2toInt16( dataDist + l_offset, &l_id_biom); l_offset +=2;
+    helper::uint8x2toInt16( dataDist + l_offset, &l_id); l_offset +=2;
+    helper::uint8x2toInt16( dataDist + l_offset, &l_animation_tick); l_offset +=2;
+    helper::uint8x2toInt16( dataDist + l_offset, &l_x); l_offset +=2;
+    helper::uint8x2toInt16( dataDist + l_offset, &l_y); l_offset +=2;
+
+    engine::tile *l_tile = p_tileset->getById( l_id);
+    if( l_tile == nullptr)
+        return;
+    
+    setTile( l_x, l_y, l_tile);
+    engine::world_tile *l_world_tile = getTile( l_x, l_y);
+    l_world_tile->animation_tick = l_animation_tick;
+
+    // TODO Biom
+}
+
+void world::network_update( network::interface *network_interface) {
+    
+}
+
+bool world::newClientCallback( network::client *client, network::interface *network_interface) {
+    network::packet l_packet;
+
+    for( int32_t x = 0; x < WORLD_SIZE; x++) {
+        for( int32_t y = 0; y < WORLD_SIZE; y++) {
+            world_tile *l_tile = getTile( x, y);
+
+            l_packet.type = engine::network_id::network_id_world_data;
+            l_packet.length = outNetworkData( l_tile, { x, y}, l_packet.data);
+            l_packet.crc = network::getCRC8( l_packet);
+
+            network_interface->sendPacket( l_packet, client);
+        }
+    }
+    log( log_trace, "world::newClientCallback");
+    return true;
+}
+
+void world::recvPacket( network::packet packet) {
+    // todo check okay
+    if( packet.type == engine::network_id::network_id_world_data )
+        inNetworkData( packet.data);
+}
+
 void world::update() {
     engine::used_world_handler = this;
 

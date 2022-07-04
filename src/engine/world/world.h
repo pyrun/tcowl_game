@@ -7,6 +7,8 @@
 #include "../graphic.h"
 #include "../physic/body.h"
 #include "../physic/hub.h"
+#include "../network_ids.h"
+#include "../../network/network.h"
 
 #include "room.h"
 #include "tile.h"
@@ -32,7 +34,7 @@ namespace engine {
         physic::shape_rect *shape;
     };
 
-    class world : public engine::graphic_object {
+    class world : public engine::graphic_object, public network::synchronisation {
         public:
             world();
             ~world();
@@ -53,6 +55,13 @@ namespace engine {
 
             void reload( engine::graphic_draw *graphic) override;
             void draw( engine::graphic_draw *graphic) override;
+
+            uint32_t outNetworkData( world_tile *tile, vec2 pos, uint8_t *dataDist);
+            void inNetworkData( uint8_t *dataDist);
+
+            void network_update( network::interface *network_interface) override;
+            bool newClientCallback( network::client *client, network::interface *network_interface) override;
+            void recvPacket( network::packet packet) override;
 
             void update();
 
