@@ -188,11 +188,12 @@ void server::update() {
     for( uint32_t i = 0; (i < p_sync_objects.size()) && l_ready; i++) {
         network::synchronisation *l_sync = p_sync_objects[i];
         l_sync->network_update( this);
-
+    }
+    
+    if( l_ready)
         // heatbeat
         sendHeartbeat( NULL);
-    }
-
+    
     //try to accept a connection 
     l_client_socket = SDLNet_TCP_Accept( p_server_socket); 
     if( l_client_socket) {
