@@ -55,30 +55,28 @@ void server::sendPacket( packet packet, client *client) {
 
     // Termination
     l_temp_data[l_offset>=NETWORK_SERVER_PACKETSIZE?NETWORK_SERVER_PACKETSIZE-1:l_offset] = 0;
-
-    if( client == nullptr || 1) {
-
+    if( client == nullptr) {
         bool l_clients = false;
-        for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++)
-            if( p_clients[i] != nullptr)
+        for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
+            if( p_clients[i] != nullptr) {
                 l_clients = true;
-            
-        
+                p_clients[i]->ready = false;
+            }
+        }
+
         if( l_clients == false)
             return;
-        
+
         ENetPacket *l_packet = enet_packet_create( l_temp_data, l_offset, ENET_PACKET_FLAG_RELIABLE);
         enet_host_broadcast( p_server, 0, l_packet);
-
-        /*for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
-            if( p_clients[i] == nullptr)
-                continue;
-            enet_peer_send ( &p_clients[i]->peer, 0, l_packet);
-            p_clients[i]->ready = false;
-        }*/
     } else {
+        if( client->peerID >= p_server->peerCount) {
+            delClient( client);
+            return;
+        }
+        
         ENetPacket *l_packet = enet_packet_create( l_temp_data, l_offset, ENET_PACKET_FLAG_RELIABLE);
-        enet_peer_send ( &client->peer, 0, l_packet);
+        enet_peer_send ( &p_server->peers[client->peerID], 0, l_packet);
         client->ready = false;
     }
 }
@@ -110,7 +108,7 @@ bool server::addClient( ENetPeer *peer) {
     // set up the client
     p_clients[ l_index] = new client;
     l_client = getClient( l_index);
-    l_client->peer = *peer;
+    l_client->peerID = peer->incomingPeerID;
     l_client->index = l_index;
     l_client->id = p_id_counter++;
     l_client->ready = true;
@@ -118,7 +116,7 @@ bool server::addClient( ENetPeer *peer) {
     // print out the clients IP and port number 
     engine::log( engine::log_debug, "server::addClient Accepted a connection with id %d from %d.%d.%d.%d port %hu", l_client->id,
         peer->address.host&0xff, (peer->address.host>>8)&0xff, (peer->address.host>>16)&0xff, peer->address.host>>24,
-        l_client->peer.address.port); 
+        peer->address.port); 
 
     for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
         network::synchronisation *l_sync = p_sync_objects[i];
@@ -126,8 +124,7 @@ bool server::addClient( ENetPeer *peer) {
     }
     
     // heatbeat start
-    sendHeartbeat();
-
+    sendHeartbeat( l_client);
     return true;
 }
 
@@ -140,11 +137,16 @@ void server::delClient( client *client_ptr) {
 
 void server::update() {
     ENetEvent l_event;
-
     while (enet_host_service (p_server, & l_event, 0) > 0) {
         switch( l_event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
                 addClient( l_event.peer);
+            } break;
+
+            case ENET_EVENT_TYPE_DISCONNECT: {
+                for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++)
+                    if( getClient( i) != nullptr && getClient( i)->peerID == l_event.peer->incomingPeerID)
+                        delClient(getClient( i));
             } break;
 
             case ENET_EVENT_TYPE_RECEIVE: {
@@ -180,7 +182,7 @@ void server::update() {
                 
                 if( l_packet.type == network_type_heartbeat) {
                     for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++)
-                        if( getClient( i) != nullptr && getClient( i)->peer.address.host == l_event.peer->address.host)
+                        if( getClient( i) != nullptr && getClient( i)->peerID == l_event.peer->incomingPeerID)
                             getClient( i)->ready = true;
                     continue;
                 }
@@ -200,7 +202,7 @@ void server::update() {
     }
 
     // network update
-    bool l_ready = true;
+    bool l_ready = true, l_heartbeat = false;
     for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
         if( getClient( i) != NULL &&
             getClient( i)->ready == false)
@@ -209,98 +211,12 @@ void server::update() {
     for( uint32_t i = 0; (i < p_sync_objects.size()) && l_ready; i++) {
         network::synchronisation *l_sync = p_sync_objects[i];
         l_sync->network_update( this);
+        l_heartbeat = true;
     }
     
     // heatbeat
-    if( l_ready)
-        sendHeartbeat( NULL);
-
-    /*
-    TCPsocket l_client_socket;
-
-    // check
-    if( p_server_socket == NULL)
-        return;
-
-    // network update
-    bool l_ready = true;
-    for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
-        if( getClient( i) != NULL &&
-            getClient( i)->ready == false)
-            l_ready = false;
-    }
-    for( uint32_t i = 0; (i < p_sync_objects.size()) && l_ready; i++) {
-        network::synchronisation *l_sync = p_sync_objects[i];
-        l_sync->network_update( this);
-    }
-    
-    if( l_ready)
-        // heatbeat
-        sendHeartbeat( NULL);
-    
-    //try to accept a connection 
-    l_client_socket = SDLNet_TCP_Accept( p_server_socket); 
-    if( l_client_socket) {
-        if( addClient( l_client_socket) == false) {
-           SDLNet_TCP_Close( l_client_socket); 
-        }
-    }
-    
-    // check for recv
-    int32_t l_num_active_sockets = SDLNet_CheckSockets( p_server_socketset, 0);
-    for( uint32_t i = 0; (i < NETWORK_SERVER_MAX_CLIENTS) && l_num_active_sockets; i++) {
-        client *l_client = getClient( i);
-        if( l_client == NULL)
-            continue;
-        if( !SDLNet_SocketReady( l_client->socket))
-            continue;
-
-        // found one
-        l_num_active_sockets--;
-
-        // recv routine
-        uint16_t l_length, flag;
-        l_length = 2;
-        uint8_t* data = recvData( l_client, &l_length);
-        if( data == NULL ||
-            l_length != 2) // min 2
-            continue;
-
-        packet l_packet;
-
-        // get type and length
-        l_packet.type = (network::packet_type)data[0];
-        l_packet.length = data[1];
-
-        // get data and CRC
-        free( data);
-        l_length = l_packet.length + 1; // crc
-        data = recvData( l_client, &l_length);
-
-        // check if valid
-        if( l_length != l_packet.length + 1)
-            continue;
-        
-        // copy data
-        memcpy( l_packet.data, data, l_packet.length);
-        l_packet.crc = data[ l_packet.length];
-        free( data);
-
-        // check CRC
-        if( l_packet.crc != getCRC8( l_packet))
-            continue;
-        
-        if( l_packet.type == network_type_heartbeat) {
-            l_client->ready = true;
-            continue;
-        }
-
-        // pocess packet
-        for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
-            network::synchronisation *l_sync = p_sync_objects[i];
-            l_sync->recvPacket( l_packet);
-        }
-    }*/
+    if( l_heartbeat)
+        sendHeartbeat();
 }
 
 void server::close() {

@@ -27,6 +27,8 @@ namespace network {
             void update() override;
 
             void close() override;
+
+            bool isConnected() override { return true; } // server is always online
         private:
             int32_t getFreeClientIndex();
             client *getClient( uint32_t index) { return p_clients[index]; }

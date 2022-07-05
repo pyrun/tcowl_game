@@ -145,8 +145,13 @@ bool app::update() {
 
     // Update
     p_player.update();
-    if( p_network)
+    if( p_network) {
         p_network->update();
+
+        // when the connection is closed -> close application
+        if( p_network->isConnected() == false)
+            return false;
+    }
     p_world.update();
     
     // physics

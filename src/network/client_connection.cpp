@@ -41,16 +41,16 @@ bool client_connection::begin() {
         return false;
     }
 
-    /*if (enet_host_service (p_client, &l_event, 5000) > 0 &&
+    if (enet_host_service (p_client, &l_event, 5000) > 0 &&
         l_event.type == ENET_EVENT_TYPE_CONNECT)
     {
         engine::log( engine::log_debug, "client_connection::begin connect was succeeded");
-    } else {
+    } else  {
         engine::log( engine::log_error, "client_connection::begin Connection was not possible");
         enet_peer_reset( p_peer);
+        p_peer = nullptr;
         return false;
-    }*/
-
+    }
     return true;
 }
 
@@ -68,8 +68,6 @@ void client_connection::sendPacket( packet packet, client *client) {
 
     ENetPacket *l_packet = enet_packet_create( l_temp_data, l_offset, ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send ( p_peer, 0, l_packet);
-    if( client)
-        client->ready = false;
 }
 
 void client_connection::addSync( synchronisation *sync) {
@@ -91,7 +89,13 @@ void client_connection::update() {
     while (enet_host_service (p_client, &l_event, 0) > 0) {
         switch( l_event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
-                engine::log( engine::log_debug, "update ENET_EVENT_TYPE_CONNECT");
+                engine::log( engine::log_warn, "client_connection::update unexpected new connection");
+            } break;
+
+            case ENET_EVENT_TYPE_DISCONNECT: {
+                engine::log( engine::log_warn, "client_connection::update connection disconnected");
+                enet_peer_reset ( p_peer);
+                p_peer = nullptr;
             } break;
 
             case ENET_EVENT_TYPE_RECEIVE: {
@@ -116,7 +120,7 @@ void client_connection::update() {
                     engine::log( engine::log_debug, "client_connection::update packet was faulty");
                     continue;
                 }
-                
+
                 // copy data
                 memcpy( l_packet.data, l_event.packet->data+2, l_packet.length);
                 l_packet.crc = l_event.packet->data[ l_packet.length+2];
@@ -124,11 +128,10 @@ void client_connection::update() {
 
                 // check CRC
                 if( l_packet.crc != getCRC8( l_packet))
-                    return;
-                
+                    continue;
                 if( l_packet.type == network_type_heartbeat) {
-                    sendHeartbeat( NULL);
-                    return;
+                    sendHeartbeat();
+                    continue;
                 }
 
                 // pocess packet
@@ -139,62 +142,10 @@ void client_connection::update() {
             } break;
 
             default:
-                engine::log( engine::log_debug, "server::update unknow message %d", l_event.type);
+                engine::log( engine::log_debug, "client_connection::update unknow message %d", l_event.type);
             break;
         }
     }
-
-    // check for recv
-    /*int32_t l_ready = 1;
-    while( l_ready) {
-        // check if we connected
-        if( p_socketset == NULL)
-            return;
-        l_ready = SDLNet_CheckSockets( p_socketset, 0);
-        if( SDLNet_SocketReady( p_socket)) {
-            uint16_t l_length, flag;
-            l_length = 2;
-            uint8_t* data = recvData( &l_length);
-            if( data == NULL ||
-                l_length != 2) // min 3
-                return;
-
-            packet l_packet;
-
-            // get type and length
-            l_packet.type = (network::packet_type)data[0];
-            l_packet.length = data[1];
-
-            // get data and CRC
-            free( data);
-            l_length = l_packet.length + 1; // crc
-            data = recvData( &l_length);
-
-            // check if valid
-            if( l_length != l_packet.length + 1)
-                return;
-            
-            // copy data
-            memcpy( l_packet.data, data, l_packet.length);
-            l_packet.crc = data[ l_packet.length];
-            free( data);
-
-            // check CRC
-            if( l_packet.crc != getCRC8( l_packet))
-                return;
-            
-            if( l_packet.type == network_type_heartbeat) {
-                sendHeartbeat( NULL);
-                return;
-            }
-
-            // pocess packet
-            for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
-                network::synchronisation *l_sync = p_sync_objects[i];
-                l_sync->recvPacket( l_packet);
-            }
-        }
-    }*/
 }
 
 void client_connection::close() {

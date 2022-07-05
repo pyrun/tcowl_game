@@ -23,6 +23,8 @@ namespace network {
             void update() override;
 
             void close() override;
+
+            bool isConnected() override { return p_peer != nullptr; }
         private:
             uint16_t p_port;
             std::string p_address;

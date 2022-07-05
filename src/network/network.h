@@ -13,15 +13,15 @@ namespace network {
     struct client {
         uint32_t id;
         uint32_t index;
-        ENetPeer peer;
+        uint32_t peerID;
 
         bool ready;
     };
 
-    // 0...127 system
+    // 1...127 system
     // 128-255 user
     enum packet_type : uint32_t {
-        network_type_heartbeat = 0
+        network_type_heartbeat = 1
     };
 
     struct packet {
@@ -44,6 +44,8 @@ namespace network {
 
             // client == null -> all clients
             void sendHeartbeat( client *client = nullptr);
+
+            virtual bool isConnected() = 0;
     };
 
     class synchronisation {
