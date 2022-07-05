@@ -16,6 +16,11 @@ include_directories(${LUA_INCLUDE_DIR})
 link_directories(${LUA_LIB_DIR})
 
 
+set(ENET_INCLUDE_DIR ../enet/include)
+set(ENET_LIB_DIR ../enet)
+include_directories(${ENET_INCLUDE_DIR})
+link_directories(${ENET_LIB_DIR})
+
 SET(RESOURCE_FILE resource.res)
 
 file(GLOB source_files
@@ -34,7 +39,7 @@ set_target_properties(TheCommemorationOfWhiteLight PROPERTIES LINK_FLAGS ${RESOU
 
 target_link_libraries( TheCommemorationOfWhiteLight mingw32 SDL2main SDL2 SDL2_net SDL2_image)
 target_link_libraries( TheCommemorationOfWhiteLight -static-libgcc -static-libstdc++)
-target_link_libraries( TheCommemorationOfWhiteLight lua53)
+target_link_libraries( TheCommemorationOfWhiteLight lua53 enet ws2_32 winmm)
 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
