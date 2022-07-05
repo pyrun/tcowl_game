@@ -17,29 +17,40 @@ client_connection::~client_connection() {
 }
 
 bool client_connection::begin() {
-    IPaddress l_ip;
+    ENetAddress l_address;
+    ENetEvent l_event;
 
-    if( SDLNet_ResolveHost( &l_ip, p_address.c_str(), p_port) == -1) {
-        engine::log( engine::log_error, "client_connection::begin SDLNet_ResolveHost: %s",SDLNet_GetError());
+    if (enet_initialize() != 0) {
+        engine::log( engine::log_error, "client_connection::begin An error occured while initializing ENet");
         return false;
     }
- 
-    p_socket = SDLNet_TCP_Open(&l_ip);
-    if( p_socket == NULL) {
-        engine::log( engine::log_error, "client_connection::begin SDLNet_TCP_Open: %s",SDLNet_GetError());
+
+    p_client = enet_host_create( NULL, 1, 2, 0, 0);
+
+    if( p_client == nullptr) {
+        engine::log( engine::log_error, "client_connection::begin An error occurred while trying to create an ENet client host.");
         return false;
     }
- 
-    p_socketset = SDLNet_AllocSocketSet(1);
-    if( p_socketset == NULL) {
-        engine::log( engine::log_error, "client_connection::begin SDLNet_AllocSocketSet: %s",SDLNet_GetError());
+
+    enet_address_set_host( &l_address, p_address.c_str());
+    l_address.port = p_port;
+
+    p_peer = enet_host_connect( p_client, &l_address, 2, 0);
+    if( p_peer == nullptr) {
+        engine::log( engine::log_error, "client_connection::begin An error occurred while trying to connect host %s.", p_address.c_str());
         return false;
     }
- 
-    if( SDLNet_TCP_AddSocket( p_socketset, p_socket) == -1) {
-        engine::log( engine::log_error, "client_connection::begin SDLNet_TCP_AddSocket: %s",SDLNet_GetError());
+
+    /*if (enet_host_service (p_client, &l_event, 5000) > 0 &&
+        l_event.type == ENET_EVENT_TYPE_CONNECT)
+    {
+        engine::log( engine::log_debug, "client_connection::begin connect was succeeded");
+    } else {
+        engine::log( engine::log_error, "client_connection::begin Connection was not possible");
+        enet_peer_reset( p_peer);
         return false;
-    }
+    }*/
+
     return true;
 }
 
@@ -55,11 +66,10 @@ void client_connection::sendPacket( packet packet, client *client) {
     l_temp_data[l_offset] = getCRC8( packet);
     l_offset++;
 
-    int l_send_length = SDLNet_TCP_Send( p_socket, l_temp_data, l_offset);
-    if( l_send_length < l_offset) {
-        engine::log( engine::log_error, "server::sendPacket SDLNet_TCP_Send: %s", SDLNet_GetError());
-        close();
-    }
+    ENetPacket *l_packet = enet_packet_create( l_temp_data, l_offset, ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send ( p_peer, 0, l_packet);
+    if( client)
+        client->ready = false;
 }
 
 void client_connection::addSync( synchronisation *sync) {
@@ -76,24 +86,66 @@ bool client_connection::delSync( synchronisation *sync) {
     return false;
 }
 
-uint8_t* client_connection::recvData( uint16_t *length) {
-    uint8_t l_temp_data[ *length];
-    int l_num_recv = SDLNet_TCP_Recv( p_socket, l_temp_data, *length);
- 
-    if( l_num_recv <= 0) {
-        close();
-        return NULL;
-    } else {
-        *length = l_num_recv;
-        uint8_t* l_data = (uint8_t*) malloc( l_num_recv*sizeof(uint8_t));
-        memcpy( l_data, l_temp_data, l_num_recv);
-        return l_data;
-    }
-}
-
 void client_connection::update() {
+    ENetEvent l_event;
+    while (enet_host_service (p_client, &l_event, 0) > 0) {
+        switch( l_event.type) {
+            case ENET_EVENT_TYPE_CONNECT: {
+                engine::log( engine::log_debug, "update ENET_EVENT_TYPE_CONNECT");
+            } break;
+
+            case ENET_EVENT_TYPE_RECEIVE: {
+                // recv routine
+                uint16_t l_length, flag;
+                l_length = l_event.packet->dataLength;
+
+                if( l_length < 2) {
+                    enet_packet_destroy( l_event.packet);
+                    engine::log( engine::log_debug, "client_connection::update wrong length");
+                    continue;
+                }
+
+                packet l_packet;
+                // get type and length
+                l_packet.type = (network::packet_type)l_event.packet->data[0];
+                l_packet.length = l_event.packet->data[1];
+
+                // check if valid
+                if( l_length != l_packet.length + 3) {
+                    enet_packet_destroy( l_event.packet);
+                    engine::log( engine::log_debug, "client_connection::update packet was faulty");
+                    continue;
+                }
+                
+                // copy data
+                memcpy( l_packet.data, l_event.packet->data+2, l_packet.length);
+                l_packet.crc = l_event.packet->data[ l_packet.length+2];
+                enet_packet_destroy( l_event.packet);
+
+                // check CRC
+                if( l_packet.crc != getCRC8( l_packet))
+                    return;
+                
+                if( l_packet.type == network_type_heartbeat) {
+                    sendHeartbeat( NULL);
+                    return;
+                }
+
+                // pocess packet
+                for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
+                    network::synchronisation *l_sync = p_sync_objects[i];
+                    l_sync->recvPacket( l_packet);
+                }
+            } break;
+
+            default:
+                engine::log( engine::log_debug, "server::update unknow message %d", l_event.type);
+            break;
+        }
+    }
+
     // check for recv
-    int32_t l_ready = 1;
+    /*int32_t l_ready = 1;
     while( l_ready) {
         // check if we connected
         if( p_socketset == NULL)
@@ -142,15 +194,10 @@ void client_connection::update() {
                 l_sync->recvPacket( l_packet);
             }
         }
-    }
+    }*/
 }
 
 void client_connection::close() {
-    if(SDLNet_TCP_DelSocket( p_socketset, p_socket) == -1) {
-        engine::log( engine::log_error, "client_connection::close SDLNet_TCP_DelSocket: %s",SDLNet_GetError());
-        exit(-1);
-    }
- 
-    SDLNet_FreeSocketSet( p_socketset);
-    SDLNet_TCP_Close( p_socket);
+    if( p_client)
+        enet_host_destroy(p_client);
 }

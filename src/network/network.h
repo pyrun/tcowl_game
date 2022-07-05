@@ -1,8 +1,9 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <stdint.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
+#include <enet/enet.h>
 
 #define NETWORK_SERVER_DEFAULT_PORT 22255
 #define NETWORK_PACKET_MAX_SIZE 1024
@@ -12,8 +13,7 @@ namespace network {
     struct client {
         uint32_t id;
         uint32_t index;
-        TCPsocket socket; 
-        IPaddress *IPadress;
+        ENetPeer peer;
 
         bool ready;
     };
@@ -31,11 +31,8 @@ namespace network {
         uint8_t crc;
     };
 
-    class interface {
+    class connection {
         public:
-            interface() {}
-            ~interface() {}
-
             virtual bool begin() = 0;
             
             // Falls client == NULL wird es an alle versendet die verbunden sind
@@ -45,17 +42,18 @@ namespace network {
 
             virtual void close() = 0;
 
-            void sendHeartbeat( client *client);
+            // client == null -> all clients
+            void sendHeartbeat( client *client = nullptr);
     };
 
     class synchronisation {
         public:
-            virtual void network_update( network::interface *network_interface) = 0;
-            virtual bool newClientCallback( network::client *client, network::interface *network_interface) = 0;
+            virtual void network_update( network::connection *network_interface) = 0;
+            virtual bool newClientCallback( network::client *client, network::connection *network_interface) = 0;
             virtual void recvPacket( network::packet packet) = 0;
     };
 
-    class service : public interface {
+    class service : public connection {
         public:
             virtual void addSync( synchronisation *sync) = 0;
             virtual bool delSync( synchronisation *sync) = 0;

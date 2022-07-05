@@ -59,8 +59,8 @@ namespace engine {
             uint32_t outNetworkData( world_tile *tile, vec2 pos, uint8_t *dataDist);
             void inNetworkData( uint8_t *dataDist);
 
-            void network_update( network::interface *network_interface) override;
-            bool newClientCallback( network::client *client, network::interface *network_interface) override;
+            void network_update( network::connection *network_interface) override;
+            bool newClientCallback( network::client *client, network::connection *network_interface) override;
             void recvPacket( network::packet packet) override;
 
             void update();

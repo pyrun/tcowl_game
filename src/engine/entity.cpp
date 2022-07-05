@@ -277,7 +277,7 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
 }
 
-void entity_handler::network_update( network::interface *network_interface) {
+void entity_handler::network_update( network::connection *network_interface) {
     network::packet l_packet;
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         engine::entity *l_entity = p_entity[i];
@@ -294,7 +294,7 @@ void entity_handler::network_update( network::interface *network_interface) {
     }
 }
 
-bool entity_handler::newClientCallback( network::client *client, network::interface *network_interface) {
+bool entity_handler::newClientCallback( network::client *client, network::connection *network_interface) {
     network::packet l_packet;
 
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {

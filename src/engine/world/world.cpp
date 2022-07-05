@@ -264,11 +264,11 @@ void world::inNetworkData( uint8_t *dataDist) {
     // TODO Biom
 }
 
-void world::network_update( network::interface *network_interface) {
+void world::network_update( network::connection *network_interface) {
     
 }
 
-bool world::newClientCallback( network::client *client, network::interface *network_interface) {
+bool world::newClientCallback( network::client *client, network::connection *network_interface) {
     network::packet l_packet;
 
     for( int32_t x = 0; x < WORLD_SIZE; x++) {

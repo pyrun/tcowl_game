@@ -22,10 +22,8 @@ namespace network {
             void addSync( synchronisation *sync) override;
             bool delSync( synchronisation *sync) override;
 
-            bool addClient( TCPsocket socket);
+            bool addClient( ENetPeer *peer);
             void delClient( client *client_ptr);
-            uint8_t* recvData( client *client_ptr, uint16_t* length);
-
             void update() override;
 
             void close() override;
@@ -33,9 +31,8 @@ namespace network {
             int32_t getFreeClientIndex();
             client *getClient( uint32_t index) { return p_clients[index]; }
         private:
-            TCPsocket p_server_socket;
-            IPaddress p_ipadress;
-            SDLNet_SocketSet p_server_socketset;
+            ENetAddress p_address;
+            ENetHost* p_server;
             uint16_t p_port;
 
             uint32_t p_id_counter;

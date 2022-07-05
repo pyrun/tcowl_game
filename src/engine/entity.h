@@ -64,8 +64,8 @@ namespace engine {
             uint32_t getAmount() { return p_amount; }
 
             // network
-            void network_update( network::interface *network_interface);
-            bool newClientCallback( network::client *client, network::interface *network_interface);
+            void network_update( network::connection *network_interface);
+            bool newClientCallback( network::client *client, network::connection *network_interface);
             void recvPacket( network::packet packet);
             
             const uint32_t getPriority() override { return 128; }
