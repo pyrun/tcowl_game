@@ -1,13 +1,14 @@
 #ifndef ENGINE_ENTITY_H
 #define ENGINE_ENTITY_H
 
-#include "graphic.h"
 #include "type.h"
-#include "world/world.h"
-#include "script.h"
-#include "../network/network.h"
-#include "input.h"
-#include "physic/hub.h"
+
+#include <engine/graphic.h>
+#include <engine/world/world.h>
+#include <engine/script.h>
+#include <engine/input.h>
+#include <engine/physic/hub.h>
+#include <network/network.h>
 
 #include <string>
 

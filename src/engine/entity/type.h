@@ -1,10 +1,10 @@
 #ifndef ENGINE_TYPE_H
 #define ENGINE_TYPE_H
 
-#include "vec.h"
-#include "graphic.h"
-#include "image.h"
-#include "physic/shape.h"
+#include <engine/vec.h>
+#include <engine/graphic.h>
+#include <engine/image.h>
+#include <engine/physic/shape.h>
 
 #include <string>
 

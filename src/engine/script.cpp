@@ -2,7 +2,7 @@
 
 #include "helper.h"
 #include "log.h"
-#include "type.h"
+#include "entity/type.h"
 
 #include "script/world_script.h"
 #include "script/entity_script.h"

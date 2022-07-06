@@ -2,7 +2,7 @@
 
 #include <string>
 #include "../log.h"
-#include "../entity.h"
+#include "../entity/entity.h"
 
 using namespace engine;
 

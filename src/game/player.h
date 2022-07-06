@@ -4,7 +4,7 @@
 #include "../engine/graphic.h"
 #include "../engine/font.h"
 #include "../engine/input.h"
-#include "../engine/entity.h"
+#include "../engine/entity/entity.h"
 
 
 namespace game {

@@ -1,10 +1,10 @@
 #include "entity.h"
 
-#include "string.h"
-#include "log.h"
-#include "timer.h"
-#include "helper.h"
-#include "network_ids.h"
+#include <string.h>
+#include <engine/log.h>
+#include <engine/timer.h>
+#include <engine/helper.h>
+#include <engine/network_ids.h>
 
 #include <cstdint>
 #include <algorithm>
@@ -13,14 +13,14 @@
 
 using namespace engine;
 
-entity_handler *engine::used_entity_handler = NULL;
+entity_handler *engine::used_entity_handler = nullptr;
 
 entity_handler::entity_handler() {
     p_draw_order.reserve( ENGINE_ENTITY_MAX_AMOUNT);
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
-        p_entity[i] = NULL;
+        p_entity[i] = nullptr;
     }
-    p_types = NULL;
+    p_types = nullptr;
     p_amount = 0;
 }
 
@@ -33,7 +33,7 @@ void entity_handler::init( type_handler *types) {
 }
 
 int16_t entity_handler::createObject( std::string name) {
-    if( p_types == NULL)
+    if( p_types == nullptr)
         return -1;
     for( uint32_t i = 0; i < p_types->getAmount(); i++)
         if( strcmp( p_types->get(i)->getName(), name.c_str()) == 0)
@@ -42,27 +42,27 @@ int16_t entity_handler::createObject( std::string name) {
 }
 
 int16_t entity_handler::createObject( uint16_t objid) {
-    if( p_types == NULL)
+    if( p_types == nullptr)
         return -1;
     type *l_type = p_types->getById( objid);
-    if( l_type == NULL)
+    if( l_type == nullptr)
         return -1;
     return createObject( l_type);
 }
 
 int16_t entity_handler::createObject( type *objtype, int32_t index) {
-    if( p_types == NULL)
+    if( p_types == nullptr)
         return -1;
-    if( objtype == NULL)
+    if( objtype == nullptr)
         return -1;
     
-    entity *l_entity = NULL;
+    entity *l_entity = nullptr;
     bool l_found = false;
     uint16_t l_index = 0;
 
     if( index < 0) {
         for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
-            if( p_entity[i] == NULL) {
+            if( p_entity[i] == nullptr) {
                 l_found = true;
                 l_index = i;
                 break;
@@ -89,11 +89,11 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
 
     l_entity->action = 0;
 
-    l_entity->lua_state = NULL;
+    l_entity->lua_state = nullptr;
     loadScriptFile( l_entity);
 
     l_entity->change = true;
-    l_entity->input = NULL;
+    l_entity->input = nullptr;
     
     log( log_trace, "entity_handler::createObject %d", l_index);
 
@@ -104,7 +104,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
 
 bool entity_handler::deleteObject( uint32_t index) {
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
-        if( p_entity[i] != NULL && p_entity[i]->index == index) {
+        if( p_entity[i] != nullptr && p_entity[i]->index == index) {
             entity *l_entity = p_entity[i];
 
             for( uint32_t n = 0; n < p_draw_order.size(); n++) {
@@ -116,7 +116,7 @@ bool entity_handler::deleteObject( uint32_t index) {
             log( log_trace, "entity_handler::deleteObject %d", index);
             p_hub.del( l_entity->body);
             delete p_entity[i];
-            p_entity[i] = NULL;
+            p_entity[i] = nullptr;
             p_amount--;
             return true;
         }
@@ -128,9 +128,9 @@ bool entity_handler::loadScriptFile( entity *entity) {
     std::string l_file;
 
     // check for null
-    if( entity == NULL)
+    if( entity == nullptr)
         return false;
-    if( entity->objtype == NULL) {
+    if( entity->objtype == nullptr) {
         log( log_error, "entity_handler::loadScriptFile type not found!\n");
         return false;
     }
@@ -146,7 +146,7 @@ bool entity_handler::loadScriptFile( entity *entity) {
     engine::used_entity_handler = this;
     script::run( entity->lua_state);
     script::function( "Intilisation", entity->lua_state, entity->index);
-    engine::used_entity_handler = NULL;
+    engine::used_entity_handler = nullptr;
     
     return true;
 }
@@ -193,10 +193,10 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     helper::uint8x2toInt16( dataDist + l_offset, &l_index); l_offset +=2;
     helper::uint8x2toInt16( dataDist + l_offset, &l_type_id); l_offset +=2;
     
-    if( p_types->getById( l_type_id) == NULL)
+    if( p_types->getById( l_type_id) == nullptr)
         return;
     entity *l_entity = get(l_index);
-    if( l_entity == NULL) {
+    if( l_entity == nullptr) {
         createObject( p_types->getById( l_type_id), l_index);
         l_entity = get( l_index);
     }
@@ -220,13 +220,13 @@ void entity_handler::update( float dt, world *world) {
 
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         engine::entity *l_entity = p_entity[i];
-        if( l_entity == NULL)
+        if( l_entity == nullptr)
             continue;
         script::function( "Update", l_entity->lua_state, l_entity->index);
     }
 
     // Freigeben
-    engine::used_entity_handler = NULL;
+    engine::used_entity_handler = nullptr;
 }
 
 void entity_handler::reload( engine::graphic_draw *graphic) {
@@ -281,7 +281,7 @@ void entity_handler::network_update( network::connection *network_interface) {
     network::packet l_packet;
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         engine::entity *l_entity = p_entity[i];
-        if( l_entity == NULL ||
+        if( l_entity == nullptr ||
             l_entity->change == false)
             continue;
 
@@ -290,7 +290,7 @@ void entity_handler::network_update( network::connection *network_interface) {
         l_packet.crc = network::getCRC8( l_packet);
         l_entity->change = false;
 
-        network_interface->sendPacket( l_packet, NULL);
+        network_interface->sendPacket( l_packet, nullptr);
     }
 }
 
@@ -299,7 +299,7 @@ bool entity_handler::newClientCallback( network::client *client, network::connec
 
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
         engine::entity *l_entity = p_entity[i];
-        if( l_entity == NULL)
+        if( l_entity == nullptr)
             continue;
 
         l_packet.type = engine::network_id::network_id_object_data;
