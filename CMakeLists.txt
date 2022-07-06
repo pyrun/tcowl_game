@@ -23,6 +23,7 @@ link_directories(${ENET_LIB_DIR})
 
 SET(RESOURCE_FILE resource.res)
 
+include_directories( src)
 file(GLOB source_files
             "src/*.cpp"
             "src/*.h"
