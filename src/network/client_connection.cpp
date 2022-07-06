@@ -149,6 +149,27 @@ void client_connection::update() {
 }
 
 void client_connection::close() {
-    if( p_client)
+    if( p_client) {
+        enet_peer_disconnect( p_peer, 0);
+
+        ENetEvent l_event;
+        bool l_quit = false;
+        while( l_quit == false && enet_host_service (p_client, &l_event, 3000) > 0) {
+            switch (l_event.type) {
+                case ENET_EVENT_TYPE_RECEIVE: {
+                    enet_packet_destroy (l_event.packet);
+                } break;
+                case ENET_EVENT_TYPE_DISCONNECT: {
+                    engine::log( engine::log_debug, "client_connection::close disconnection succeeded.");
+                    l_quit = true;
+                } break;
+                default:
+                break;
+            }
+        }
+        // falls wir keine antwort erhalten haben -> zwanghaft
+        if( l_quit == false)
+            enet_peer_reset( p_peer);
         enet_host_destroy(p_client);
+    }
 }

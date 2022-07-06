@@ -220,8 +220,42 @@ void server::update() {
 }
 
 void server::close() {
-    if( p_server)
+    if( p_server) {
+        for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
+            client *l_client = getClient(i);
+            if( l_client == nullptr)
+                continue;
+            
+            if( l_client->peerID >= p_server->peerCount) {
+                delClient( l_client);
+                return;
+            }
+
+            enet_peer_disconnect( &p_server->peers[l_client->peerID], 0);
+        }
+        ENetEvent l_event;
+        bool l_quit = false;
+        while( l_quit == false && enet_host_service( p_server, &l_event, 3000) > 0) {
+            switch (l_event.type) {
+                case ENET_EVENT_TYPE_RECEIVE: {
+                    enet_packet_destroy (l_event.packet);
+                } break;
+                case ENET_EVENT_TYPE_DISCONNECT: {
+                    for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++)
+                        if( getClient( i) != nullptr && getClient( i)->peerID == l_event.peer->incomingPeerID)
+                            delClient(getClient( i));
+                } break;
+                default:
+                break;
+            }
+            l_quit = true;
+            for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++)
+                if( getClient( i) != nullptr)
+                    l_quit = false;
+        }
+
         enet_host_destroy( p_server);
+    }
 }
 
 // Search for free space and if it is not available, a negative number is returned
