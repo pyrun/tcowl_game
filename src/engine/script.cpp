@@ -1,6 +1,6 @@
 #include "script.h"
 
-#include "helper.h"
+#include <engine/helper.hpp>
 #include "log.h"
 #include "entity/type.h"
 

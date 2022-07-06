@@ -2,6 +2,7 @@
 #define ENGINE_ENTITY_H
 
 #include "type.h"
+#include "inventory.hpp"
 
 #include <engine/graphic.h>
 #include <engine/world/world.h>
@@ -29,6 +30,8 @@ namespace engine {
 
         lua_State *lua_state;
         engine::input_map *input;
+
+        inventory_grid *inventory;
 
         // used for network sync
         // only sync if this true, set be false after sync

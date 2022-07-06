@@ -1,7 +1,8 @@
 #include "camera.h"
-#include "helper.h"
 
 #include <limits>
+
+#include <engine/helper.hpp>
 
 using namespace engine;
 

@@ -4,8 +4,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <dirent.h>
-
-#include <engine/helper.h>
+#include <engine/helper.hpp>
 #include <engine/helper_json.h>
 #include <engine/log.h>
 

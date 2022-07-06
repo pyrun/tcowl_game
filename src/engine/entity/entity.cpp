@@ -3,7 +3,7 @@
 #include <string.h>
 #include <engine/log.h>
 #include <engine/timer.h>
-#include <engine/helper.h>
+#include <engine/helper.hpp>
 #include <engine/network_ids.h>
 
 #include <cstdint>
@@ -91,6 +91,8 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
 
     l_entity->lua_state = nullptr;
     loadScriptFile( l_entity);
+
+    l_entity->inventory = nullptr;
 
     l_entity->change = true;
     l_entity->input = nullptr;

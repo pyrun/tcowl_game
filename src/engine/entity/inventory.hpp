@@ -1,12 +1,48 @@
 #ifndef ENTITY_INVENTORY_HPP
 #define ENTITY_INVENTORY_HPP
 
-#define ENTITY_INVENTORY_MAXSIZE_W 10
-#define ENTITY_INVENTORY_MAXSIZE_H 5
+#include <vector>
+#include <stdint.h>
+#include <engine/vec.h>
+#include <engine/helper.hpp>
+#include <engine/graphic.h>
 
 namespace engine {
-    struct inventory {
-        int32_t map[ ENTITY_INVENTORY_MAXSIZE_W * ENTITY_INVENTORY_MAXSIZE_H];
+    struct inventory_entry {
+        uint16_t id;
+        vec2 pos;
+    };
+
+    enum inventory_grid_state {
+        inventory_grid_state_unavailable = 0,
+        inventory_grid_state_available,
+        inventory_grid_state_taken,
+    };
+
+
+    class inventory_grid : public engine::graphic_object {
+        public:
+            inventory_grid( uint32_t w, uint32_t h) {
+                p_grid = new helper::map2d<inventory_grid_state>( w, h);
+                p_grid->fill( inventory_grid_state::inventory_grid_state_unavailable);
+            }
+            ~inventory_grid() {
+                if(p_grid)
+                    delete p_grid;
+            }
+
+            void reload( graphic_draw *graphic) override {
+
+            }
+
+            void draw( graphic_draw *graphic) override {
+
+            }
+
+            std::vector<inventory_entry> *getList() { return &p_items; }
+        private:
+            helper::map2d<inventory_grid_state> *p_grid;
+            std::vector<inventory_entry> p_items;
     };
 }
 

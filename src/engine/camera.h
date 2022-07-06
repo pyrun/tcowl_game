@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "vec.h"
+#include <engine/vec.h>
 
 namespace engine {
     enum camera_mode : uint32_t {

@@ -4,7 +4,7 @@
 #include <math.h>
 
 #include "log.h"
-#include "helper.h"
+#include <engine/helper.hpp>
 
 using namespace engine;
 

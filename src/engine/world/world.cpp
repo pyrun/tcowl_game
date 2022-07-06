@@ -1,6 +1,6 @@
 #include "world.h"
 #include "../noise.h"
-#include "../helper.h"
+#include <engine/helper.hpp>
 #include "../timer.h"
 #include "../log.h"
 

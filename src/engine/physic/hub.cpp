@@ -1,6 +1,6 @@
 #include "hub.h"
 
-#include "../helper.h"
+#include <engine/helper.hpp>
 #include "../log.h"
 
 #include <iostream>

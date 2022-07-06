@@ -62,6 +62,9 @@ void app::begin() {
         l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
+        engine::entity *l_entity = p_entity.get( l_id);
+        l_entity->inventory = new engine::inventory_grid( 10, 5);
+
         /*l_id = p_entity.createObject(3);
         p_entity.setPosition( l_id, { 50, 102});
 
