@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${command:cmake.launchTargetPath}",
-      "args": ["client.json"],
+      "args": ["local.json"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}\\res",
       "environment": [ ],

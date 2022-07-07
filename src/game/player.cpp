@@ -38,6 +38,8 @@ void player::draw( engine::graphic_draw *graphic) {
 
         engine::fvec2 l_pos = p_player->body->getPosition() + ( fvec2{ (float)l_action->size.x, (float)l_action->size.y} / fvec2{ 2.f, 2.f} );
 
+        p_player->inventory->draw( graphic);
+
         graphic->getCamera()->setTarget( l_pos);
     }
 }

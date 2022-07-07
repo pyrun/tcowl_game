@@ -31,9 +31,6 @@ namespace engine {
 
     class graphic_image {
         public:
-            graphic_image() {}
-            ~graphic_image() {}
-
             SDL_Texture *getTexture() { return p_texture; }
         public:
             vec2 size;

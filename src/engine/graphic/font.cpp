@@ -47,7 +47,7 @@ void font::init( graphic *graphic, font_setting setting) {
     p_setting = setting;
     p_graphic = graphic;
     p_image.setAlphaKey( 0, 0, 0);
-    p_image.load( p_graphic, "font/font.bmp");
+    p_image.load( p_graphic, "system/font.bmp");
 
     p_setting.breakpoint = p_image.size.x/p_setting.size.x;
 }
