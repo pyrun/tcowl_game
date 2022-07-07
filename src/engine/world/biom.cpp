@@ -1,4 +1,4 @@
-#include "biom.h"
+#include "biom.hpp"
 
 using namespace engine;
 

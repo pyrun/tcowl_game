@@ -1,12 +1,12 @@
-#include "type.h"
+#include "type.hpp"
 
 #include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include <dirent.h>
+#include <nlohmann/json.hpp>
 #include <engine/helper.hpp>
-#include <engine/helper_json.h>
-#include <engine/log.h>
+#include <engine/helper_json.hpp>
+#include <engine/log.hpp>
 
 using json = nlohmann::json;
 

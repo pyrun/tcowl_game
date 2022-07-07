@@ -1,4 +1,5 @@
-#include "log.h"
+#include "log.hpp"
+
 #include <stdarg.h> /* va_end(), va_list, va_start(), vprintf() */
 #include <stdio.h> /* vprintf() */
 

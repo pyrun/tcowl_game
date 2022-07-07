@@ -1,7 +1,7 @@
-#include "global_script.h"
+#include "global_script.hpp"
 
 #include <string>
-#include "../log.h"
+#include <engine/log.hpp>
 
 using namespace engine;
 

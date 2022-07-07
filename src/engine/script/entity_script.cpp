@@ -1,8 +1,9 @@
-#include "entity_script.h"
+#include "entity_script.hpp"
 
 #include <string>
-#include "../log.h"
-#include "../entity/entity.h"
+
+#include <engine/log.hpp>
+#include <engine/entity/entity.hpp>
 
 using namespace engine;
 

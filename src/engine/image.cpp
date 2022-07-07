@@ -1,6 +1,6 @@
-#include "image.h"
+#include "image.hpp"
 
-#include "log.h"
+#include <engine/log.hpp>
 
 using namespace engine;
 

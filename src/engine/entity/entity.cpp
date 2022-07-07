@@ -1,10 +1,10 @@
-#include "entity.h"
+#include "entity.hpp"
 
 #include <string.h>
-#include <engine/log.h>
-#include <engine/timer.h>
+#include <engine/log.hpp>
+#include <engine/timer.hpp>
 #include <engine/helper.hpp>
-#include <engine/network_ids.h>
+#include <engine/network_ids.hpp>
 
 #include <cstdint>
 #include <algorithm>

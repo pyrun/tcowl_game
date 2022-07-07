@@ -1,8 +1,10 @@
-#include "world.h"
-#include "../noise.h"
+#include "world.hpp"
+
+
+#include <engine/noise.hpp>
 #include <engine/helper.hpp>
-#include "../timer.h"
-#include "../log.h"
+#include <engine/timer.hpp>
+#include <engine/log.hpp>
 
 using namespace engine;
 

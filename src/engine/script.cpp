@@ -1,12 +1,12 @@
-#include "script.h"
+#include "script.hpp"
 
+#include <engine/log.hpp>
 #include <engine/helper.hpp>
-#include "log.h"
-#include "entity/type.h"
+#include <engine/entity/type.hpp> // ENGINE_TYPE_FILE_SCRIPT
 
-#include "script/world_script.h"
-#include "script/entity_script.h"
-#include "script/global_script.h"
+#include "script/world_script.hpp"
+#include "script/entity_script.hpp"
+#include "script/global_script.hpp"
 
 static luaL_Reg const core_funcs [] = { // TODO Version
     { NULL, NULL }

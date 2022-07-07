@@ -3,9 +3,9 @@
 
 #include <vector>
 #include <stdint.h>
-#include <engine/vec.h>
+#include <engine/vec.hpp>
 #include <engine/helper.hpp>
-#include <engine/graphic.h>
+#include <engine/graphic.hpp>
 
 namespace engine {
     struct inventory_entry {

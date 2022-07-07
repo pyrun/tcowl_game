@@ -1,11 +1,11 @@
-#include "server.h"
+#include "server.hpp"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "../engine/log.h"
+#include <engine/log.hpp>
 
 using namespace network;
 

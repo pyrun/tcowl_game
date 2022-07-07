@@ -1,10 +1,10 @@
-#include "graphic.h"
+#include "graphic.hpp"
 
 #include <string>
 #include <math.h>
 #include <algorithm>
 
-#include "log.h"
+#include <engine/log.hpp>
 
 using namespace engine;
 

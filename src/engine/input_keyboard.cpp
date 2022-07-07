@@ -1,9 +1,9 @@
-#include "input_keyboard.h"
+#include "input_keyboard.hpp"
 
 #include <string>
 #include <math.h>
 
-#include "log.h"
+#include <engine/log.hpp>
 #include <engine/helper.hpp>
 
 using namespace engine;

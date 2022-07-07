@@ -1,8 +1,8 @@
-#include "app.h"
+#include "app.hpp"
 
 #include <math.h>
-#include "../engine/vec.h"
-#include "../engine/helper_json.h"
+#include <engine/vec.hpp>
+#include <engine/helper_json.hpp>
 
 using namespace game;
 using json = nlohmann::json;

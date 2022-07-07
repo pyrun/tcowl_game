@@ -1,8 +1,8 @@
-#include "world_script.h"
+#include "world_script.hpp"
 
 #include <string>
-#include "../log.h"
-#include "../world/world.h"
+#include <engine/log.hpp>
+#include <engine/world/world.hpp>
 
 using namespace engine;
 

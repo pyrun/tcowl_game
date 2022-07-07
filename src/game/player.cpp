@@ -1,9 +1,9 @@
-#include "player.h"
+#include "player.hpp"
 
 using namespace engine;
 using namespace game;
 
-#include "../engine/timer.h"
+#include <engine/timer.hpp>
 
 player::player() {
     p_font = NULL;

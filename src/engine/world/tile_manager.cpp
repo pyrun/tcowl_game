@@ -1,4 +1,4 @@
-#include "tile_manager.h"
+#include "tile_manager.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -6,8 +6,8 @@
 #include <dirent.h>
 
 #include <engine/helper.hpp>
-#include "../helper_json.h"
-#include "../log.h"
+#include <engine/helper_json.hpp>
+#include <engine/log.hpp>
 
 using json = nlohmann::json;
 using namespace engine;

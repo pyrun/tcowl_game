@@ -1,8 +1,9 @@
-#include "client_connection.h"
+#include "client_connection.hpp"
 
 #include <stdio.h>
 #include <string.h>
-#include "../engine/log.h"
+
+#include <engine/log.hpp>
 
 using namespace network;
 

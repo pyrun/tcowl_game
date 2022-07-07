@@ -1,4 +1,4 @@
-#include "timer.h"
+#include "timer.hpp"
 
 #include <SDL2/SDL.h>
 

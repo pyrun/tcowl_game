@@ -1,4 +1,4 @@
-#include "noise.h"
+#include "noise.hpp"
 
 int32_t helper_noise_seed = 0;
 

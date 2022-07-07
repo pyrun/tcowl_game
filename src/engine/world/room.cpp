@@ -1,4 +1,4 @@
-#include "room.h"
+#include "room.hpp"
 
 using namespace engine;
 

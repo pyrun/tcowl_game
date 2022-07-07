@@ -3,7 +3,7 @@
 
 #include "sdl_init.h"
 
-#include "game/app.h"
+#include "game/app.hpp"
 
 int main( int argc, char* args[] ) {
     sdl::init();
