@@ -3,9 +3,8 @@
 
 #include <vector>
 
-
-#include <engine/image.hpp>
-#include <engine/graphic.hpp>
+#include <engine/graphic/image.hpp>
+#include <engine/graphic/graphic.hpp>
 #include <engine/physic/body.hpp>
 #include <engine/physic/hub.hpp>
 #include <engine/network_ids.hpp>

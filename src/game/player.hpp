@@ -1,8 +1,8 @@
 #ifndef LOBBY_HPP
 #define LOBBY_HPP
 
-#include <engine/graphic.hpp>
-#include <engine/font.hpp>
+#include <engine/graphic/graphic.hpp>
+#include <engine/graphic/font.hpp>
 #include <engine/input.hpp>
 #include <engine/entity/entity.hpp>
 

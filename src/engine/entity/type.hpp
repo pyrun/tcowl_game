@@ -3,8 +3,8 @@
 
 #include <string>
 #include <engine/vec.hpp>
-#include <engine/graphic.hpp>
-#include <engine/image.hpp>
+#include <engine/graphic/graphic.hpp>
+#include <engine/graphic/image.hpp>
 #include <engine/physic/shape.hpp>
 
 #define ENGINE_TYPE_NAME_MAX_LENGTH 64

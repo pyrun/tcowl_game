@@ -1,8 +1,8 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <engine/image.hpp>
-#include <engine/graphic.hpp>
+#include <engine/graphic/graphic.hpp>
+#include <engine/graphic/image.hpp>
 
 #define ENGINE_FONT_OFFSET 0x20
 

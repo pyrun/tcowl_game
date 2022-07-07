@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <engine/vec.hpp>
 #include <engine/helper.hpp>
-#include <engine/graphic.hpp>
+#include <engine/graphic/graphic.hpp>
 
 namespace engine {
     struct inventory_entry {
@@ -19,7 +19,6 @@ namespace engine {
         inventory_grid_state_taken,
     };
 
-
     class inventory_grid : public engine::graphic_object {
         public:
             inventory_grid( uint32_t w, uint32_t h) {
@@ -31,13 +30,8 @@ namespace engine {
                     delete p_grid;
             }
 
-            void reload( graphic_draw *graphic) override {
-
-            }
-
-            void draw( graphic_draw *graphic) override {
-
-            }
+            void reload( graphic_draw *graphic) override;
+            void draw( graphic_draw *graphic) override;
 
             std::vector<inventory_entry> *getList() { return &p_items; }
         private:

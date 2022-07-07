@@ -1,18 +1,17 @@
 #ifndef GAME_APP_HPP
 #define GAME_APP_HPP
 
-#include <engine/graphic.hpp>
+#include <engine/graphic/graphic.hpp>
+#include <engine/graphic/font.hpp>
+#include <engine/graphic/image.hpp>
 #include <engine/log.hpp>
 #include <engine/input_keyboard.hpp>
-#include <engine/image.hpp>
-#include <engine/font.hpp>
 #include <engine/entity/type.hpp>
 #include <engine/entity/entity.hpp>
 #include <engine/json.hpp>
 #include <engine/world/tile_manager.hpp>
 #include <engine/world/biom_manager.hpp>
 #include <engine/world/world.hpp>
-#include <engine/graphic.hpp>
 #include <network/server.hpp>
 #include <network/client_connection.hpp>
 #include "player.hpp"

@@ -4,7 +4,7 @@
 #include "type.hpp"
 #include "inventory.hpp"
 
-#include <engine/graphic.hpp>
+#include <engine/graphic/graphic.hpp>
 #include <engine/world/world.hpp>
 #include <engine/script.hpp>
 #include <engine/input.hpp>

@@ -2,7 +2,7 @@
 #define ENGINE_HUB_HPP
 
 #include <vector>
-#include <engine/graphic.hpp>
+#include <engine/graphic/graphic.hpp>
 #include "body.hpp"
 
 #define ENGINE_PHYSIC_TIME 0.005f

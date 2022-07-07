@@ -6,8 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-
-#include <engine/graphic.hpp>
+#include <engine/graphic/graphic.hpp>
 
 namespace engine {
     class image : public graphic_image{

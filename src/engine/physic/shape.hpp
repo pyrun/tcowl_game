@@ -1,7 +1,7 @@
 #ifndef PHYSIC_SHAPE_H
 #define PHYSIC_SHAPE_H
 
-#include <engine/graphic.hpp>
+#include <engine/graphic/graphic.hpp>
 #include <engine/vec.hpp>
 
 namespace physic {

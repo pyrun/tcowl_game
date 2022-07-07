@@ -6,7 +6,7 @@
 #include <string>
 
 #include <engine/vec.hpp>
-#include <engine/camera.hpp>
+#include <engine/graphic/camera.hpp>
 
 #ifndef M_PI_2
 #define M_PI_2 (M_PI/2.f)

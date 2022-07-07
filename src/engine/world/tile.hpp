@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include <engine/graphic.hpp>
-#include <engine/image.hpp>
+#include <engine/graphic/graphic.hpp>
+#include <engine/graphic/image.hpp>
 
 #define ENGINE_TILE_SIZE 16
 #define ENGINE_VEC2_TILE_SIZE vec2{ ENGINE_TILE_SIZE, ENGINE_TILE_SIZE}
