@@ -32,13 +32,25 @@ void player::draw( engine::graphic_draw *graphic) {
     helper::time::reset( &l_time);
 
     if( p_player) {
-
+        static bool l_set = false;
+        static vec2 l_pos1, l_pos2;
         // Mouse
         p_font->print( l_camera + vec2{ 10, 0}, "%3.d %3.d", p_input->getInputMap()->mouse.x, p_input->getInputMap()->mouse.y);
-        if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack))
+        if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack)) {
+            l_pos1 = l_camera + (p_input->getInputMap()->mouse / vec2{ (int32_t)graphic->getScale(), (int32_t)graphic->getScale()}) ;
             engine::log( log_debug, "mouse left click");
+            l_set = true;
+        }
+        l_pos2 = l_camera + (p_input->getInputMap()->mouse / vec2{ (int32_t)graphic->getScale(), (int32_t)graphic->getScale()}) - l_pos1;
+        if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack)) {
+            engine::log( log_debug, "mouse left click lose");
+            l_set = false;
+        }
         
         drawInventory( graphic); // draw inventory
+        graphic->setDrawColor( 255, 255, 0, 255);
+        if(l_set)
+            graphic->drawLine( l_pos1, l_pos2);
 
         // centre camera to player
         action *l_action = p_player->objtype->getAction( p_player->action);
@@ -55,5 +67,7 @@ void player::update() {
 }
 
 void player::drawInventory( engine::graphic_draw *graphic) {
-    p_player->inventory->draw( graphic, false);
+    graphic->setDrawColor( 70, 30, 30, 100);
+    graphic->drawFilledRect( vec2{ 0, 0} + graphic->getCamera()->getPosition().toVec(), graphic->getCamera()->getSize().toVec());
+    p_player->inventory->draw( graphic);
 }

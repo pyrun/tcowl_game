@@ -43,6 +43,7 @@ namespace engine {
     enum input_key_state {
         input_key_down = 0,
         input_key_up,
+        input_key_unknow,
     };
 
     enum input_key_edge_detection {

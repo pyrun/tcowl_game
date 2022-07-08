@@ -39,24 +39,22 @@ namespace engine {
 
     class graphic_draw {
         public:
-            graphic_draw() {}
-            ~graphic_draw() {}
+            virtual void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
 
-            void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-
-            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0});
-            void drawRect( vec2 pos, vec2 rect);
-            void drawEllipse( vec2 pos, fvec2 radius);
-            void drawLine( vec2 pos, vec2 dest);
+            virtual void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}) = 0;
+            virtual void drawRect( vec2 pos, vec2 rect) = 0;
+            virtual void drawFilledRect( vec2 pos, vec2 rect) = 0;
+            virtual void drawEllipse( vec2 pos, fvec2 radius) = 0;
+            virtual void drawLine( vec2 pos, vec2 dest) = 0;
 
             uint32_t getDisplacedElements() { return p_displayed_elements; }
-            camera *getCamera() { return &p_camera; }
+            virtual camera *getCamera() = 0;
+            virtual uint32_t getScale() = 0;
+
+            virtual SDL_Renderer *getRenderer() = 0;
         public:
-            SDL_Renderer *p_renderer;
             uint32_t p_displayed_elements;
             uint32_t p_displayed_elements_counter;
-
-            camera p_camera;
     };
 
     class graphic_object {
@@ -86,8 +84,26 @@ namespace engine {
             bool checkObject( graphic_object* object);
 
             void setTitle( std::string title) { snprintf( p_config.titel, ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH, title.c_str()); }
+
+            void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
+
+            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}) override;
+            void drawRect( vec2 pos, vec2 rect) override;
+            void drawFilledRect( vec2 pos, vec2 rect) override;
+            void drawEllipse( vec2 pos, fvec2 radius) override;
+            void drawLine( vec2 pos, vec2 dest) override;
+
+            camera *getCamera() override { return &p_camera; }
+            uint32_t getScale() override { return p_windows_scale; };
+            SDL_Renderer *getRenderer() override  { return p_renderer; }
         private:
+            SDL_Renderer *p_renderer;
+            camera p_camera;
+
             SDL_Window *p_window;
+            vec2 p_windows_size;
+            uint32_t p_windows_scale;
+
             graphic_config p_config;
             std::vector<graphic_object*> p_graphic_objects;
     };

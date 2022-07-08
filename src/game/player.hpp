@@ -26,6 +26,7 @@ namespace game {
             engine::input *p_input;
             engine::entity_handler *p_entity;
             engine::entity *p_player;
+            engine::image *p_backpack;
     };
 };
 

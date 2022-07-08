@@ -32,7 +32,7 @@ bool image::load( engine::graphic_draw *graphic, std::string file) {
     SDL_SetColorKey( l_image, p_color_key.w?SDL_TRUE:SDL_FALSE, SDL_MapRGB( l_image->format, p_color_key.x, p_color_key.y, p_color_key.z));
 
     // Bild aus dem Arbeitsspeicher auf die Grafikkarte übertragen
-    p_texture = SDL_CreateTextureFromSurface( graphic->p_renderer, l_image);
+    p_texture = SDL_CreateTextureFromSurface( graphic->getRenderer(), l_image);
     SDL_FreeSurface( l_image);
     if( p_texture == NULL) {
         engine::log( log_warn, "Error creating texture \"%s\" %s", file.c_str(), SDL_GetError());

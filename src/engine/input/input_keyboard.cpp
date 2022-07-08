@@ -39,6 +39,10 @@ void input_keyboard::event( SDL_Event *event) {
         case SDL_MOUSEBUTTONUP: {
             onMouseEvent( input_key_up);
         } break;
+        case SDL_MOUSEMOTION: {
+            onMouseEvent( input_key_unknow);
+        } break;
+
         default: {
             // Something else
         } break;
