@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 
-#include <engine/input.hpp>
+#include <engine/input/input.hpp>
 
 namespace engine {
     class input_keyboard : public input {
@@ -21,6 +21,8 @@ namespace engine {
         private:
             void key( input_key_state state, SDL_Keycode key);
             void key_axis();
+
+            void onMouseEvent( input_key_state state);
         private:
             input_map p_map_input;
             input_map p_map_previous;

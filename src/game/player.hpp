@@ -3,7 +3,7 @@
 
 #include <engine/graphic/graphic.hpp>
 #include <engine/graphic/font.hpp>
-#include <engine/input.hpp>
+#include <engine/input/input.hpp>
 #include <engine/entity/entity.hpp>
 
 namespace game {
@@ -19,6 +19,8 @@ namespace game {
 
             void update();
             const uint32_t getPriority() override { return 256; }
+        private:
+            void drawInventory( engine::graphic_draw *graphic);
         private:
             engine::font *p_font;
             engine::input *p_input;

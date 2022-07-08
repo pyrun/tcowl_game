@@ -33,6 +33,12 @@ void input_keyboard::event( SDL_Event *event) {
         case SDL_KEYUP: {
             key( input_key_up, event->key.keysym.sym);
         } break;
+        case SDL_MOUSEBUTTONDOWN: {
+            onMouseEvent( input_key_down);
+        } break;
+        case SDL_MOUSEBUTTONUP: {
+            onMouseEvent( input_key_up);
+        } break;
         default: {
             // Something else
         } break;
@@ -109,4 +115,11 @@ void input_keyboard::key_axis() {
     float l_arc = atan2( l_y, l_x);
     p_map_input.axies.y = sin(l_arc)*1;
     p_map_input.axies.x = cos(l_arc)*1;
+}
+
+void input_keyboard::onMouseEvent( input_key_state state) {
+    // SDL_PumpEvents(); // make sure we have the latest mouse state.
+    
+    uint32_t l_mouse_click = SDL_GetMouseState( &p_map_input.mouse.x, &p_map_input.mouse.y);
+    p_map_input.buttons[input_buttons_attack] = l_mouse_click & SDL_BUTTON_LMASK;
 }

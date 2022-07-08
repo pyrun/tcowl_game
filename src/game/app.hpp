@@ -5,7 +5,7 @@
 #include <engine/graphic/font.hpp>
 #include <engine/graphic/image.hpp>
 #include <engine/log.hpp>
-#include <engine/input_keyboard.hpp>
+#include <engine/input/input_keyboard.hpp>
 #include <engine/entity/type.hpp>
 #include <engine/entity/entity.hpp>
 #include <engine/json.hpp>

@@ -31,7 +31,8 @@ namespace engine {
             }
 
             void reload( graphic_draw *graphic) override;
-            void draw( graphic_draw *graphic) override;
+            void draw( graphic_draw *graphic) override { draw( graphic, true); };
+            void draw( graphic_draw *graphic, bool top);
 
             std::vector<inventory_entry> *getList() { return &p_items; }
         private:

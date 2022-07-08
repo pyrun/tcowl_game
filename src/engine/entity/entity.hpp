@@ -7,7 +7,7 @@
 #include <engine/graphic/graphic.hpp>
 #include <engine/world/world.hpp>
 #include <engine/script.hpp>
-#include <engine/input.hpp>
+#include <engine/input/input.hpp>
 #include <engine/physic/hub.hpp>
 #include <network/network.hpp>
 

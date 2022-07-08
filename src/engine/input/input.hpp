@@ -37,11 +37,12 @@ namespace engine {
     struct input_map { // default map
         fvec2 axies;
         bool buttons[input_buttons_end];
+        vec2 mouse;
     };
 
     enum input_key_state {
         input_key_down = 0,
-        input_key_up
+        input_key_up,
     };
 
     enum input_key_edge_detection {
