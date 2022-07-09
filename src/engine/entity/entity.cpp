@@ -41,7 +41,7 @@ int16_t entity_handler::createObject( std::string name) {
     return -1;
 }
 
-int16_t entity_handler::createObject( uint16_t objid) {
+int16_t entity_handler::createObject( int16_t objid) {
     if( p_types == nullptr)
         return -1;
     type *l_type = p_types->getById( objid);

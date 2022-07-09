@@ -20,7 +20,7 @@ namespace engine {
         uint16_t index;
 
         type *objtype;
-        uint16_t objtypeid;
+        int16_t objtypeid;
         physic::body *body;
 
         uint8_t action;
@@ -46,7 +46,7 @@ namespace engine {
 
             void init( type_handler *types);
 
-            int16_t createObject( uint16_t objid); // -> objtype
+            int16_t createObject( int16_t objid); // -> objtype
             int16_t createObject( std::string name); // -> objtype
             int16_t createObject( type *objtype, int32_t index = -1);
             bool deleteObject( uint32_t index);
@@ -72,6 +72,7 @@ namespace engine {
             bool newClientCallback( network::client *client, network::connection *network_interface);
             void recvPacket( network::packet packet);
             
+            type *getType( uint16_t id) { return p_types->getById( id); }
             const uint32_t getPriority() override { return 128; }
             physic::hub *getPhysicHub() { return &p_hub; }
         private:

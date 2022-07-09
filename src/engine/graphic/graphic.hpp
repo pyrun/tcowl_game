@@ -41,7 +41,7 @@ namespace engine {
         public:
             virtual void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
 
-            virtual void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}) = 0;
+            virtual void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}, double angle = 0) = 0;
             virtual void drawRect( vec2 pos, vec2 rect) = 0;
             virtual void drawFilledRect( vec2 pos, vec2 rect) = 0;
             virtual void drawEllipse( vec2 pos, fvec2 radius) = 0;
@@ -87,7 +87,7 @@ namespace engine {
 
             void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
 
-            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}) override;
+            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}, double angle = 0) override;
             void drawRect( vec2 pos, vec2 rect) override;
             void drawFilledRect( vec2 pos, vec2 rect) override;
             void drawEllipse( vec2 pos, fvec2 radius) override;

@@ -20,6 +20,10 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     p_entity = entitys;
 
     p_player = p_entity->get( 1);
+
+    if( p_player) {
+        p_player->inventory->add( { 3, 3}, entitys->getType(100) );
+    }
 }
 
 void player::draw( engine::graphic_draw *graphic) {

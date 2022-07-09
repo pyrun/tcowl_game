@@ -30,7 +30,17 @@ namespace helper {
             type *get( uint32_t x, uint32_t y) {
                 if( x >= p_w || y >= p_h)
                     return nullptr;
-                return &p_map[y*p_h+x];
+                return &p_map[y*p_w+x];
+            }
+
+            bool set( uint32_t x, uint32_t y, type value) {
+                type *l_tile = get( x, y);
+                if( l_tile) {
+                    *l_tile = value;
+                    return true;
+                } else {
+                    return false;
+                }
             }
 
             uint32_t getW() { return p_w; }

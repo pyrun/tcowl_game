@@ -1,0 +1,15 @@
+{
+    "name": "tea",
+    "id": 100,
+    "image": "graphic.png",
+    "alpha-key": [ 68, 123, 134],
+    "action": [
+        {
+            "name": "Idle",
+            "position": [ 0, 0],
+            "size": [ 16, 16],
+            "length": 1,
+            "delay": 0
+        }
+    ]
+}
