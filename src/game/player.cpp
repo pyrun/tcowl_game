@@ -67,6 +67,9 @@ void player::update() {
     if( p_player) {
         p_player->change = true;
         p_entity->bindInput( p_player, p_input->getInputMap());
+
+        if( p_player->inventory)
+            p_entity->bindInput( p_player, nullptr);
     }
 }
 

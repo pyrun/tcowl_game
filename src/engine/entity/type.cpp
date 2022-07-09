@@ -14,6 +14,7 @@ using namespace engine;
 
 type::type() {
     p_shape = nullptr;
+    p_type = type_objecttype_object;
 }
 
 void type::cleanup() {
@@ -97,6 +98,13 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     }
     l_type->setId( l_id);
 
+    // Type
+    std::string l_object_type = helper::json::getString( &l_json, "type", "object");
+    if( l_object_type == "object")
+        l_type->setType( engine::type_objecttype::type_objecttype_object);
+    else if( l_object_type == "item")
+        l_type->setType( engine::type_objecttype::type_objecttype_item);
+
     // Graphic
     std::string l_image_file;
     l_image_file = helper::json::getString( &l_json, "image", "error");
@@ -169,7 +177,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         }
     }
 
-    log( log_level::log_info, "Entity id:%d name:%s action:%d loaded", l_type->getId(), l_type->getName(), l_type->getAmountActions());
+    log( log_level::log_info, "Entity id:%d name:%s action:%d type:%s loaded", l_type->getId(), l_type->getName(), l_type->getAmountActions(), l_object_type.c_str());
 }
 
 void type_handler::reload( graphic_draw *graphic) {

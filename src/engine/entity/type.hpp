@@ -22,6 +22,11 @@ namespace engine {
         bool bind_velocity; // Anpassen der Animationsgeschwindigkeit an die Geschwindigkeit
     };
 
+    enum type_objecttype {
+        type_objecttype_object,
+        type_objecttype_item,
+    };
+
     class type {
         public:
             type();
@@ -50,6 +55,9 @@ namespace engine {
             
             void linkShape(physic::shape *shape) { p_shape = shape; }
             physic::shape *getShape() { return p_shape; }
+
+            void setType(type_objecttype type) { p_type = type; }
+            type_objecttype getType() { return p_type; }
         private:
             uint16_t p_id;
             char p_name[ENGINE_TYPE_NAME_MAX_LENGTH];
@@ -58,6 +66,7 @@ namespace engine {
             image p_image;
             vec2 p_depth_sorting_offset; // offset beim z-depth sorting
             physic::shape *p_shape;
+            type_objecttype p_type;
     };
 
     class type_handler {
