@@ -29,6 +29,7 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
 void player::draw( engine::graphic_draw *graphic) {
     static uint32_t l_time = 0;
     vec2 l_camera = graphic->getCamera()->getPosition().toVec();
+    vec2 l_mouse = graphic->getMousePositionToLogicalMousePosition( p_input->getInputMap()->mouse);
     if( !p_font)
         return;
 
@@ -42,17 +43,26 @@ void player::draw( engine::graphic_draw *graphic) {
         // Mouse
         p_font->print( l_camera + vec2{ 10, 0}, "%3.d %3.d", p_input->getInputMap()->mouse.x, p_input->getInputMap()->mouse.y);
         if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack)) {
-            l_pos1 = (p_input->getInputMap()->mouse / vec2{ (int32_t)graphic->getScale(), (int32_t)graphic->getScale()}) ;
+            l_pos1 = l_mouse;
             engine::log( log_debug, "mouse left click");
             l_set = true;
 
-            inventory_entry *l_item_tmp = p_player->inventory->onClick( l_pos1);
-            if( l_item_tmp) {
-                if( l_item != nullptr)
+            if( l_item == nullptr) {
+                inventory_entry *l_item_tmp = p_player->inventory->onClick( l_pos1);
+                if( l_item_tmp) {
+                    l_item = new inventory_entry;
+                    *l_item = *l_item_tmp;
+                    p_player->inventory->del( l_item_tmp);
+                }
+            } else {
+                vec2 l_tile_pos = p_player->inventory->getTilePos(l_pos1);
+                engine::log( log_debug, "%3.d %3.d", l_tile_pos.x, l_tile_pos.y);
+                engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, l_item->objtype);
+                if( l_item_add) {
+                    l_item_add->angle = l_item->angle;
                     delete l_item;
-                l_item = new inventory_entry;
-                *l_item = *l_item_tmp;
-                p_player->inventory->del( l_item_tmp);
+                    l_item = nullptr;
+                }
             }
         }
 
@@ -60,7 +70,7 @@ void player::draw( engine::graphic_draw *graphic) {
             if( l_item)
                 p_player->inventory->turn( l_item, true);
         } 
-        l_pos2 = (p_input->getInputMap()->mouse / vec2{ (int32_t)graphic->getScale(), (int32_t)graphic->getScale()}) - l_pos1;
+        l_pos2 = l_mouse - l_pos1;
         if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack)) {
             engine::log( log_debug, "mouse left click lose");
             l_set = false;
@@ -73,7 +83,7 @@ void player::draw( engine::graphic_draw *graphic) {
             graphic->drawLine( l_camera+l_pos1, l_pos2);
         
         if( l_item)
-            p_player->inventory->drawItem( graphic, l_camera + (p_input->getInputMap()->mouse / vec2{ (int32_t)graphic->getScale(), (int32_t)graphic->getScale()}), l_item,
+            p_player->inventory->drawItem( graphic, l_camera + l_mouse, l_item,
             vec2{ 16, 16}/vec2{ 2, 2});
 
         // centre camera to player

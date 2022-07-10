@@ -8,6 +8,9 @@
 #include <engine/entity/type.hpp>
 #include <engine/graphic/graphic.hpp>
 
+#define ENTITY_INVENTORY_SIZE 16
+#define ENTITY_INVENTORY_SIZE_VEC2 vec2{ ENTITY_INVENTORY_SIZE, ENTITY_INVENTORY_SIZE}
+
 namespace engine {
     enum inventory_angle {
         inventory_angle_0 = 0,
@@ -39,8 +42,10 @@ namespace engine {
                     delete p_grid;
             }
 
-            void add( vec2 pos, engine::type *objtype);
+            inventory_entry *add( vec2 pos, engine::type *objtype);
+            bool check( vec2 pos, engine::type *objtype);
             bool del( inventory_entry *item);
+            vec2 getTilePos( vec2 pos_abs);
 
             inventory_entry *onClick( vec2 pos);
             void turn( inventory_entry *item, bool clockwise);

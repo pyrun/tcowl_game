@@ -196,6 +196,34 @@ void graphic::drawLine( vec2 pos, vec2 vector) {
     SDL_RenderDrawLine( p_renderer, pos.x, pos.y, pos.x+vector.x, pos.y+vector.y);
 }
 
+vec2 graphic::getMousePositionToLogicalMousePosition( vec2 realMousePos) {
+    int wWidth, wHeight;
+    int rLogicalWidth, rLogicalHeight;
+    int rRealWidth, rRealHeight;
+    float rScaleX, rScaleY;
+    int rMidpointY, wMidpointY;
+    int rMidpointX, wMidpointX;
+    int rY, rX;
+
+    SDL_GetWindowSize( p_window, &wWidth, &wHeight);
+    wMidpointY = wHeight/2;
+    wMidpointX = wWidth/2;
+
+    SDL_RenderGetLogicalSize( p_renderer, &rLogicalWidth, &rLogicalHeight);
+    SDL_RenderGetScale( p_renderer, &rScaleX, &rScaleY);
+    rRealWidth = (float)rLogicalWidth*(float)rScaleX;
+    rRealHeight = (float)rLogicalHeight*(float)rScaleY;
+    rMidpointY = rRealHeight/2;
+    rMidpointX = rRealWidth/2;
+    rY = wMidpointY - rMidpointY;
+    rX = wMidpointX - rMidpointX;
+
+    int adjustedMouseY = realMousePos.y - rY; // takes into account any border when keeping aspect ratio
+    int adjustedMouseX = realMousePos.x - rX;
+    return vec2 { int32_t((float)adjustedMouseX / (float)rRealWidth * (float)rLogicalWidth),
+        int32_t((float) adjustedMouseY / (float)rRealHeight * (float)rLogicalHeight)};
+}
+
 void graphic::setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor( p_renderer, r, g, b, a);
 }

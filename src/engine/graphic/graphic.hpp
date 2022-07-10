@@ -47,6 +47,8 @@ namespace engine {
             virtual void drawEllipse( vec2 pos, fvec2 radius) = 0;
             virtual void drawLine( vec2 pos, vec2 dest) = 0;
 
+            virtual vec2 getMousePositionToLogicalMousePosition( vec2 realMousePos) = 0;
+
             uint32_t getDisplacedElements() { return p_displayed_elements; }
             virtual camera *getCamera() = 0;
             virtual uint32_t getScale() = 0;
@@ -92,6 +94,8 @@ namespace engine {
             void drawFilledRect( vec2 pos, vec2 rect) override;
             void drawEllipse( vec2 pos, fvec2 radius) override;
             void drawLine( vec2 pos, vec2 dest) override;
+
+            vec2 getMousePositionToLogicalMousePosition( vec2 realMousePos) override;
 
             camera *getCamera() override { return &p_camera; }
             uint32_t getScale() override { return p_windows_scale; };

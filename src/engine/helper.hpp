@@ -27,8 +27,9 @@ namespace helper {
                     p_map[i] = value;
             }
 
-            type *get( uint32_t x, uint32_t y) {
-                if( x >= p_w || y >= p_h)
+            type *get( int32_t x, int32_t y) {
+                if( x >= p_w || y >= p_h ||
+                    x < 0 || y < 0)
                     return nullptr;
                 return &p_map[y*p_w+x];
             }
