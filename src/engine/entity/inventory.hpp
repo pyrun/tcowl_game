@@ -40,16 +40,25 @@ namespace engine {
             }
 
             void add( vec2 pos, engine::type *objtype);
+            bool del( inventory_entry *item);
+
+            inventory_entry *onClick( vec2 pos);
+            void turn( inventory_entry *item, bool clockwise);
 
             void setState( vec2 pos, inventory_grid_state state);
             void reload( graphic_draw *graphic) override;
             void draw( graphic_draw *graphic) override { draw( graphic, true); };
             void draw( graphic_draw *graphic, bool top);
+            void drawItem( graphic_draw *graphic, vec2 pos, inventory_entry *item, vec2 centre = vec2{ 0, 0});
 
             std::vector<inventory_entry> *getList() { return &p_items; }
         private:
+            vec2 calcDrawPos( graphic_draw *graphic, bool top);
+        private:
             helper::map2d<inventory_grid_state> *p_grid;
             std::vector<inventory_entry> p_items;
+
+            engine::vec2 p_draw_pos;
     };
 }
 

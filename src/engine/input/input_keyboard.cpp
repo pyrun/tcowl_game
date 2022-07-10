@@ -126,4 +126,5 @@ void input_keyboard::onMouseEvent( input_key_state state) {
     
     uint32_t l_mouse_click = SDL_GetMouseState( &p_map_input.mouse.x, &p_map_input.mouse.y);
     p_map_input.buttons[input_buttons_attack] = l_mouse_click & SDL_BUTTON_LMASK;
+    p_map_input.buttons[input_buttons_special] = l_mouse_click & SDL_BUTTON_RMASK;
 }

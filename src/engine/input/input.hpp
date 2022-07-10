@@ -17,6 +17,7 @@ namespace engine {
 
     enum input_buttons{
         input_buttons_attack = 0,
+        input_buttons_special,
         input_buttons_up,
         input_buttons_down,
         input_buttons_left,
