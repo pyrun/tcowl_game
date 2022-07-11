@@ -7,6 +7,19 @@
 #include <engine/entity/entity.hpp>
 
 namespace game {
+    enum player_state {
+        player_state_idle = 0,
+        player_state_inventory,
+        player_state_inventory_chest,
+        player_state_battle,
+    };
+
+    struct player_move_item {
+        engine::inventory_entry *item;
+        engine::inventory_entry item_origin_state;
+        engine::inventory_grid *origin;
+    };
+
     class player : public engine::graphic_object {
         public:
             player();
@@ -20,8 +33,12 @@ namespace game {
             void update();
             const uint32_t getPriority() override { return 256; }
         private:
+            void clearItemMove();
             void drawInventory( engine::graphic_draw *graphic);
         private:
+            player_state p_state;
+            player_move_item l_item_move;
+
             engine::font *p_font;
             engine::input *p_input;
             engine::entity_handler *p_entity;

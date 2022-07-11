@@ -22,7 +22,7 @@ namespace engine {
     struct inventory_entry {
         engine::type *objtype;
         vec2 pos;
-        inventory_angle angle;
+        inventory_angle angle = inventory_angle_0;
     };
 
     enum inventory_grid_state {
@@ -42,8 +42,8 @@ namespace engine {
                     delete p_grid;
             }
 
-            inventory_entry *add( vec2 pos, engine::type *objtype);
-            bool check( vec2 pos, engine::type *objtype);
+            inventory_entry *add( vec2 pos, inventory_entry *objtype);
+            inventory_grid_state check( vec2 pos, inventory_entry *objtype);
             bool del( inventory_entry *item);
             vec2 getTilePos( vec2 pos_abs);
 

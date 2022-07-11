@@ -20,6 +20,8 @@ namespace engine {
         uint32_t delay; // Nach wie vielen Ticks weiter gesprungen wird
         uint32_t length; // Anzahl der Bilder
         bool bind_velocity; // Anpassen der Animationsgeschwindigkeit an die Geschwindigkeit
+
+        std::vector<vec2> item_hitbox;
     };
 
     enum type_objecttype {

@@ -8,6 +8,9 @@ using namespace game;
 
 player::player() {
     p_font = NULL;
+    l_item_move.item = nullptr;
+    l_item_move.origin = nullptr;
+    p_state =  player_state::player_state_inventory;
 }
 
 player::~player() {
@@ -22,7 +25,10 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     p_player = p_entity->get( 1);
 
     if( p_player) {
-        p_player->inventory->add( { 3, 3}, entitys->getType(100) );
+        engine::inventory_entry l_entry;
+        l_entry.objtype = entitys->getType(100);
+        p_player->inventory->add( { 3, 3}, &l_entry);
+        p_player->inventory->add( { 4, 3}, &l_entry);
     }
 }
 
@@ -36,9 +42,65 @@ void player::draw( engine::graphic_draw *graphic) {
     p_font->print( l_camera + vec2{ -50, 0} + vec2{ (int32_t)graphic->getCamera()->getSize().x, 0}, "%2.1d ms", helper::time::getDurrent(&l_time));
     helper::time::reset( &l_time);
     
-    static inventory_entry *l_item = nullptr;
     if( p_player) {
-        static bool l_set = false;
+        switch(p_state) {
+            case player_state::player_state_inventory: {
+                if( p_player->inventory == nullptr) { // if no inventory -> cancle
+                    p_state = player_state::player_state_idle;
+                    break;
+                }
+                // process input
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack) ||
+                    p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack)) { // drag and move item
+                    if( l_item_move.item == nullptr) {
+                        engine::inventory_entry *l_item = p_player->inventory->onClick( l_mouse);
+                        if( l_item) { // remove item from inventory
+                            l_item_move.item = new engine::inventory_entry;
+                            *l_item_move.item = *l_item;
+                            l_item_move.item_origin_state = *l_item;
+                            p_player->inventory->del( l_item);
+                            l_item_move.origin = p_player->inventory;
+                        }
+                    } else { // we have one item to move
+                        vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse);
+                        engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, l_item_move.item); // try to add in inventory
+                        if( l_item_add) { // if happend we change some settings
+                            l_item_add->angle = l_item_move.item->angle;
+                            clearItemMove();
+                        } else { // return item prev. place
+                            p_player->inventory->add( l_item_move.item_origin_state.pos, &l_item_move.item_origin_state);
+                            clearItemMove();
+                        }
+                    }
+                }
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_special)) // turn item
+                    if( l_item_move.item)
+                        p_player->inventory->turn( l_item_move.item, true);
+
+                drawInventory( graphic); // draw inventory
+
+                if( l_item_move.item != nullptr) {
+                    vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse);
+                    switch(  p_player->inventory->check( l_tile_pos, l_item_move.item)) {
+                        case engine::inventory_grid_state::inventory_grid_state_taken: {
+                            graphic->setDrawColor( 255, 255, 0, 255);
+                            graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
+                        } break;
+                        case engine::inventory_grid_state::inventory_grid_state_available: {
+                            graphic->setDrawColor( 255, 0, 255, 255);
+                            graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
+                        } break;
+                        default:
+                        break;
+                    }
+                    p_player->inventory->drawItem( graphic, l_camera + l_mouse, l_item_move.item, ENTITY_INVENTORY_SIZE_VEC2/vec2{ 2, 2});
+                }
+            } break;
+            default:
+            break;
+        }
+
+        /*static bool l_set = false;
         static vec2 l_pos1, l_pos2;
         // Mouse
         p_font->print( l_camera + vec2{ 10, 0}, "%3.d %3.d", p_input->getInputMap()->mouse.x, p_input->getInputMap()->mouse.y);
@@ -89,7 +151,7 @@ void player::draw( engine::graphic_draw *graphic) {
         // centre camera to player
         action *l_action = p_player->objtype->getAction( p_player->action);
         engine::fvec2 l_pos = p_player->body->getPosition() + ( fvec2{ (float)l_action->size.x, (float)l_action->size.y} / fvec2{ 2.f, 2.f} );
-        graphic->getCamera()->setTarget( l_pos);
+        graphic->getCamera()->setTarget( l_pos);*/
     }
 }
 
@@ -101,6 +163,13 @@ void player::update() {
         if( p_player->inventory)
             p_entity->bindInput( p_player, nullptr);
     }
+}
+
+void player::clearItemMove() {
+    if( l_item_move.item)
+        delete l_item_move.item;
+    l_item_move.item = nullptr;
+    l_item_move.origin = nullptr;
 }
 
 void player::drawInventory( engine::graphic_draw *graphic) {

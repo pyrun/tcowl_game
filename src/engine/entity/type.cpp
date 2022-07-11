@@ -177,6 +177,17 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         }
     }
 
+    // item-hitbox
+    if( l_json["item-hitbox"].is_array()) {
+        json l_json_root_item_hitbox = l_json["item-hitbox"];
+        for( uint32_t i = 0; i < l_json["item-hitbox"].size(); i++) {
+            json l_item_hitbox_json = l_json_root_item_hitbox[i];
+            if( l_item_hitbox_json.is_array() && l_item_hitbox_json.size() == 2) {
+                log( log_level::log_debug, "item-hitbox %d %d", l_item_hitbox_json[0].get<int32_t>(), l_item_hitbox_json[1].get<int32_t>());
+            }
+        }
+    }
+
     log( log_level::log_info, "Entity id:%d name:%s action:%d type:%s loaded", l_type->getId(), l_type->getName(), l_type->getAmountActions(), l_object_type.c_str());
 }
 

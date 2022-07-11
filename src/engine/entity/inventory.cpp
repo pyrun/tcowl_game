@@ -6,14 +6,14 @@ using namespace engine;
 
 engine::image l_image;
 
-inventory_entry *inventory_grid::add( vec2 pos, engine::type *objtype) {
-    if( !check( pos, objtype))
+inventory_entry *inventory_grid::add( vec2 pos, inventory_entry *objtype) {
+    if( check( pos, objtype) != inventory_grid_state_available)
         return nullptr;
     setState( pos, inventory_grid_state::inventory_grid_state_taken);
     inventory_entry l_enitry;
-    l_enitry.objtype = objtype;
+    l_enitry.objtype = objtype->objtype;
     l_enitry.pos = pos;
-    l_enitry.angle = inventory_angle_90;
+    l_enitry.angle = objtype->angle;
     p_items.push_back( l_enitry);
     return &p_items[p_items.size()-1];
 }
@@ -35,11 +35,11 @@ vec2 inventory_grid::getTilePos( vec2 pos_abs) {
     return (pos_abs-p_draw_pos+vec2{ (int32_t)p_grid->getW()/2*ENTITY_INVENTORY_SIZE, 0} )/ENTITY_INVENTORY_SIZE_VEC2;
 }
 
-bool inventory_grid::check( vec2 pos, engine::type *objtype) {
+engine::inventory_grid_state inventory_grid::check( vec2 pos, inventory_entry *objtype) {
     engine::inventory_grid_state *l_state = p_grid->get( pos.x, pos.y);
-    if( l_state && *l_state == engine::inventory_grid_state::inventory_grid_state_available)
-        return true;
-    return false;
+    if( l_state)
+        return *l_state;
+    return engine::inventory_grid_state::inventory_grid_state_unavailable;
 }
 
 void inventory_grid::setState( vec2 pos, inventory_grid_state state) {
