@@ -49,7 +49,12 @@ void player::draw( engine::graphic_draw *graphic) {
     
     if( p_player) {
         switch(p_state) {
+            case player_state::player_state_idle: {
+                p_entity->bindInput( p_player, p_input->getInputMap());
+            } break;
+
             case player_state::player_state_inventory: {
+                p_entity->bindInput( p_player, nullptr);
                 if( p_player->inventory == nullptr) { // if no inventory -> cancle
                     p_state = player_state::player_state_idle;
                     break;
@@ -123,10 +128,6 @@ void player::draw( engine::graphic_draw *graphic) {
 void player::update() {
     if( p_player) {
         p_player->change = true;
-        p_entity->bindInput( p_player, p_input->getInputMap());
-
-        if( p_player->inventory)
-            p_entity->bindInput( p_player, nullptr);
     }
 }
 
