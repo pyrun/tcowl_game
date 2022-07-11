@@ -12,7 +12,7 @@
 #define ENTITY_INVENTORY_SIZE_VEC2 vec2{ ENTITY_INVENTORY_SIZE, ENTITY_INVENTORY_SIZE}
 
 namespace engine {
-    enum inventory_angle {
+    enum inventory_angle : uint32_t{
         inventory_angle_0 = 0,
         inventory_angle_90 = 90,
         inventory_angle_180 = 180,
@@ -31,6 +31,11 @@ namespace engine {
         inventory_grid_state_taken,
     };
 
+    struct inventory_onClick_answer {
+        inventory_entry *item;
+        vec2 point;
+    };
+
     class inventory_grid : public engine::graphic_object {
         public:
             inventory_grid( uint32_t w, uint32_t h) {
@@ -47,7 +52,7 @@ namespace engine {
             bool del( inventory_entry *item);
             vec2 getTilePos( vec2 pos_abs);
 
-            inventory_entry *onClick( vec2 pos);
+            inventory_onClick_answer onClick( vec2 pos);
             void turn( inventory_entry *item, bool clockwise);
 
             void setState( vec2 pos, inventory_grid_state state);
@@ -58,6 +63,7 @@ namespace engine {
 
             std::vector<inventory_entry> *getList() { return &p_items; }
         private:
+             std::vector<vec2> getItemHitboxList( inventory_entry *item); // with rotate
             vec2 calcDrawPos( graphic_draw *graphic, bool top);
         private:
             helper::map2d<inventory_grid_state> *p_grid;

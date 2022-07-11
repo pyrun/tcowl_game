@@ -1,0 +1,20 @@
+{
+    "name": "bread",
+    "type": "item",
+    "id": 101,
+    "image": "graphic.png",
+    "alpha-key": [ 68, 123, 134],
+    "action": [
+        {
+            "name": "Idle",
+            "position": [ 0, 0],
+            "size": [ 32, 16],
+            "length": 1,
+            "delay": 0
+        }
+    ],
+    "item-hitbox": [
+        [ 0, 0],
+        [ 1, 0]
+    ]
+}

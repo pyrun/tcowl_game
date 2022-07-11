@@ -1,0 +1,23 @@
+{
+    "name": "axt",
+    "type": "item",
+    "id": 102,
+    "image": "graphic.png",
+    "alpha-key": [ 68, 123, 134],
+    "action": [
+        {
+            "name": "Idle",
+            "position": [ 0, 0],
+            "size": [ 64, 32],
+            "length": 1,
+            "delay": 0
+        }
+    ],
+    "item-hitbox": [
+        [ 0, 0],
+        [ 0, 1],
+        [ 1, 1],
+        [ 2, 1],
+        [ 3, 1]
+    ]
+}

@@ -18,6 +18,7 @@ namespace game {
         engine::inventory_entry *item;
         engine::inventory_entry item_origin_state;
         engine::inventory_grid *origin;
+        engine::vec2 pos;
     };
 
     class player : public engine::graphic_object {
@@ -37,7 +38,7 @@ namespace game {
             void drawInventory( engine::graphic_draw *graphic);
         private:
             player_state p_state;
-            player_move_item l_item_move;
+            player_move_item p_item_move;
 
             engine::font *p_font;
             engine::input *p_input;

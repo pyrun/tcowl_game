@@ -16,6 +16,10 @@ namespace engine {
         vec2 operator-(const vec2 rhs) {
             return vec2{ x-rhs.x, y-rhs.y};
         }
+        
+        vec2 operator-() {
+            return vec2{ -x, -y};
+        }
 
         vec2 operator*(const vec2& rhs) {
             return vec2{ x*rhs.x, y*rhs.y};

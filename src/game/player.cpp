@@ -8,8 +8,8 @@ using namespace game;
 
 player::player() {
     p_font = NULL;
-    l_item_move.item = nullptr;
-    l_item_move.origin = nullptr;
+    p_item_move.item = nullptr;
+    p_item_move.origin = nullptr;
     p_state =  player_state::player_state_inventory;
 }
 
@@ -27,8 +27,13 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     if( p_player) {
         engine::inventory_entry l_entry;
         l_entry.objtype = entitys->getType(100);
+        p_player->inventory->add( { 2, 3}, &l_entry);
+        l_entry.objtype = entitys->getType(102);
+        p_player->inventory->add( { 4, 2}, &l_entry);
+        l_entry.objtype = entitys->getType(103);
         p_player->inventory->add( { 3, 3}, &l_entry);
-        p_player->inventory->add( { 4, 3}, &l_entry);
+        l_entry.objtype = entitys->getType(101);
+        p_player->inventory->add( { 2, 2}, &l_entry);
     }
 }
 
@@ -52,36 +57,41 @@ void player::draw( engine::graphic_draw *graphic) {
                 // process input
                 if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack) ||
                     p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack)) { // drag and move item
-                    if( l_item_move.item == nullptr) {
-                        engine::inventory_entry *l_item = p_player->inventory->onClick( l_mouse);
-                        if( l_item) { // remove item from inventory
-                            l_item_move.item = new engine::inventory_entry;
-                            *l_item_move.item = *l_item;
-                            l_item_move.item_origin_state = *l_item;
-                            p_player->inventory->del( l_item);
-                            l_item_move.origin = p_player->inventory;
+                    if( p_item_move.item == nullptr) {
+                        engine::inventory_onClick_answer l_answer = p_player->inventory->onClick( l_mouse);
+                        if( l_answer.item) { // remove item from inventory
+                            p_item_move.item = new engine::inventory_entry;
+                            *p_item_move.item = *l_answer.item;
+                            p_item_move.item_origin_state = *l_answer.item;
+                            p_item_move.pos = l_answer.point;
+                            p_player->inventory->del( l_answer.item);
+                            engine::log( log_debug, "%d %d", p_item_move.pos.x, p_item_move.pos.y);
+                            p_item_move.origin = p_player->inventory;
                         }
                     } else { // we have one item to move
-                        vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse);
-                        engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, l_item_move.item); // try to add in inventory
+                        vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse) - p_item_move.pos;
+                        engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, p_item_move.item); // try to add in inventory
                         if( l_item_add) { // if happend we change some settings
-                            l_item_add->angle = l_item_move.item->angle;
+                            l_item_add->angle = p_item_move.item->angle;
                             clearItemMove();
                         } else { // return item prev. place
-                            p_player->inventory->add( l_item_move.item_origin_state.pos, &l_item_move.item_origin_state);
+                            p_player->inventory->add( p_item_move.item_origin_state.pos, &p_item_move.item_origin_state);
                             clearItemMove();
                         }
                     }
                 }
-                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_special)) // turn item
-                    if( l_item_move.item)
-                        p_player->inventory->turn( l_item_move.item, true);
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_special)) {// turn item
+                    if( p_item_move.item) {
+                        p_player->inventory->turn( p_item_move.item, true);
+                        p_item_move.pos = vec2{ -p_item_move.pos.y, p_item_move.pos.x};
+                    }
+                }
 
                 drawInventory( graphic); // draw inventory
 
-                if( l_item_move.item != nullptr) {
-                    vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse);
-                    switch(  p_player->inventory->check( l_tile_pos, l_item_move.item)) {
+                if( p_item_move.item != nullptr) {
+                    vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
+                    switch(  p_player->inventory->check( l_tile_pos, p_item_move.item)) {
                         case engine::inventory_grid_state::inventory_grid_state_taken: {
                             graphic->setDrawColor( 255, 255, 0, 255);
                             graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
@@ -93,65 +103,20 @@ void player::draw( engine::graphic_draw *graphic) {
                         default:
                         break;
                     }
-                    p_player->inventory->drawItem( graphic, l_camera + l_mouse, l_item_move.item, ENTITY_INVENTORY_SIZE_VEC2/vec2{ 2, 2});
+                    p_player->inventory->drawItem( graphic,
+                        l_camera + l_mouse - (p_item_move.pos*ENTITY_INVENTORY_SIZE_VEC2) - ENTITY_INVENTORY_SIZE_VEC2/vec2{2,2}, //pos
+                        p_item_move.item, // item
+                        ENTITY_INVENTORY_SIZE_VEC2/vec2{ 2, 2}); // centre
                 }
             } break;
             default:
             break;
         }
 
-        /*static bool l_set = false;
-        static vec2 l_pos1, l_pos2;
-        // Mouse
-        p_font->print( l_camera + vec2{ 10, 0}, "%3.d %3.d", p_input->getInputMap()->mouse.x, p_input->getInputMap()->mouse.y);
-        if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack)) {
-            l_pos1 = l_mouse;
-            engine::log( log_debug, "mouse left click");
-            l_set = true;
-
-            if( l_item == nullptr) {
-                inventory_entry *l_item_tmp = p_player->inventory->onClick( l_pos1);
-                if( l_item_tmp) {
-                    l_item = new inventory_entry;
-                    *l_item = *l_item_tmp;
-                    p_player->inventory->del( l_item_tmp);
-                }
-            } else {
-                vec2 l_tile_pos = p_player->inventory->getTilePos(l_pos1);
-                engine::log( log_debug, "%3.d %3.d", l_tile_pos.x, l_tile_pos.y);
-                engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, l_item->objtype);
-                if( l_item_add) {
-                    l_item_add->angle = l_item->angle;
-                    delete l_item;
-                    l_item = nullptr;
-                }
-            }
-        }
-
-        if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_special)) {
-            if( l_item)
-                p_player->inventory->turn( l_item, true);
-        } 
-        l_pos2 = l_mouse - l_pos1;
-        if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack)) {
-            engine::log( log_debug, "mouse left click lose");
-            l_set = false;
-        }
-
-        
-        drawInventory( graphic); // draw inventory
-        graphic->setDrawColor( 255, 255, 0, 255);
-        if(l_set)
-            graphic->drawLine( l_camera+l_pos1, l_pos2);
-        
-        if( l_item)
-            p_player->inventory->drawItem( graphic, l_camera + l_mouse, l_item,
-            vec2{ 16, 16}/vec2{ 2, 2});
-
         // centre camera to player
         action *l_action = p_player->objtype->getAction( p_player->action);
         engine::fvec2 l_pos = p_player->body->getPosition() + ( fvec2{ (float)l_action->size.x, (float)l_action->size.y} / fvec2{ 2.f, 2.f} );
-        graphic->getCamera()->setTarget( l_pos);*/
+        graphic->getCamera()->setTarget( l_pos);
     }
 }
 
@@ -166,10 +131,10 @@ void player::update() {
 }
 
 void player::clearItemMove() {
-    if( l_item_move.item)
-        delete l_item_move.item;
-    l_item_move.item = nullptr;
-    l_item_move.origin = nullptr;
+    if( p_item_move.item)
+        delete p_item_move.item;
+    p_item_move.item = nullptr;
+    p_item_move.origin = nullptr;
 }
 
 void player::drawInventory( engine::graphic_draw *graphic) {

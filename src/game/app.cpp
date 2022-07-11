@@ -65,8 +65,8 @@ void app::begin() {
         engine::entity *l_entity = p_entity.get( l_id);
         l_entity->inventory = new engine::inventory_grid( 10, 5);
 
-        for( int32_t x = 0; x < 3; x++)
-            for( int32_t y = 0; y < 3; y++)
+        for( int32_t x = 0; x < 6; x++)
+            for( int32_t y = 0; y < 4; y++)
                 l_entity->inventory->setState( engine::vec2{ x, y} + engine::vec2{ 2, 2}, engine::inventory_grid_state::inventory_grid_state_available);
         l_entity->inventory->setState( engine::vec2{ 1, 1}, engine::inventory_grid_state::inventory_grid_state_available);
 

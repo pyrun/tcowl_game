@@ -20,8 +20,6 @@ namespace engine {
         uint32_t delay; // Nach wie vielen Ticks weiter gesprungen wird
         uint32_t length; // Anzahl der Bilder
         bool bind_velocity; // Anpassen der Animationsgeschwindigkeit an die Geschwindigkeit
-
-        std::vector<vec2> item_hitbox;
     };
 
     enum type_objecttype {
@@ -60,6 +58,8 @@ namespace engine {
 
             void setType(type_objecttype type) { p_type = type; }
             type_objecttype getType() { return p_type; }
+            std::vector<vec2> getItemHitbox() { return p_item_hitbox; }
+            void addItemHitbox( vec2 pos) { p_item_hitbox.push_back(pos); }
         private:
             uint16_t p_id;
             char p_name[ENGINE_TYPE_NAME_MAX_LENGTH];
@@ -69,6 +69,7 @@ namespace engine {
             vec2 p_depth_sorting_offset; // offset beim z-depth sorting
             physic::shape *p_shape;
             type_objecttype p_type;
+            std::vector<vec2> p_item_hitbox;
     };
 
     class type_handler {
