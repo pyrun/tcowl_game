@@ -57,14 +57,14 @@ namespace engine {
 
             void setState( vec2 pos, inventory_grid_state state);
             void reload( graphic_draw *graphic) override;
-            void draw( graphic_draw *graphic) override { draw( graphic, true); };
-            void draw( graphic_draw *graphic, bool top);
+            void draw( graphic_draw *graphic) override { draw( graphic, vec2{ 0, 0}); };
+            void draw( graphic_draw *graphic, vec2 offset);
             void drawItem( graphic_draw *graphic, vec2 pos, inventory_entry *item, vec2 centre = vec2{ 0, 0});
 
             std::vector<inventory_entry> *getList() { return &p_items; }
         private:
              std::vector<vec2> getItemHitboxList( inventory_entry *item); // with rotate
-            vec2 calcDrawPos( graphic_draw *graphic, bool top);
+            vec2 calcDrawPos( graphic_draw *graphic, vec2 offset);
         private:
             helper::map2d<inventory_grid_state> *p_grid;
             std::vector<inventory_entry> p_items;

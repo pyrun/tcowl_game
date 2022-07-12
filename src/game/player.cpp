@@ -51,6 +51,9 @@ void player::draw( engine::graphic_draw *graphic) {
         switch(p_state) {
             case player_state::player_state_idle: {
                 p_entity->bindInput( p_player, p_input->getInputMap());
+
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_inventory))
+                    p_state = player_state::player_state_inventory;
             } break;
 
             case player_state::player_state_inventory: {
@@ -59,30 +62,31 @@ void player::draw( engine::graphic_draw *graphic) {
                     p_state = player_state::player_state_idle;
                     break;
                 }
-                // process input
-                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack) ||
-                    p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack)) { // drag and move item
-                    if( p_item_move.item == nullptr) {
-                        engine::inventory_onClick_answer l_answer = p_player->inventory->onClick( l_mouse);
-                        if( l_answer.item) { // remove item from inventory
-                            p_item_move.item = new engine::inventory_entry;
-                            *p_item_move.item = *l_answer.item;
-                            p_item_move.item_origin_state = *l_answer.item;
-                            p_item_move.pos = l_answer.point;
-                            p_player->inventory->del( l_answer.item);
-                            engine::log( log_debug, "%d %d", p_item_move.pos.x, p_item_move.pos.y);
-                            p_item_move.origin = p_player->inventory;
-                        }
-                    } else { // we have one item to move
-                        vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse) - p_item_move.pos;
-                        engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, p_item_move.item); // try to add in inventory
-                        if( l_item_add) { // if happend we change some settings
-                            l_item_add->angle = p_item_move.item->angle;
-                            clearItemMove();
-                        } else { // return item prev. place
-                            p_player->inventory->add( p_item_move.item_origin_state.pos, &p_item_move.item_origin_state);
-                            clearItemMove();
-                        }
+
+                // move item
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack) &&
+                    p_item_move.item == nullptr) { // pick up item
+                    engine::inventory_onClick_answer l_answer = p_player->inventory->onClick( l_mouse);
+                    if( l_answer.item) { // remove item from inventory
+                        p_item_move.item = new engine::inventory_entry;
+                        *p_item_move.item = *l_answer.item;
+                        p_item_move.item_origin_state = *l_answer.item;
+                        p_item_move.pos = l_answer.point;
+                        p_player->inventory->del( l_answer.item);
+                        engine::log( log_debug, "%d %d", p_item_move.pos.x, p_item_move.pos.y);
+                        p_item_move.origin = p_player->inventory;
+                    }
+                }
+                if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack) &&
+                     p_item_move.item) { // place item
+                    vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse) - p_item_move.pos;
+                    engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, p_item_move.item); // try to add in inventory
+                    if( l_item_add) { // if happend we change some settings
+                        l_item_add->angle = p_item_move.item->angle;
+                        clearItemMove();
+                    } else { // return item prev. place
+                        p_player->inventory->add( p_item_move.item_origin_state.pos, &p_item_move.item_origin_state);
+                        clearItemMove();
                     }
                 }
                 if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_special)) {// turn item
@@ -98,11 +102,11 @@ void player::draw( engine::graphic_draw *graphic) {
                     vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
                     switch(  p_player->inventory->check( l_tile_pos, p_item_move.item)) {
                         case engine::inventory_grid_state::inventory_grid_state_taken: {
-                            graphic->setDrawColor( 255, 255, 0, 255);
+                            graphic->setDrawColor( 255, 64, 32, 255);
                             graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
                         } break;
                         case engine::inventory_grid_state::inventory_grid_state_available: {
-                            graphic->setDrawColor( 255, 0, 255, 255);
+                            graphic->setDrawColor( 0, 255, 64, 255);
                             graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
                         } break;
                         default:
@@ -113,7 +117,17 @@ void player::draw( engine::graphic_draw *graphic) {
                         p_item_move.item, // item
                         ENTITY_INVENTORY_SIZE_VEC2/vec2{ 2, 2}); // centre
                 }
-            } break;
+
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_inventory)) {
+                    p_state = player_state::player_state_idle;
+                    if( p_item_move.item != nullptr) {
+                        // return item
+                        p_player->inventory->add( p_item_move.item_origin_state.pos, &p_item_move.item_origin_state);
+                        clearItemMove();
+                    }
+                }
+            } break; // player_state::player_state_inventory
+
             default:
             break;
         }

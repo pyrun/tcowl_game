@@ -100,14 +100,13 @@ void inventory_grid::turn( inventory_entry *item, bool clockwise) {
     }
 }
 
-void inventory_grid::draw( graphic_draw *graphic, bool top) {
+void inventory_grid::draw( graphic_draw *graphic, vec2 offset) {
     if( l_image.getTexture() == nullptr)
         l_image.load( graphic, "system/inventory.png");
     
-    calcDrawPos( graphic, top);
+    calcDrawPos( graphic, offset);
 
     engine::vec2 l_pos;
-    vec2 p_draw_pos = vec2{ graphic->getCamera()->getSize().toVec().x/2,  (int32_t)top?0:(int32_t)(graphic->getCamera()->getSize().toVec().y - p_grid->getH()*16)};
     for(l_pos.x = 0; l_pos.x < p_grid->getW(); l_pos.x++ ) {
         for(l_pos.y = 0; l_pos.y < p_grid->getH(); l_pos.y++ ) {
             engine::inventory_grid_state *l_tile = p_grid->get( l_pos.x, l_pos.y);
@@ -163,7 +162,7 @@ std::vector<vec2> inventory_grid::getItemHitboxList( inventory_entry *item) {
     return l_list;
 }
 
-vec2 inventory_grid::calcDrawPos( graphic_draw *graphic, bool top) {
-    p_draw_pos = vec2{ graphic->getCamera()->getSize().toVec().x/2,  (int32_t)top?0:(int32_t)(graphic->getCamera()->getSize().toVec().y - p_grid->getH()*16)};
+vec2 inventory_grid::calcDrawPos( graphic_draw *graphic, vec2 offset) {
+    p_draw_pos = vec2{ graphic->getCamera()->getSize().toVec().x/2 + offset.x, offset.y};
     return p_draw_pos;
 }

@@ -58,6 +58,10 @@ void input_keyboard::reset() {
 void input_keyboard::key( input_key_state state, SDL_Keycode key) {
     bool l_update_axis = false;
     switch( key) {
+        case SDLK_e: [[fallthrough]];
+        case SDLK_i: {
+            p_map_input.buttons[input_buttons_inventory] = state == input_key_state::input_key_down;
+        } break;
         case SDLK_w: {
             p_map_input.buttons[input_buttons_up] = state == input_key_state::input_key_down;
             l_update_axis = true;
