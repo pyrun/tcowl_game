@@ -175,6 +175,44 @@ static int lua_setInventoryState( lua_State *state) {
     return 1;
 }
 
+static int lua_addInventoryItem( lua_State *state) {
+    entity *l_obj;
+    std::string l_state_name;
+    vec2 l_pos;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    if( l_obj->inventory == nullptr)
+        return 0;
+    
+    if( !lua_isnumber( state, 2) || !lua_isnumber( state, 3) || !lua_isstring( state, 4)) {
+        log( log_warn, "lua_addInventoryItem call wrong argument");
+        return 0;
+    }
+
+    l_pos.x = lua_tonumber( state, 2);
+    l_pos.y = lua_tonumber( state, 3);
+    l_state_name = lua_tostring( state, 4);
+
+    engine::type *l_type = engine::used_entity_handler->getTypeByName(l_state_name);
+
+    if( l_type == nullptr) {
+        log( log_warn, "lua_addInventoryItem type not found %s", l_state_name);
+        return 0;
+    }
+
+    engine::inventory_entry l_entry;
+    l_entry.objtype = l_type;
+
+    engine::inventory_entry *l_item = l_obj->inventory->add( l_pos, &l_entry);
+
+    // TODO check if happen
+    lua_pushboolean( state, l_item==nullptr?false:true);
+    return 1;
+}
+
 #ifdef __cplusplus
 }
 #endif
@@ -188,6 +226,7 @@ static const struct luaL_Reg entity_lib_funcs[] = {
     {"getInputAxies", lua_getInputAxies},
     {"getInputButtons", lua_getInputButtons},
     {"setInventoryState", lua_setInventoryState},
+    {"addInventoryItem", lua_addInventoryItem},
     {NULL, NULL}
     };
 

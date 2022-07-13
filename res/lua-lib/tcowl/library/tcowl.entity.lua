@@ -60,11 +60,21 @@ function tcowl.entity.getInputAxies( id) end
 function tcowl.entity.getInputAxies( id) end
 
 ---
----Get input buttons
+---Change state of inventory tile
 ---
 ---@param id? number # object id
 ---@param x? number # pos x
 ---@param y? number # pos y
 ---@param state? string # unavailable, available or taken
----@return boolean attack # button attack
+---@return boolean happend # happend
 function tcowl.entity.setInventoryState( id, x, y, state) end
+
+---
+---Add item to inventory
+---
+---@param id? number # object id
+---@param x? number # pos x
+---@param y? number # pos y
+---@param objname? string # object name
+---@return boolean happend # happend
+function tcowl.entity.addInventoryItem( id, x, y, objname) end

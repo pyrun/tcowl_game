@@ -4,6 +4,7 @@
     "image": "graphic.png",
     "collision-type": "rect",
     "collision-data": [ 0, 8, 21, 4],
+    "inventory-size": [ 3, 3],
     "action": [
         {
             "name": "Idle",

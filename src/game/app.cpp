@@ -64,26 +64,6 @@ void app::begin() {
 
         l_id = p_entity.createObject(6);
         p_entity.setPosition( l_id, { 120, 102});
-
-        /*l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 50, 102});
-
-        l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 160, 50});
-        l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 180, 30});
-        l_id = p_entity.createObject(3);
-        p_entity.setPosition( l_id, { 120, 100});
-
-        l_id = p_entity.createObject(4);
-        p_entity.setPosition( l_id, { 150, 50});
-
-        l_id = p_entity.createObject(10);
-        p_entity.setPosition( l_id, { 50, 50});
-
-        l_id = p_entity.createObject(5);
-        p_entity.setPosition( l_id, { 100, 150});*/
-
         p_entity.deleteObject( 0);
     }
     if( l_net_type == app_config_network_server)

@@ -22,7 +22,7 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     p_input = input;
     p_entity = entitys;
 
-    p_player = p_entity->get( 1);
+    p_player = p_entity->get( 2);
 
     if( p_player && p_player->inventory) {
         engine::inventory_entry l_entry;

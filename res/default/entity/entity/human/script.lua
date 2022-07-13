@@ -7,6 +7,7 @@ function Intilisation( id)
 			tcowl.entity.setInventoryState( id, x, y, "available")
 		end
 	end
+	
 end
 
 function Update( id)
