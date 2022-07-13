@@ -205,8 +205,9 @@ static int lua_addInventoryItem( lua_State *state) {
 
     engine::inventory_entry l_entry;
     l_entry.objtype = l_type;
+    l_entry.pos = l_pos;
 
-    engine::inventory_entry *l_item = l_obj->inventory->add( l_pos, &l_entry);
+    engine::inventory_entry *l_item = l_obj->inventory->add( &l_entry);
 
     // TODO check if happen
     lua_pushboolean( state, l_item==nullptr?false:true);

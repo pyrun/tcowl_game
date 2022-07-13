@@ -16,15 +16,15 @@ inventory_grid::~inventory_grid() {
         delete p_grid;
 }
 
-inventory_entry *inventory_grid::add( vec2 pos, inventory_entry *objtype) {
-    if( check( pos, objtype) != inventory_grid_state_available)
+inventory_entry *inventory_grid::add( inventory_entry *objtype) {
+    if( check( objtype) != inventory_grid_state_available)
         return nullptr;
     for (engine::vec2 const& l_hitbox : getItemHitboxList(objtype) ) {
-        setState( pos+l_hitbox, inventory_grid_state::inventory_grid_state_taken);
+        setState( objtype->pos+l_hitbox, inventory_grid_state::inventory_grid_state_taken);
     }
     inventory_entry l_enitry;
     l_enitry.objtype = objtype->objtype;
-    l_enitry.pos = pos;
+    l_enitry.pos = objtype->pos;
     l_enitry.angle = objtype->angle;
     p_items.push_back( l_enitry);
     return &p_items[p_items.size()-1];
@@ -49,9 +49,9 @@ vec2 inventory_grid::getTilePos( vec2 pos_abs) {
     return (pos_abs-p_draw_pos+vec2{ (int32_t)p_grid->getW()/2*ENTITY_INVENTORY_SIZE, 0} )/ENTITY_INVENTORY_SIZE_VEC2;
 }
 
-engine::inventory_grid_state inventory_grid::check( vec2 pos, inventory_entry *objtype) {
+engine::inventory_grid_state inventory_grid::check( inventory_entry *objtype) {
     for (engine::vec2 const& l_hitbox : getItemHitboxList(objtype)) {
-        engine::inventory_grid_state *l_state = p_grid->get( pos.x+l_hitbox.x, pos.y+l_hitbox.y);
+        engine::inventory_grid_state *l_state = p_grid->get( objtype->pos.x+l_hitbox.x, objtype->pos.y+l_hitbox.y);
         if( l_state == nullptr)
             return engine::inventory_grid_state::inventory_grid_state_unavailable;
         if( *l_state != engine::inventory_grid_state::inventory_grid_state_available)
@@ -86,8 +86,6 @@ inventory_onClick_answer inventory_grid::onClick( vec2 pos) {
     }
     return l_return;
 }
-
-
 
 void inventory_grid::turn( inventory_entry *item, bool clockwise) {
     if( item == nullptr)

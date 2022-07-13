@@ -22,12 +22,13 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     p_input = input;
     p_entity = entitys;
 
-    p_player = p_entity->get( 2);
+    p_player = p_entity->get( 1);
 
     if( p_player && p_player->inventory) {
         engine::inventory_entry l_entry;
         l_entry.objtype = entitys->getTypeByName("bread");
-        p_player->inventory->add( { 5, 3}, &l_entry);
+        l_entry.pos = vec2{ 5, 3};
+        p_player->inventory->add( &l_entry);
 
         /*p_player->inventory->add( { 2, 3}, &l_entry);
         l_entry.objtype = entitys->getType(102);
@@ -75,19 +76,18 @@ void player::draw( engine::graphic_draw *graphic) {
                         p_item_move.item_origin_state = *l_answer.item;
                         p_item_move.pos = l_answer.point;
                         p_player->inventory->del( l_answer.item);
-                        engine::log( log_debug, "%d %d", p_item_move.pos.x, p_item_move.pos.y);
                         p_item_move.origin = p_player->inventory;
                     }
                 }
                 if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack) &&
                      p_item_move.item) { // place item
-                    vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse) - p_item_move.pos;
-                    engine::inventory_entry *l_item_add = p_player->inventory->add( l_tile_pos, p_item_move.item); // try to add in inventory
+                    p_item_move.item->pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
+                    engine::inventory_entry *l_item_add = p_player->inventory->add( p_item_move.item); // try to add in inventory
                     if( l_item_add) { // if happend we change some settings
                         l_item_add->angle = p_item_move.item->angle;
                         clearItemMove();
                     } else { // return item prev. place
-                        p_player->inventory->add( p_item_move.item_origin_state.pos, &p_item_move.item_origin_state);
+                        p_player->inventory->add( &p_item_move.item_origin_state);
                         clearItemMove();
                     }
                 }
@@ -101,8 +101,8 @@ void player::draw( engine::graphic_draw *graphic) {
                 drawInventory( graphic); // draw inventory
 
                 if( p_item_move.item != nullptr) {
-                    vec2 l_tile_pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
-                    switch(  p_player->inventory->check( l_tile_pos, p_item_move.item)) {
+                    p_item_move.item->pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
+                    switch(  p_player->inventory->check( p_item_move.item)) {
                         case engine::inventory_grid_state::inventory_grid_state_taken: {
                             graphic->setDrawColor( 255, 64, 32, 255);
                             graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
@@ -124,7 +124,7 @@ void player::draw( engine::graphic_draw *graphic) {
                     p_state = player_state::player_state_idle;
                     if( p_item_move.item != nullptr) {
                         // return item
-                        p_player->inventory->add( p_item_move.item_origin_state.pos, &p_item_move.item_origin_state);
+                        p_player->inventory->add( &p_item_move.item_origin_state);
                         clearItemMove();
                     }
                 }

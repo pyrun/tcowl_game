@@ -41,8 +41,9 @@ namespace engine {
             inventory_grid( uint32_t w, uint32_t h);
             ~inventory_grid();
 
-            inventory_entry *add( vec2 pos, inventory_entry *objtype);
-            inventory_grid_state check( vec2 pos, inventory_entry *objtype);
+            inventory_entry *add( inventory_entry *objtype);
+            
+            inventory_grid_state check( inventory_entry *objtype);
             bool del( inventory_entry *item);
             vec2 getTilePos( vec2 pos_abs);
 
