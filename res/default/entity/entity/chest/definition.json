@@ -1,0 +1,23 @@
+{
+    "name": "chest",
+    "id": 6,
+    "image": "graphic.png",
+    "collision-type": "rect",
+    "collision-data": [ 0, 8, 21, 4],
+    "action": [
+        {
+            "name": "Idle",
+            "position": [ 0, 0],
+            "size": [ 21, 15],
+            "length": 1,
+            "delay": 0
+        },
+        {
+            "name": "Open",
+            "position": [ 21, 0],
+            "size": [ 21, 15],
+            "length": 1,
+            "delay": 0
+        }
+    ]
+}

@@ -1,6 +1,14 @@
 local velocity_window = 0.1
 local walk_speed = 10.0
 
+function Intilisation( id)
+	for x=3,6 do
+		for y=1,3 do
+			tcowl.entity.setInventoryState( id, x, y, "available")
+		end
+	end
+end
+
 function Update( id)
 	local l_velX, l_velY
 
