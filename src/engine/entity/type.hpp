@@ -58,8 +58,12 @@ namespace engine {
 
             void setType(type_objecttype type) { p_type = type; }
             type_objecttype getType() { return p_type; }
+
             std::vector<vec2> getItemHitbox() { return p_item_hitbox; }
             void addItemHitbox( vec2 pos) { p_item_hitbox.push_back(pos); }
+
+            void setInventorySize( vec2 value) { l_inventory_size = value; }
+            vec2 getInventorySize() { return l_inventory_size; }
         private:
             uint16_t p_id;
             char p_name[ENGINE_TYPE_NAME_MAX_LENGTH];
@@ -70,6 +74,8 @@ namespace engine {
             physic::shape *p_shape;
             type_objecttype p_type;
             std::vector<vec2> p_item_hitbox;
+
+            vec2 l_inventory_size;
     };
 
     class type_handler {
@@ -85,6 +91,7 @@ namespace engine {
             uint32_t getAmount() { return (uint32_t)p_type.size(); }
             type *get( uint32_t index) { return &p_type.at( index); }
             type *getById( uint16_t id);
+            type *getByName( std::string name);
         private:
             type *createtype();
             bool removetype( type *target);

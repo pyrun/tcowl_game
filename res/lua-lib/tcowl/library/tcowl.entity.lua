@@ -58,3 +58,13 @@ function tcowl.entity.getInputAxies( id) end
 ---@param id? number # object id
 ---@return boolean attack # button attack
 function tcowl.entity.getInputAxies( id) end
+
+---
+---Get input buttons
+---
+---@param id? number # object id
+---@param x? number # pos x
+---@param y? number # pos y
+---@param state? string # unavailable, available or taken
+---@return boolean attack # button attack
+function tcowl.entity.setInventoryState( id, x, y, state) end

@@ -143,6 +143,38 @@ static int lua_getInputButtons( lua_State *state) {
     return 1;
 }
 
+static int lua_setInventoryState( lua_State *state) {
+    entity *l_obj;
+    std::string l_state_name;
+    vec2 l_pos;
+    inventory_grid_state l_state = inventory_grid_state_unavailable;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    if( l_obj->inventory == nullptr)
+        return 0;
+    
+    if( !lua_isnumber( state, 2) || !lua_isnumber( state, 3) || !lua_isstring( state, 4)) {
+        log( log_warn, "lua_setInventoryState call wrong argument");
+        return 0;
+    }
+
+    l_pos.x = lua_tonumber( state, 2);
+    l_pos.y = lua_tonumber( state, 3);
+    l_state_name = lua_tostring( state, 4);
+
+    // TODO check if inventory_grid_state_unavailable or inventory_grid_state_taken
+    if( l_state_name == "available")
+        l_state = inventory_grid_state_available;
+    l_obj->inventory->setState( l_pos, l_state);
+
+    // TODO check if happen
+    lua_pushboolean( state, true);
+    return 1;
+}
+
 #ifdef __cplusplus
 }
 #endif
@@ -155,6 +187,7 @@ static const struct luaL_Reg entity_lib_funcs[] = {
     {"isInputPresent", lua_isInputPresent},
     {"getInputAxies", lua_getInputAxies},
     {"getInputButtons", lua_getInputButtons},
+    {"setInventoryState", lua_setInventoryState},
     {NULL, NULL}
     };
 

@@ -10,7 +10,7 @@ player::player() {
     p_font = NULL;
     p_item_move.item = nullptr;
     p_item_move.origin = nullptr;
-    p_state =  player_state::player_state_inventory;
+    p_state =  player_state::player_state_idle;
 }
 
 player::~player() {
@@ -24,16 +24,18 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
 
     p_player = p_entity->get( 1);
 
-    if( p_player) {
+    if( p_player && p_player->inventory) {
         engine::inventory_entry l_entry;
-        l_entry.objtype = entitys->getType(100);
-        p_player->inventory->add( { 2, 3}, &l_entry);
+        l_entry.objtype = entitys->getTypeByName("bread");
+        p_player->inventory->add( { 5, 3}, &l_entry);
+
+        /*p_player->inventory->add( { 2, 3}, &l_entry);
         l_entry.objtype = entitys->getType(102);
         p_player->inventory->add( { 4, 2}, &l_entry);
         l_entry.objtype = entitys->getType(103);
         p_player->inventory->add( { 3, 3}, &l_entry);
         l_entry.objtype = entitys->getType(101);
-        p_player->inventory->add( { 2, 2}, &l_entry);
+        p_player->inventory->add( { 2, 2}, &l_entry);*/
     }
 }
 

@@ -62,16 +62,8 @@ void app::begin() {
         l_id = p_entity.createObject(1);
         p_entity.setPosition( l_id, { 100, 100});
 
-        engine::entity *l_entity = p_entity.get( l_id);
-        l_entity->inventory = new engine::inventory_grid( 10, 5);
-
-        for( int32_t x = 0; x < 6; x++)
-            for( int32_t y = 0; y < 4; y++)
-                l_entity->inventory->setState( engine::vec2{ x, y} + engine::vec2{ 2, 2}, engine::inventory_grid_state::inventory_grid_state_available);
-        l_entity->inventory->setState( engine::vec2{ 1, 1}, engine::inventory_grid_state::inventory_grid_state_available);
-
-        l_id = p_entity.createObject(100);
-        p_entity.setPosition( l_id, { 10, 102});
+        l_id = p_entity.createObject(6);
+        p_entity.setPosition( l_id, { 120, 102});
 
         /*l_id = p_entity.createObject(3);
         p_entity.setPosition( l_id, { 50, 102});

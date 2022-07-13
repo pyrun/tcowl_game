@@ -6,6 +6,16 @@ using namespace engine;
 
 engine::image l_image;
 
+inventory_grid::inventory_grid( uint32_t w, uint32_t h) {
+    p_grid = new helper::map2d<inventory_grid_state>( w, h);
+    p_grid->fill( inventory_grid_state::inventory_grid_state_unavailable);
+}
+
+inventory_grid::~inventory_grid() {
+    if(p_grid)
+        delete p_grid;
+}
+
 inventory_entry *inventory_grid::add( vec2 pos, inventory_entry *objtype) {
     if( check( pos, objtype) != inventory_grid_state_available)
         return nullptr;

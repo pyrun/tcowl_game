@@ -191,6 +191,16 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         l_type->addItemHitbox( vec2{ 0, 0});
     }
 
+    // inventory-size
+    if( l_json["inventory-size"].is_array()) {
+        json l_json_root_inventory_size = l_json["inventory-size"];
+        if( l_json_root_inventory_size.size() == 2) {
+            vec2 l_size = vec2{ l_json_root_inventory_size[0].get<int32_t>(), l_json_root_inventory_size[1].get<int32_t>()};
+            log( log_level::log_debug, "inventory-size %d %d", l_size.x, l_size.y);
+            l_type->setInventorySize( l_size);
+        }
+    }
+
     log( log_level::log_info, "Entity id:%d name:%s action:%d type:%s loaded", l_type->getId(), l_type->getName(), l_type->getAmountActions(), l_object_type.c_str());
 }
 
@@ -222,6 +232,13 @@ bool type_handler::removetype( type *target) {
 type *type_handler::getById( uint16_t id) {
     for( uint32_t i = 0; i < p_type.size(); i++)
         if( p_type[i].getId() == id)
+            return &p_type[i];
+    return NULL;
+}
+
+type *type_handler::getByName( std::string name) {
+    for( uint32_t i = 0; i < p_type.size(); i++)
+        if( p_type[i].getName() == name)
             return &p_type[i];
     return NULL;
 }

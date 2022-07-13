@@ -1,4 +1,5 @@
 #include "entity.hpp"
+#include "inventory.hpp"
 
 #include <string.h>
 #include <engine/log.hpp>
@@ -76,6 +77,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
         l_index = (uint32_t)index;
     }
 
+    // Step 1 - object
     l_entity = p_entity[l_index] = new entity;
     p_draw_order.push_back( l_entity);
     l_entity->index = l_index;
@@ -89,17 +91,21 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
 
     l_entity->action = 0;
 
-    l_entity->lua_state = nullptr;
-    loadScriptFile( l_entity);
-
-    l_entity->inventory = nullptr;
+    if( objtype->getInventorySize().x || objtype->getInventorySize().y) {
+        l_entity->inventory = new inventory_grid( objtype->getInventorySize().x, objtype->getInventorySize().y);
+    } else {
+        l_entity->inventory = nullptr;
+    }
 
     l_entity->change = true;
     l_entity->input = nullptr;
-    
-    log( log_trace, "entity_handler::createObject %d", l_index);
 
+    log( log_trace, "entity_handler::createObject %d", l_index);
     p_amount++;
+
+    // Step 2 - Script
+    l_entity->lua_state = nullptr;
+    loadScriptFile( l_entity);
     
     return l_index;
 }

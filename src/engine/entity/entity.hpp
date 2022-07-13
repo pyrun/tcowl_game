@@ -71,8 +71,9 @@ namespace engine {
             void network_update( network::connection *network_interface);
             bool newClientCallback( network::client *client, network::connection *network_interface);
             void recvPacket( network::packet packet);
-            
+
             type *getType( uint16_t id) { return p_types->getById( id); }
+            type *getTypeByName( std::string name) { return p_types->getByName( name); }
             const uint32_t getPriority() override { return 128; }
             physic::hub *getPhysicHub() { return &p_hub; }
         private:

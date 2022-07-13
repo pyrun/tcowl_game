@@ -38,14 +38,8 @@ namespace engine {
 
     class inventory_grid : public engine::graphic_object {
         public:
-            inventory_grid( uint32_t w, uint32_t h) {
-                p_grid = new helper::map2d<inventory_grid_state>( w, h);
-                p_grid->fill( inventory_grid_state::inventory_grid_state_unavailable);
-            }
-            ~inventory_grid() {
-                if(p_grid)
-                    delete p_grid;
-            }
+            inventory_grid( uint32_t w, uint32_t h);
+            ~inventory_grid();
 
             inventory_entry *add( vec2 pos, inventory_entry *objtype);
             inventory_grid_state check( vec2 pos, inventory_entry *objtype);
