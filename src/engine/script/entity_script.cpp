@@ -103,7 +103,6 @@ static int lua_setAnimation( lua_State *state) {
 
     l_action_name = lua_tostring( state, 2);
     
-    
     for( action &action: l_obj->objtype->actions) 
         if( action.name == l_action_name)
             l_action = &action;
@@ -155,7 +154,7 @@ static int lua_getInputButtons( lua_State *state) {
     if( !l_obj->input)
         return 0;
 
-    lua_pushnumber( state, l_obj->input->buttons[ input_buttons::input_buttons_attack]);
+    lua_pushnumber( state, l_obj->input->buttons[ input_buttons::input_buttons_use]);
     return 1;
 }
 

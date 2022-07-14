@@ -58,50 +58,22 @@ void input_keyboard::reset() {
 void input_keyboard::key( input_key_state state, SDL_Keycode key) {
     bool l_update_axis = false;
     switch( key) {
+        case SDLK_r: { p_map_input.buttons[input_buttons_action] = state == input_key_state::input_key_down; } break;
+        case SDLK_q: { p_map_input.buttons[input_buttons_use] = state == input_key_state::input_key_down; } break;
         case SDLK_e: [[fallthrough]];
-        case SDLK_i: {
-            p_map_input.buttons[input_buttons_inventory] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_w: {
-            p_map_input.buttons[input_buttons_up] = state == input_key_state::input_key_down;
-            l_update_axis = true;
-        } break;
-        case SDLK_s: {
-            p_map_input.buttons[input_buttons_down] = state == input_key_state::input_key_down;
-            l_update_axis = true;
-        } break;
-        case SDLK_a: {
-            p_map_input.buttons[input_buttons_left] = state == input_key_state::input_key_down;
-            l_update_axis = true;
-        } break;
-        case SDLK_d: {
-            p_map_input.buttons[input_buttons_right] = state == input_key_state::input_key_down;
-            l_update_axis = true;
-        } break;
-        case SDLK_F1: {
-            p_map_input.buttons[input_buttons_special_0] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_F2: {
-            p_map_input.buttons[input_buttons_special_1] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_F3: {
-            p_map_input.buttons[input_buttons_special_2] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_F4: {
-            p_map_input.buttons[input_buttons_special_3] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_F5: {
-            p_map_input.buttons[input_buttons_special_4] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_F6: {
-            p_map_input.buttons[input_buttons_special_5] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_F7: {
-            p_map_input.buttons[input_buttons_special_6] = state == input_key_state::input_key_down;
-        } break;
-        case SDLK_F8: {
-            p_map_input.buttons[input_buttons_special_7] = state == input_key_state::input_key_down;
-        } break;
+        case SDLK_i: { p_map_input.buttons[input_buttons_inventory] = state == input_key_state::input_key_down; } break;
+        case SDLK_w: { p_map_input.buttons[input_buttons_up] = state == input_key_state::input_key_down; l_update_axis = true; } break;
+        case SDLK_s: { p_map_input.buttons[input_buttons_down] = state == input_key_state::input_key_down; l_update_axis = true; } break;
+        case SDLK_a: { p_map_input.buttons[input_buttons_left] = state == input_key_state::input_key_down; l_update_axis = true; } break;
+        case SDLK_d: { p_map_input.buttons[input_buttons_right] = state == input_key_state::input_key_down; l_update_axis = true; } break;
+        case SDLK_F1: { p_map_input.buttons[input_buttons_special_0] = state == input_key_state::input_key_down; } break;
+        case SDLK_F2: { p_map_input.buttons[input_buttons_special_1] = state == input_key_state::input_key_down; } break;
+        case SDLK_F3: { p_map_input.buttons[input_buttons_special_2] = state == input_key_state::input_key_down; } break;
+        case SDLK_F4: { p_map_input.buttons[input_buttons_special_3] = state == input_key_state::input_key_down; } break;
+        case SDLK_F5: { p_map_input.buttons[input_buttons_special_4] = state == input_key_state::input_key_down; } break;
+        case SDLK_F6: { p_map_input.buttons[input_buttons_special_5] = state == input_key_state::input_key_down; } break;
+        case SDLK_F7: { p_map_input.buttons[input_buttons_special_6] = state == input_key_state::input_key_down; } break;
+        case SDLK_F8: { p_map_input.buttons[input_buttons_special_7] = state == input_key_state::input_key_down; } break;
         default: break;
     }
 
@@ -129,6 +101,8 @@ void input_keyboard::onMouseEvent( input_key_state state) {
     // SDL_PumpEvents(); // make sure we have the latest mouse state.
     
     uint32_t l_mouse_click = SDL_GetMouseState( &p_map_input.mouse.x, &p_map_input.mouse.y);
-    p_map_input.buttons[input_buttons_attack] = l_mouse_click & SDL_BUTTON_LMASK;
-    p_map_input.buttons[input_buttons_special] = l_mouse_click & SDL_BUTTON_RMASK;
+    if( state != input_key_unknow) {
+        p_map_input.buttons[input_buttons_use] = l_mouse_click & SDL_BUTTON_LMASK;
+        p_map_input.buttons[input_buttons_action] = l_mouse_click & SDL_BUTTON_RMASK;
+    }
 }

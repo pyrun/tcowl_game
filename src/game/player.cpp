@@ -70,7 +70,7 @@ void player::draw( engine::graphic_draw *graphic) {
                 }
 
                 // move item
-                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_attack) &&
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_use) &&
                     p_item_move.item == nullptr) { // pick up item
                     engine::inventory_onClick_answer l_answer = p_player->inventory->onClick( l_mouse);
                     if( l_answer.item) { // remove item from inventory
@@ -82,7 +82,7 @@ void player::draw( engine::graphic_draw *graphic) {
                         p_item_move.origin = p_player->inventory;
                     }
                 }
-                if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_attack) &&
+                if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_use) &&
                      p_item_move.item) { // place item
                     p_item_move.item->pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
                     engine::inventory_entry *l_item_add = p_player->inventory->add( p_item_move.item); // try to add in inventory
@@ -94,7 +94,7 @@ void player::draw( engine::graphic_draw *graphic) {
                         clearItemMove();
                     }
                 }
-                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_special)) {// turn item
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_action)) {// turn item
                     if( p_item_move.item) {
                         p_player->inventory->turn( p_item_move.item, true);
                         p_item_move.pos = vec2{ -p_item_move.pos.y, p_item_move.pos.x};
