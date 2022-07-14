@@ -12,25 +12,6 @@ using json = nlohmann::json;
 
 using namespace engine;
 
-type::type() {
-    p_shape = nullptr;
-    p_type = type_objecttype_object;
-}
-
-void type::cleanup() {
-    if( p_shape)
-        delete p_shape;
-}
-
-action *type::getAction( std::string name) {
-    for( std::size_t i = 0; i < p_action.size(); i++) {
-        action *l_action = &p_action[i];
-        if( l_action->name == name)
-            return l_action;
-    }
-    return NULL;
-}
-
 type_handler::type_handler() {
     p_type.clear();
 }
@@ -87,23 +68,22 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     type *l_type = createtype();
 
     // Name
-    l_type->setName( helper::json::getString( &l_json, "name", "noName").c_str());
+    l_type->name = helper::json::getString( &l_json, "name", "noName");
 
     // Id
     uint32_t l_id;
-    l_id = helper::json::getUint32( &l_json, "id", 0);
-    if( l_id == 0) { // keine Nummer vergeben
+    l_type->id = helper::json::getUint32( &l_json, "id", 0);
+    if( l_type->id == 0) { // keine Nummer vergeben
         removetype( l_type);
         return;
     }
-    l_type->setId( l_id);
 
     // Type
     std::string l_object_type = helper::json::getString( &l_json, "type", "object");
     if( l_object_type == "object")
-        l_type->setType( engine::type_objecttype::type_objecttype_object);
+        l_type->object_type = engine::type_objecttype::type_objecttype_object;
     else if( l_object_type == "item")
-        l_type->setType( engine::type_objecttype::type_objecttype_item);
+        l_type->object_type = engine::type_objecttype::type_objecttype_item;
 
     // Graphic
     std::string l_image_file;
@@ -117,18 +97,18 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     uint8_t *l_color_key;
     l_color_key = helper::json::getNumberArrayN<uint8_t>( &l_json, "alpha-key", 3);
     if( l_color_key) {
-        l_type->getImage()->setAlphaKey( l_color_key[0], l_color_key[1], l_color_key[2]);
+        l_type->image.setAlphaKey( l_color_key[0], l_color_key[1], l_color_key[2]);
         delete l_color_key;
     }
 
     // depth_sorting_offset
-    l_type->setDepthSortingOffset( helper::json::getVec2( &l_json, "depth-sorting-offset"));
+    l_type->depth_sorting_offset = helper::json::getVec2( &l_json, "depth-sorting-offset");
 
     // Load image
-    l_type->getImage()->load( graphic, folder + l_image_file);
+    l_type->image.load( graphic, folder + l_image_file);
 
     // Set Folder path
-    l_type->setFolderPath( folder);
+    l_type->src_path = folder;
 
     // Physic data
     float *l_collision_data = helper::json::getNumberArray<float>( &l_json, "collision-data", 8);
@@ -147,7 +127,7 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
     }
     if( l_shape)
         l_shape->setOffset( { l_collision_data[0], l_collision_data[1]});
-    l_type->linkShape( l_shape);
+    l_type->shape = l_shape;
 
     // Alle Aktionen laden und hinzufügen
     if( l_json["action"].is_array()) {
@@ -172,8 +152,8 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
                 l_action.size.y,
                 l_action.length,
                 l_action.delay);
-
-            l_type->addAction( l_action);
+            
+            l_type->actions.push_back( l_action);
         }
     }
 
@@ -184,11 +164,11 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
             json l_item_hitbox_json = l_json_root_item_hitbox[i];
             if( l_item_hitbox_json.is_array() && l_item_hitbox_json.size() == 2) {
                 log( log_level::log_debug, "item-hitbox %d %d", l_item_hitbox_json[0].get<int32_t>(), l_item_hitbox_json[1].get<int32_t>());
-                l_type->addItemHitbox( vec2{ l_item_hitbox_json[0].get<int32_t>(), l_item_hitbox_json[1].get<int32_t>()});
+                l_type->item_vertex.push_back( vec2{ l_item_hitbox_json[0].get<int32_t>(), l_item_hitbox_json[1].get<int32_t>()});
             }
         }
-    } else if( l_type->getType() == engine::type_objecttype_item) {
-        l_type->addItemHitbox( vec2{ 0, 0});
+    } else if( l_type->object_type == engine::type_objecttype_item) {
+        l_type->item_vertex.push_back( vec2{ 0, 0});
     }
 
     // inventory-size
@@ -197,19 +177,16 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
         if( l_json_root_inventory_size.size() == 2) {
             vec2 l_size = vec2{ l_json_root_inventory_size[0].get<int32_t>(), l_json_root_inventory_size[1].get<int32_t>()};
             log( log_level::log_debug, "inventory-size %d %d", l_size.x, l_size.y);
-            l_type->setInventorySize( l_size);
+            l_type->inventory_size = l_size;
         }
     }
 
-    log( log_level::log_info, "Entity id:%d name:%s action:%d type:%s loaded", l_type->getId(), l_type->getName(), l_type->getAmountActions(), l_object_type.c_str());
+    log( log_level::log_info, "Entity id:%d name:%s action:%d type:%s loaded", l_type->id, l_type->name.c_str(), l_type->actions.size(), l_object_type.c_str());
 }
 
 void type_handler::reload( graphic_draw *graphic) {
-    for( uint32_t i = 0; i < p_type.size(); i++) {
-        type *l_type = &p_type[i];
-        // reload image
-        l_type->getImage()->reload( graphic);
-    }
+    for( type &l_type: p_type)
+        l_type.image.reload( graphic);
 }
 
 type *type_handler::createtype() {
@@ -222,6 +199,8 @@ bool type_handler::removetype( type *target) {
     for( uint32_t i = 0; i < p_type.size(); i++) {
         type *l_type = &p_type[i];
         if( l_type == target) {
+            if( l_type->shape) // free shape
+                delete l_type->shape;
             p_type.erase( p_type.begin()+i);
             return true;
         }
@@ -230,15 +209,15 @@ bool type_handler::removetype( type *target) {
 }
 
 type *type_handler::getById( uint16_t id) {
-    for( uint32_t i = 0; i < p_type.size(); i++)
-        if( p_type[i].getId() == id)
-            return &p_type[i];
+    for( type &l_type: p_type)
+        if( l_type.id == id)
+            return &l_type;
     return NULL;
 }
 
 type *type_handler::getByName( std::string name) {
-    for( uint32_t i = 0; i < p_type.size(); i++)
-        if( p_type[i].getName() == name)
-            return &p_type[i];
+    for( type &l_type: p_type)
+        if( l_type.name == name)
+            return &l_type;
     return NULL;
 }

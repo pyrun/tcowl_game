@@ -138,8 +138,10 @@ void inventory_grid::draw( graphic_draw *graphic, vec2 offset) {
 }
 
 void inventory_grid::drawItem( graphic_draw *graphic, vec2 pos, inventory_entry *item, vec2 centre) {
-    action *l_action = item->objtype->getAction( 0); // TODO: display action
-    graphic->draw(  item->objtype->getImage(),
+    if( item->objtype->actions.size() == 0)
+        return;
+    action *l_action = &item->objtype->actions[0];
+    graphic->draw( &item->objtype->image,
         pos,
         l_action->size,
         l_action->postion,
@@ -149,7 +151,7 @@ void inventory_grid::drawItem( graphic_draw *graphic, vec2 pos, inventory_entry 
 
 std::vector<vec2> inventory_grid::getItemHitboxList( inventory_entry *item) {
     std::vector<vec2> l_list;
-    for (engine::vec2 const& l_hitbox : item->objtype->getItemHitbox() ) {
+    for (engine::vec2 const& l_hitbox : item->objtype->item_vertex ) {
         switch( item->angle) {
             case engine::inventory_angle::inventory_angle_0:
                 l_list.push_back( l_hitbox);

@@ -88,9 +88,9 @@ static int lua_getPosition( lua_State *state) {
 
 static int lua_setAnimation( lua_State *state) {
     entity *l_obj;
-    action *l_action_obj;
+    action *l_action;
     int l_id;
-    std::string l_action;
+    std::string l_action_name;
 
     l_obj = entity_script_getObject( state);
     if( !l_obj)
@@ -101,11 +101,14 @@ static int lua_setAnimation( lua_State *state) {
         return 0;
     }
 
-    l_action = lua_tostring( state, 2);
-
-    l_action_obj = l_obj->objtype->getAction( l_action);
-    if( l_action_obj) {
-        l_obj->action = l_action_obj->id;
+    l_action_name = lua_tostring( state, 2);
+    
+    
+    for( action &action: l_obj->objtype->actions) 
+        if( action.name == l_action_name)
+            l_action = &action;
+    if( l_action) {
+        l_obj->action = l_action->id;
         if( lua_isnumber( state, 3))
             l_obj->animation_tick = lua_tonumber( state, 3);
     }

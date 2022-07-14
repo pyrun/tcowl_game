@@ -37,7 +37,7 @@ int16_t entity_handler::createObject( std::string name) {
     if( p_types == nullptr)
         return -1;
     for( uint32_t i = 0; i < p_types->getAmount(); i++)
-        if( strcmp( p_types->get(i)->getName(), name.c_str()) == 0)
+        if( strcmp( p_types->get(i)->name.c_str(), name.c_str()) == 0)
             return createObject( p_types->get(i));
     return -1;
 }
@@ -83,16 +83,16 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     l_entity->index = l_index;
 
     l_entity->objtype = objtype;
-    l_entity->objtypeid = objtype->getId();
+    l_entity->objtypeid = objtype->id;
 
     l_entity->body = new physic::body;
-    l_entity->body->linkShape( objtype->getShape());
+    l_entity->body->linkShape( objtype->shape);
     p_hub.add( l_entity->body);
 
     l_entity->action = 0;
 
-    if( objtype->getInventorySize().x || objtype->getInventorySize().y) {
-        l_entity->inventory = new inventory_grid( objtype->getInventorySize().x, objtype->getInventorySize().y);
+    if( objtype->inventory_size.x || objtype->inventory_size.y) {
+        l_entity->inventory = new inventory_grid( objtype->inventory_size.x, objtype->inventory_size.y);
     } else {
         l_entity->inventory = nullptr;
     }
@@ -142,7 +142,7 @@ bool entity_handler::loadScriptFile( entity *entity) {
         log( log_error, "entity_handler::loadScriptFile type not found!\n");
         return false;
     }
-    l_file = entity->objtype->getFolderPath() +  ENGINE_TYPE_FILE_SCRIPT;
+    l_file = entity->objtype->src_path +  ENGINE_TYPE_FILE_SCRIPT;
 
     // Delete existing script beforehand if it is existing
     script::free( entity->lua_state);
@@ -245,8 +245,8 @@ void entity_handler::draw( engine::graphic_draw *graphic) {
     // depth sorting 
     struct {
         bool operator()( entity *a, entity *b) const {
-            return a->body->getPosition().y+a->objtype->getAction(a->action)->size.y+a->objtype->getDepthSortingOffset().y
-                <  b->body->getPosition().y+b->objtype->getAction(b->action)->size.y+b->objtype->getDepthSortingOffset().y;
+            return a->body->getPosition().y+a->objtype->actions[a->action].size.y+a->objtype->depth_sorting_offset.y
+                <  b->body->getPosition().y+b->objtype->actions[b->action].size.y+b->objtype->depth_sorting_offset.y;
         }
     } depthSorting;
     std::sort( p_draw_order.begin(), p_draw_order.end(), depthSorting);
@@ -260,7 +260,7 @@ void entity_handler::draw( engine::graphic_draw *graphic) {
 
 void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     // todo get action
-    action *l_action = obj->objtype->getAction( obj->action);
+    action *l_action = &obj->objtype->actions[ obj->action];
     float l_time;
     float l_factor = 15.f; // TODO remove factor magic value
     uint32_t l_magical_value_ticks_mul = 10; // TODO remove this value for ticks mul
@@ -279,7 +279,7 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
         obj->animation_tick++;
     }
 
-    graphic->draw(  obj->objtype->getImage(),
+    graphic->draw(  &obj->objtype->image,
                     obj->body->getPosition().toVec(),
                     l_action->size,
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});

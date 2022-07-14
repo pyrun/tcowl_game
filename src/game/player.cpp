@@ -138,7 +138,7 @@ void player::draw( engine::graphic_draw *graphic) {
         }
 
         // centre camera to player
-        action *l_action = p_player->objtype->getAction( p_player->action);
+        action *l_action = &p_player->objtype->actions[ p_player->action];
         engine::fvec2 l_pos = p_player->body->getPosition() + ( fvec2{ (float)l_action->size.x, (float)l_action->size.y} / fvec2{ 2.f, 2.f} );
         graphic->getCamera()->setTarget( l_pos);
     }
