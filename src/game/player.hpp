@@ -10,7 +10,7 @@ namespace game {
     enum player_state {
         player_state_idle = 0,
         player_state_inventory,
-        player_state_inventory_chest,
+        player_state_inventory_transfer,
         player_state_battle,
     };
 

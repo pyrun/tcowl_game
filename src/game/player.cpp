@@ -59,6 +59,9 @@ void player::draw( engine::graphic_draw *graphic) {
                     p_state = player_state::player_state_inventory;
             } break;
 
+            case player_state::player_state_inventory_transfer: {
+                
+            } [[fallthrough]];
             case player_state::player_state_inventory: {
                 p_entity->bindInput( p_player, nullptr);
                 if( p_player->inventory == nullptr) { // if no inventory -> cancle

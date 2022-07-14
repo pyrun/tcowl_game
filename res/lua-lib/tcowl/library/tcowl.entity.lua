@@ -36,6 +36,13 @@ function tcowl.entity.setAnimation( id, name, tick) end
 ---@param x? number # x velocity
 ---@param y? number # y velocity
 function tcowl.entity.doVelocity( id, x , y) end
+---
+---Get position of object
+---
+---@param id? number # object id
+---@return number x # x position
+---@return number y # y position
+function tcowl.entity.getPosition( id) end
 
 ---
 ---Check if object id has input
@@ -78,3 +85,14 @@ function tcowl.entity.setInventoryState( id, x, y, state) end
 ---@param objname? string # object name
 ---@return boolean happend # happend
 function tcowl.entity.addInventoryItem( id, x, y, objname) end
+
+---
+---Search for objects in Rect Pos from object
+---
+---@param id? number # object id
+---@param x? number # pos x
+---@param y? number # pos y
+---@param w? number # rect w
+---@param h? number # rect h
+---@return table number objects_id # ids
+function tcowl.entity.find( id, x, y, w, h) end

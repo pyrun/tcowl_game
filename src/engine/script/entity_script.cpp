@@ -73,6 +73,19 @@ static int lua_doVelocity( lua_State *state) {
     return 0;
 }
 
+static int lua_getPosition( lua_State *state) {
+    int l_id;
+    entity *l_obj;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    lua_pushnumber( state, l_obj->body->getPosition().x);
+    lua_pushnumber( state, l_obj->body->getPosition().y);
+    return 2;
+}
+
 static int lua_setAnimation( lua_State *state) {
     entity *l_obj;
     action *l_action_obj;
@@ -214,6 +227,41 @@ static int lua_addInventoryItem( lua_State *state) {
     return 1;
 }
 
+static int lua_find( lua_State *state) {
+    entity *l_obj;
+    int l_id;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj ||
+        l_obj->body == nullptr)
+        return 0;
+    
+    if( !lua_isnumber( state, 2) || !lua_isnumber( state, 3) ||
+        !lua_isnumber( state, 4) || !lua_isnumber( state, 5)) {
+        log( log_warn, "lua_find call wrong argument");
+        return 0;
+    }
+
+    vec2 l_pos;
+    vec2 l_rect;
+
+    l_pos.x = lua_tonumber( state, 2);
+    l_pos.y = lua_tonumber( state, 3);
+    l_rect.x = lua_tonumber( state, 4);
+    l_rect.y = lua_tonumber( state, 5);
+
+    std::vector<engine::entity*> l_objects = engine::used_entity_handler->find( l_obj->body->getPosition().toVec() + l_pos, l_rect);
+    
+    lua_newtable( state);
+    uint32_t i = 1;
+    for( entity* const & l_entity: l_objects) {
+        lua_pushnumber( state, i++); // push key 
+        lua_pushnumber( state, l_entity->index); // value
+        lua_settable( state, -3);
+    }
+    return 1;
+}
+
 #ifdef __cplusplus
 }
 #endif
@@ -223,11 +271,13 @@ static const struct luaL_Reg entity_lib_funcs[] = {
     {"getVelocity", lua_getVelocity},
     {"setAnimation", lua_setAnimation},
     {"doVelocity", lua_doVelocity},
+    {"getPosition", lua_getPosition},
     {"isInputPresent", lua_isInputPresent},
     {"getInputAxies", lua_getInputAxies},
     {"getInputButtons", lua_getInputButtons},
     {"setInventoryState", lua_setInventoryState},
     {"addInventoryItem", lua_addInventoryItem},
+    {"find", lua_find},
     {NULL, NULL}
     };
 

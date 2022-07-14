@@ -65,6 +65,8 @@ namespace engine {
             void draw( engine::graphic_draw *graphic) override;
             void drawEntity( engine::graphic_draw *graphic, entity* obj);
 
+            std::vector<entity*> find( vec2 pos, vec2 rect);
+
             uint32_t getAmount() { return p_amount; }
 
             // network

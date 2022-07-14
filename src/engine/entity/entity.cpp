@@ -285,6 +285,33 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
 }
 
+std::vector<entity*> entity_handler::find( vec2 pos, vec2 rect) {
+    std::vector<entity*> l_array;
+
+    for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
+        engine::entity *l_entity = p_entity[i];
+        if( l_entity == nullptr ||
+            l_entity->body == nullptr ||
+            l_entity->body->getShape() == nullptr)
+            continue;
+        // use physic hub for check
+        if( p_hub.testAABBAABB( fvec2{ (float)pos.x, (float)pos.y},
+            fvec2{ (float)rect.x, (float)rect.y},
+            l_entity->body->getPosition(),
+            l_entity->body->getShape()->getAABB())) {
+            // check if its new
+            bool l_new = true;
+            for( entity* const & l_entity_hit: l_array)
+                if( l_entity_hit != l_entity)
+                    l_new = false;
+            if( l_new)
+                l_array.push_back( l_entity);
+
+        }
+    }
+    return l_array;
+}
+
 void entity_handler::network_update( network::connection *network_interface) {
     network::packet l_packet;
     for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
