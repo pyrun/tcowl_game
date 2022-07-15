@@ -10,7 +10,7 @@ player::player() {
     p_font = NULL;
     p_item_move.item = nullptr;
     p_item_move.origin = nullptr;
-    p_state =  player_state::player_state_idle;
+    p_state =  player_state::player_state_inventory_transfer;
 }
 
 player::~player() {
@@ -23,6 +23,7 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     p_entity = entitys;
 
     p_player = p_entity->get( 1);
+    p_transfer_target = p_entity->get( 2);
 
     if( p_player && p_player->inventory) {
         engine::inventory_entry l_entry;
@@ -60,7 +61,12 @@ void player::draw( engine::graphic_draw *graphic) {
             } break;
 
             case player_state::player_state_inventory_transfer: {
-                
+                if( p_transfer_target == nullptr ||
+                    p_transfer_target->inventory == nullptr) {
+                    p_state = player_state::player_state_inventory;
+                    p_transfer_target = nullptr;
+                    break;
+                }
             } [[fallthrough]];
             case player_state::player_state_inventory: {
                 p_entity->bindInput( p_player, nullptr);
@@ -72,62 +78,56 @@ void player::draw( engine::graphic_draw *graphic) {
                 // move item
                 if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_use) &&
                     p_item_move.item == nullptr) { // pick up item
-                    engine::inventory_onClick_answer l_answer = p_player->inventory->onClick( l_mouse);
-                    if( l_answer.item) { // remove item from inventory
-                        p_item_move.item = new engine::inventory_entry;
-                        *p_item_move.item = *l_answer.item;
-                        p_item_move.item_origin_state = *l_answer.item;
-                        p_item_move.pos = l_answer.point;
-                        p_player->inventory->del( l_answer.item);
-                        p_item_move.origin = p_player->inventory;
-                    }
+                    if( !tryGetItemFromInventory( l_mouse, p_player))
+                        tryGetItemFromInventory( l_mouse, p_transfer_target);
                 }
                 if( p_input->edgeDetection( input_key_edge_detection_up, input_buttons_use) &&
                      p_item_move.item) { // place item
-                    p_item_move.item->pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
-                    engine::inventory_entry *l_item_add = p_player->inventory->add( p_item_move.item); // try to add in inventory
-                    if( l_item_add) { // if happend we change some settings
-                        l_item_add->angle = p_item_move.item->angle;
-                        clearItemMove();
-                    } else { // return item prev. place
-                        p_player->inventory->add( &p_item_move.item_origin_state);
+                    if( tryPutItemToInventory( l_mouse, p_player));
+                    else if( tryPutItemToInventory( l_mouse, p_transfer_target));
+                    else {
+                        p_item_move.origin->add( &p_item_move.item_origin_state); // TODO If it does not work, the object is deleted
                         clearItemMove();
                     }
                 }
                 if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_action)) {// turn item
                     if( p_item_move.item) {
-                        p_player->inventory->turn( p_item_move.item, true);
-                        p_item_move.pos = vec2{ -p_item_move.pos.y, p_item_move.pos.x};
+                        engine::inventory::turn( p_item_move.item, true);
+                        p_item_move.pos = vec2{ -p_item_move.pos.y, p_item_move.pos.x}; // rotate offset x&y
                     }
                 }
 
-                drawInventory( graphic); // draw inventory
+                drawInventory( graphic); // draw inventory// drag item draw
 
                 if( p_item_move.item != nullptr) {
-                    p_item_move.item->pos = p_player->inventory->getTilePos(l_mouse)-p_item_move.pos;
-                    switch(  p_player->inventory->check( p_item_move.item)) {
+                    engine::inventory_grid_state l_state  = checkItemInInventory( l_mouse, p_player);
+                    if( l_state == engine::inventory_grid_state::inventory_grid_state_unavailable)
+                        l_state  = checkItemInInventory( l_mouse, p_transfer_target);
+                    switch(  l_state) {
                         case engine::inventory_grid_state::inventory_grid_state_taken: {
                             graphic->setDrawColor( 255, 64, 32, 255);
-                            graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
+                            SDL_SetTextureColorMod( p_item_move.item->objtype->image.getTexture(), 255, 64, 32);
                         } break;
                         case engine::inventory_grid_state::inventory_grid_state_available: {
                             graphic->setDrawColor( 0, 255, 64, 255);
-                            graphic->drawRect( l_camera+(l_mouse/ENTITY_INVENTORY_SIZE_VEC2)*ENTITY_INVENTORY_SIZE_VEC2, ENTITY_INVENTORY_SIZE_VEC2);
+                            SDL_SetTextureColorMod( p_item_move.item->objtype->image.getTexture(), 0, 255, 64);
                         } break;
                         default:
                         break;
                     }
+
                     p_player->inventory->drawItem( graphic,
                         l_camera + l_mouse - (p_item_move.pos*ENTITY_INVENTORY_SIZE_VEC2) - ENTITY_INVENTORY_SIZE_VEC2/vec2{2,2}, //pos
                         p_item_move.item, // item
                         ENTITY_INVENTORY_SIZE_VEC2/vec2{ 2, 2}); // centre
+                    SDL_SetTextureColorMod( p_item_move.item->objtype->image.getTexture(), 255, 255, 255);
                 }
 
                 if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_inventory)) {
                     p_state = player_state::player_state_idle;
                     if( p_item_move.item != nullptr) {
                         // return item
-                        p_player->inventory->add( &p_item_move.item_origin_state);
+                        p_item_move.origin->add( &p_item_move.item_origin_state); // TODO If it does not work, the object is deleted
                         clearItemMove();
                     }
                 }
@@ -150,6 +150,50 @@ void player::update() {
     }
 }
 
+bool player::tryGetItemFromInventory( engine::vec2 pos, engine::entity *entity) {
+    if( entity == nullptr ||
+        entity->inventory == nullptr)
+        return false;
+    engine::inventory_onClick_answer l_answer = entity->inventory->onClick( pos);
+    if( l_answer.item) { // remove item from inventory
+        p_item_move.item = new engine::inventory_entry;
+        *p_item_move.item = *l_answer.item;
+        p_item_move.item_origin_state = *l_answer.item;
+        p_item_move.pos = l_answer.point;
+        entity->inventory->del( l_answer.item);
+        p_item_move.origin = entity->inventory;
+        return true;
+    }
+    return false;
+}
+
+bool player::tryPutItemToInventory( engine::vec2 pos, engine::entity *entity) {
+    if( entity == nullptr ||
+        entity->inventory == nullptr)
+        return false;
+    
+    p_item_move.item->pos = entity->inventory->getTilePos(pos)-p_item_move.pos;
+    
+    engine::inventory_entry *l_item_add = entity->inventory->add( p_item_move.item); // try to add in inventory
+    if( l_item_add) { // if happend we change some settings
+        l_item_add->angle = p_item_move.item->angle;
+        clearItemMove();
+        return true;
+    }
+    return false;
+}
+
+engine::inventory_grid_state player::checkItemInInventory( engine::vec2 pos, engine::entity *entity) {
+    if( entity == nullptr ||
+        entity->inventory == nullptr)
+        return inventory_grid_state::inventory_grid_state_unavailable;
+    p_item_move.item->pos = entity->inventory->getTilePos( pos)-p_item_move.pos;
+
+    return entity->inventory->check( p_item_move.item);
+}
+
+
+
 void player::clearItemMove() {
     if( p_item_move.item)
         delete p_item_move.item;
@@ -160,5 +204,9 @@ void player::clearItemMove() {
 void player::drawInventory( engine::graphic_draw *graphic) {
     graphic->setDrawColor( 70, 30, 30, 100);
     graphic->drawFilledRect( vec2{ 0, 0} + graphic->getCamera()->getPosition().toVec(), graphic->getCamera()->getSize().toVec());
-    p_player->inventory->draw( graphic);
+
+    p_player->inventory->draw( graphic); // player inventory
+    if( p_transfer_target &&
+        p_transfer_target->inventory)
+        p_transfer_target->inventory->draw( graphic, vec2{ 0, 100});  // target inventory
 }

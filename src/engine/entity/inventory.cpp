@@ -46,7 +46,14 @@ bool inventory_grid::del( inventory_entry *item) {
 }
 
 vec2 inventory_grid::getTilePos( vec2 pos_abs) {
-    return (pos_abs-p_draw_pos+vec2{ (int32_t)p_grid->getW()/2*ENTITY_INVENTORY_SIZE, 0} )/ENTITY_INVENTORY_SIZE_VEC2;
+    vec2 l_pos = (pos_abs-p_draw_pos);
+    // TODO: better solution
+    // In the special case when l_pos is below to zero but above -ENTITY_INVENTORY_SIZE, we get zero and not -1
+    if( l_pos.x < 0)
+        l_pos.x -= ENTITY_INVENTORY_SIZE;
+    if( l_pos.y < 0)
+        l_pos.y -= ENTITY_INVENTORY_SIZE;
+    return l_pos/ENTITY_INVENTORY_SIZE_VEC2;
 }
 
 engine::inventory_grid_state inventory_grid::check( inventory_entry *objtype) {
@@ -57,6 +64,7 @@ engine::inventory_grid_state inventory_grid::check( inventory_entry *objtype) {
         if( *l_state != engine::inventory_grid_state::inventory_grid_state_available)
             return *l_state;
     }
+
     return engine::inventory_grid_state::inventory_grid_state_available;
 }
 
@@ -73,7 +81,7 @@ inventory_onClick_answer inventory_grid::onClick( vec2 pos) {
     for(uint32_t i = 0; i < p_items.size(); i++) {
         inventory_entry *l_item = &p_items[i];
         for (engine::vec2 const& l_hitbox : getItemHitboxList(l_item)) {
-            vec2 l_pos = (l_item->pos + l_hitbox - vec2{ (int32_t)p_grid->getW()/2, 0}) * ENTITY_INVENTORY_SIZE_VEC2 + p_draw_pos;
+            vec2 l_pos = (l_item->pos + l_hitbox) * ENTITY_INVENTORY_SIZE_VEC2 + p_draw_pos;
             if( pos.x > l_pos.x && 
                 pos.y > l_pos.y &&
                 pos.x < l_pos.x + ENTITY_INVENTORY_SIZE &&
@@ -85,27 +93,6 @@ inventory_onClick_answer inventory_grid::onClick( vec2 pos) {
         }
     }
     return l_return;
-}
-
-void inventory_grid::turn( inventory_entry *item, bool clockwise) {
-    if( item == nullptr)
-        return;
-    switch( item->angle) {
-        case inventory_angle::inventory_angle_0:
-            item->angle = clockwise?inventory_angle::inventory_angle_90:inventory_angle::inventory_angle_270;
-        break;
-        case inventory_angle::inventory_angle_90:
-            item->angle = clockwise?inventory_angle::inventory_angle_180:inventory_angle::inventory_angle_0;
-        break;
-        case inventory_angle::inventory_angle_180:
-            item->angle = clockwise?inventory_angle::inventory_angle_270:inventory_angle::inventory_angle_90;
-        break;
-        case inventory_angle::inventory_angle_270:
-            item->angle = clockwise?inventory_angle::inventory_angle_0:inventory_angle::inventory_angle_180;
-        break;
-        default:
-        break;
-    }
 }
 
 void inventory_grid::draw( graphic_draw *graphic, vec2 offset) {
@@ -121,17 +108,16 @@ void inventory_grid::draw( graphic_draw *graphic, vec2 offset) {
             
             if( l_tile && *l_tile != engine::inventory_grid_state::inventory_grid_state_unavailable)
                 graphic->draw( &l_image,
-                    (l_pos - vec2{ (int32_t)p_grid->getW()/2, 0}) * ENTITY_INVENTORY_SIZE_VEC2+ graphic->getCamera()->getPosition().toVec() + p_draw_pos,
+                    l_pos * ENTITY_INVENTORY_SIZE_VEC2 + graphic->getCamera()->getPosition().toVec() + p_draw_pos,
                     vec2{16, 16},
                     vec2{*l_tile==engine::inventory_grid_state::inventory_grid_state_taken?16:0,0});
         }
     }
 
-
     for(uint32_t i = 0; i < p_items.size(); i++) {
         inventory_entry *l_item = &p_items[i];
         drawItem( graphic,
-            (l_item->pos - vec2{ (int32_t)p_grid->getW()/2, 0}) * ENTITY_INVENTORY_SIZE_VEC2 + graphic->getCamera()->getPosition().toVec() + p_draw_pos,
+            l_item->pos * ENTITY_INVENTORY_SIZE_VEC2 + graphic->getCamera()->getPosition().toVec() + p_draw_pos,
             l_item,
             ENTITY_INVENTORY_SIZE_VEC2 / vec2{ 2, 2});
     }
@@ -173,6 +159,27 @@ std::vector<vec2> inventory_grid::getItemHitboxList( inventory_entry *item) {
 }
 
 vec2 inventory_grid::calcDrawPos( graphic_draw *graphic, vec2 offset) {
-    p_draw_pos = vec2{ graphic->getCamera()->getSize().toVec().x/2 + offset.x, offset.y};
+    p_draw_pos = vec2{ graphic->getCamera()->getSize().toVec().x/2 + offset.x - (int32_t)(p_grid->getW()*ENTITY_INVENTORY_SIZE)/2, offset.y};
     return p_draw_pos;
+}
+
+void engine::inventory::turn( inventory_entry *item, bool clockwise) {
+    if( item == nullptr)
+        return;
+    switch( item->angle) {
+        case inventory_angle::inventory_angle_0:
+            item->angle = clockwise?inventory_angle::inventory_angle_90:inventory_angle::inventory_angle_270;
+        break;
+        case inventory_angle::inventory_angle_90:
+            item->angle = clockwise?inventory_angle::inventory_angle_180:inventory_angle::inventory_angle_0;
+        break;
+        case inventory_angle::inventory_angle_180:
+            item->angle = clockwise?inventory_angle::inventory_angle_270:inventory_angle::inventory_angle_90;
+        break;
+        case inventory_angle::inventory_angle_270:
+            item->angle = clockwise?inventory_angle::inventory_angle_0:inventory_angle::inventory_angle_180;
+        break;
+        default:
+        break;
+    }
 }

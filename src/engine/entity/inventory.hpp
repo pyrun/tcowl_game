@@ -66,6 +66,10 @@ namespace engine {
 
             engine::vec2 p_draw_pos;
     };
+
+    namespace inventory {
+        void turn( inventory_entry *item, bool clockwise); // turn item 90°
+    };
 }
 
 #endif

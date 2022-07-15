@@ -33,10 +33,7 @@ namespace engine {
 
         inventory_grid *inventory;
 
-        // used for network sync
-        // only sync if this true, set be false after sync
-        // todo state of change, like only pos, only action, destroyed
-        bool change;
+        bool change; // synchronised with other systems, used for example in the network
     };
 
     class entity_handler : public engine::graphic_object, public network::synchronisation {
@@ -53,7 +50,7 @@ namespace engine {
             bool loadScriptFile( entity *entity);
             bool bindInput( entity *entity, engine::input_map *input_obj);
 
-            entity *get( int16_t index) { return index>=0&&index<ENGINE_ENTITY_MAX_AMOUNT?p_entity[ (uint16_t)index]:nullptr; }
+            entity *get( int16_t index);
             void setPosition( int16_t index, fvec2 pos);
 
             uint32_t outNetworkData( entity *obj, uint8_t *dataDist);

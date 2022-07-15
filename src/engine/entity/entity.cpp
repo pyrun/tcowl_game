@@ -166,6 +166,10 @@ bool entity_handler::bindInput( entity *entity, input_map *input_obj) {
     return true;
 }
 
+entity *entity_handler::get( int16_t index) {
+    return index>=0&&index<ENGINE_ENTITY_MAX_AMOUNT?p_entity[ (uint16_t)index]:nullptr;
+}
+
 void entity_handler::setPosition( int16_t index, fvec2 pos) {
     entity *l_entity;
     l_entity = get(index);

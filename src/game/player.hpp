@@ -34,6 +34,9 @@ namespace game {
             void update();
             const uint32_t getPriority() override { return 256; }
         private:
+            bool tryGetItemFromInventory( engine::vec2 pos, engine::entity *entity);
+            bool tryPutItemToInventory( engine::vec2 pos, engine::entity *entity);
+            engine::inventory_grid_state checkItemInInventory( engine::vec2 pos, engine::entity *entity);
             void clearItemMove();
             void drawInventory( engine::graphic_draw *graphic);
         private:
@@ -45,6 +48,8 @@ namespace game {
             engine::entity_handler *p_entity;
             engine::entity *p_player;
             engine::image *p_backpack;
+
+            engine::entity *p_transfer_target;
     };
 };
 
