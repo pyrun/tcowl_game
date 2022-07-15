@@ -10,7 +10,7 @@ player::player() {
     p_font = NULL;
     p_item_move.item = nullptr;
     p_item_move.origin = nullptr;
-    p_state =  player_state::player_state_inventory_transfer;
+    p_state =  player_state::player_state_idle;
 }
 
 player::~player() {
@@ -56,8 +56,19 @@ void player::draw( engine::graphic_draw *graphic) {
             case player_state::player_state_idle: {
                 p_entity->bindInput( p_player, p_input->getInputMap());
 
-                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_inventory))
+                if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_inventory)) {
                     p_state = player_state::player_state_inventory;
+                    vec2 l_offset = {2, 2};
+                    std::vector<engine::entity*> l_entitys = p_entity->find(
+                        p_player->body->getPosition().toVec()-l_offset,
+                        p_player->body->getShape()->getAABB().toVec()+l_offset*vec2{2,2});
+                    for( engine::entity *l_entity: l_entitys) {
+                        if( l_entity->inventory && l_entity != p_player) {
+                            p_state = player_state_inventory_transfer;
+                            p_transfer_target = l_entity;
+                        }
+                    }
+                }
             } break;
 
             case player_state::player_state_inventory_transfer: {
@@ -74,6 +85,8 @@ void player::draw( engine::graphic_draw *graphic) {
                     p_state = player_state::player_state_idle;
                     break;
                 }
+                if( p_state == player_state_inventory && p_transfer_target)
+                    p_transfer_target = nullptr;
 
                 // move item
                 if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_use) &&

@@ -306,7 +306,7 @@ std::vector<entity*> entity_handler::find( vec2 pos, vec2 rect) {
             // check if its new
             bool l_new = true;
             for( entity* const & l_entity_hit: l_array)
-                if( l_entity_hit != l_entity)
+                if( l_entity_hit == l_entity)
                     l_new = false;
             if( l_new)
                 l_array.push_back( l_entity);
