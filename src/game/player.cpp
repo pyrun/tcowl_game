@@ -60,8 +60,8 @@ void player::draw( engine::graphic_draw *graphic) {
                     p_state = player_state::player_state_inventory;
                     vec2 l_offset = {2, 2};
                     std::vector<engine::entity*> l_entitys = p_entity->find(
-                        p_player->body->getPosition().toVec()-l_offset,
-                        p_player->body->getShape()->getAABB().toVec()+l_offset*vec2{2,2});
+                        p_player->body->position.toVec()-l_offset,
+                        p_player->body->shape->getAABB().toVec()+l_offset*vec2{2,2});
                     for( engine::entity *l_entity: l_entitys) {
                         if( l_entity->inventory && l_entity != p_player) {
                             p_state = player_state_inventory_transfer;
@@ -152,7 +152,7 @@ void player::draw( engine::graphic_draw *graphic) {
 
         // centre camera to player
         action *l_action = &p_player->objtype->actions[ p_player->action];
-        engine::fvec2 l_pos = p_player->body->getPosition() + ( fvec2{ (float)l_action->size.x, (float)l_action->size.y} / fvec2{ 2.f, 2.f} );
+        engine::fvec2 l_pos = p_player->body->position + ( fvec2{ (float)l_action->size.x, (float)l_action->size.y} / fvec2{ 2.f, 2.f} );
         graphic->getCamera()->setTarget( l_pos);
     }
 }

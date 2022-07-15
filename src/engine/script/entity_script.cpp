@@ -50,8 +50,8 @@ static int lua_getVelocity( lua_State *state) {
     if( !l_obj)
         return 0;
 
-    lua_pushnumber( state, l_obj->body->getVelocity().x);
-    lua_pushnumber( state, l_obj->body->getVelocity().y);
+    lua_pushnumber( state, l_obj->body->velocity.x);
+    lua_pushnumber( state, l_obj->body->velocity.y);
     return 2;
 }
 
@@ -68,7 +68,7 @@ static int lua_doVelocity( lua_State *state) {
         return 0;
     }
 
-    l_obj->body->addVelocity( { (float)lua_tonumber( state, 2), (float)lua_tonumber( state, 3)});
+    l_obj->body->velocity = l_obj->body->velocity + engine::fvec2{ (float)lua_tonumber( state, 2), (float)lua_tonumber( state, 3)};
 
     return 0;
 }
@@ -81,8 +81,8 @@ static int lua_getPosition( lua_State *state) {
     if( !l_obj)
         return 0;
 
-    lua_pushnumber( state, l_obj->body->getPosition().x);
-    lua_pushnumber( state, l_obj->body->getPosition().y);
+    lua_pushnumber( state, l_obj->body->position.x);
+    lua_pushnumber( state, l_obj->body->position.y);
     return 2;
 }
 
@@ -252,7 +252,7 @@ static int lua_find( lua_State *state) {
     l_rect.x = lua_tonumber( state, 4);
     l_rect.y = lua_tonumber( state, 5);
 
-    std::vector<engine::entity*> l_objects = engine::used_entity_handler->find( l_obj->body->getPosition().toVec() + l_pos, l_rect);
+    std::vector<engine::entity*> l_objects = engine::used_entity_handler->find( l_obj->body->position.toVec() + l_pos, l_rect);
     
     lua_newtable( state);
     uint32_t i = 1;

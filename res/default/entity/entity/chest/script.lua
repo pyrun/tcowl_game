@@ -4,7 +4,7 @@ function Intilisation( id)
 			tcowl.entity.setInventoryState( id, x, y, "available")
 		end
 	end
-	tcowl.entity.addInventoryItem( id, 0, 1, "bread")
+	tcowl.entity.addInventoryItem( id, 0, 1, "sword")
 end
 
 function Update( id)

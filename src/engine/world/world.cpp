@@ -92,7 +92,6 @@ void world::generate_collisionmap( physic::hub *hub) {
                 continue;
             if( checkSolidTileReachable( { x, y}) ) {
                 int32_t l_row = 1, l_line = 1;
-
                 // check y
                 while( checkSolidTileReachable( { x, y+l_row})) {
                     if( checkSkip( l_skip_list, x, y+l_row))
@@ -115,8 +114,8 @@ void world::generate_collisionmap( physic::hub *hub) {
                 if( p_physic_bodys[l_index].shape != nullptr)
                     delete p_physic_bodys[l_index].shape;
                 p_physic_bodys[l_index].shape = new physic::shape_rect( { (float)(ENGINE_TILE_SIZE*l_line), (float)(ENGINE_TILE_SIZE*l_row) });
-                l_body->linkShape( p_physic_bodys[l_index].shape);
-                l_body->setPosition( { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE} );
+                l_body->shape = p_physic_bodys[l_index].shape;
+                l_body->position = { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE};
                 hub->add( l_body); // add to the hub
 
                 // check amount of tiles

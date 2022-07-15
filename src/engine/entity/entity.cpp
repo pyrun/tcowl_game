@@ -86,7 +86,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     l_entity->objtypeid = objtype->id;
 
     l_entity->body = new physic::body;
-    l_entity->body->linkShape( objtype->shape);
+    l_entity->body->shape = objtype->shape;
     p_hub.add( l_entity->body);
 
     l_entity->action = 0;
@@ -177,7 +177,7 @@ void entity_handler::setPosition( int16_t index, fvec2 pos) {
         return;
     if( l_entity->body == nullptr)
         return;
-    l_entity->body->setPosition( pos);
+    l_entity->body->position = pos;
 }
 
 uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
@@ -186,11 +186,11 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
     helper::int16toUint8x2( obj->index, dataDist + l_offset); l_offset +=2;
     helper::int16toUint8x2( obj->objtypeid, dataDist + l_offset); l_offset +=2;
 
-    helper::floatToUint8x4( obj->body->getPosition().x, dataDist + l_offset); l_offset +=4;
-    helper::floatToUint8x4( obj->body->getPosition().y, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->position.x, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->position.y, dataDist + l_offset); l_offset +=4;
 
-    helper::floatToUint8x4( obj->body->getVelocity().x, dataDist + l_offset); l_offset +=4;
-    helper::floatToUint8x4( obj->body->getVelocity().y, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->velocity.x, dataDist + l_offset); l_offset +=4;
+    helper::floatToUint8x4( obj->body->velocity.y, dataDist + l_offset); l_offset +=4;
 
     dataDist[l_offset] = obj->action; l_offset +=1;
 
@@ -216,11 +216,11 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     l_entity->objtype = p_types->getById( l_type_id);
     l_entity->objtypeid = l_type_id;
 
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getPositionPtr()->x); l_offset +=4;
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getPositionPtr()->y); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->position.x); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->position.y); l_offset +=4;
 
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getVelocityPtr()->x); l_offset +=4;
-    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->getVelocityPtr()->y); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->velocity.x); l_offset +=4;
+    helper::uint8x4toFloat( dataDist + l_offset, &l_entity->body->velocity.y); l_offset +=4;
 
     l_entity->action = dataDist[l_offset]; l_offset +=1;
 }
@@ -249,8 +249,8 @@ void entity_handler::draw( engine::graphic_draw *graphic) {
     // depth sorting 
     struct {
         bool operator()( entity *a, entity *b) const {
-            return a->body->getPosition().y+a->objtype->actions[a->action].size.y+a->objtype->depth_sorting_offset.y
-                <  b->body->getPosition().y+b->objtype->actions[b->action].size.y+b->objtype->depth_sorting_offset.y;
+            return a->body->position.y+a->objtype->actions[a->action].size.y+a->objtype->depth_sorting_offset.y
+                <  b->body->position.y+b->objtype->actions[b->action].size.y+b->objtype->depth_sorting_offset.y;
         }
     } depthSorting;
     std::sort( p_draw_order.begin(), p_draw_order.end(), depthSorting);
@@ -271,7 +271,7 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
 
     // adjust animation speed to acceleration if wanted
     if( l_action->bind_velocity) {
-        l_time = powf( obj->body->getVelocity().normalize() / l_factor, -1);
+        l_time = powf( obj->body->velocity.normalize() / l_factor, -1);
         l_time *=l_action->delay;
     } else {
         l_time = l_action->delay;
@@ -284,7 +284,7 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     }
 
     graphic->draw(  &obj->objtype->image,
-                    obj->body->getPosition().toVec(),
+                    obj->body->position.toVec(),
                     l_action->size,
                     l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
 }
@@ -296,13 +296,13 @@ std::vector<entity*> entity_handler::find( vec2 pos, vec2 rect) {
         engine::entity *l_entity = p_entity[i];
         if( l_entity == nullptr ||
             l_entity->body == nullptr ||
-            l_entity->body->getShape() == nullptr)
+            l_entity->body->shape == nullptr)
             continue;
         // use physic hub for check
         if( p_hub.testAABBAABB( fvec2{ (float)pos.x, (float)pos.y},
             fvec2{ (float)rect.x, (float)rect.y},
-            l_entity->body->getPosition(),
-            l_entity->body->getShape()->getAABB())) {
+            l_entity->body->position,
+            l_entity->body->shape->getAABB())) {
             // check if its new
             bool l_new = true;
             for( entity* const & l_entity_hit: l_array)

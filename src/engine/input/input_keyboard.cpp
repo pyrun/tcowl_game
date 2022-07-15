@@ -95,6 +95,11 @@ void input_keyboard::key_axis() {
     float l_arc = atan2( l_y, l_x);
     p_map_input.axies.y = sin(l_arc)*1;
     p_map_input.axies.x = cos(l_arc)*1;
+
+    if( fabs( p_map_input.axies.y) < 0.1f)
+        p_map_input.axies.y = 0;
+    if( fabs( p_map_input.axies.x) < 0.1f)
+        p_map_input.axies.x = 0;
 }
 
 void input_keyboard::onMouseEvent( input_key_state state) {

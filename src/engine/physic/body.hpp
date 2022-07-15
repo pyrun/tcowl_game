@@ -4,40 +4,14 @@
 #include "shape.hpp"
 
 namespace physic {
-    class body {
-        public:
-            body();
-            ~body();
+    struct body {
+            engine::fvec2 position = { 0, 0};
+            engine::fvec2 velocity = { 0, 0};
 
-            void cleanup();
+            bool collision = false;
 
-            void linkShape( shape* shape) { p_shape = shape; }
-            void setDensity( float density) { p_density = density; }
-
-            void addPosition( engine::fvec2 value) { p_position += value; }
-            void setPosition( engine::fvec2 value) { p_position = value; }
-
-            void addVelocity( engine::fvec2 value) { p_velocity += value; }
-            void setVelocity( engine::fvec2 value) { p_velocity = value; }
-
-            engine::fvec2 getPosition() { return p_position; }
-            engine::fvec2 getVelocity() { return p_velocity; }
-            
-            engine::fvec2 *getPositionPtr() { return &p_position; }
-            engine::fvec2 *getVelocityPtr() { return &p_velocity; }
-
-            bool getCollied() { return p_collision; }
-            void setCollied( bool set) { p_collision = set; }
-
-            shape *getShape() { return p_shape; }
-        private:
-            engine::fvec2 p_position;
-            engine::fvec2 p_velocity;
-
-            bool p_collision;
-
-            shape *p_shape;
-            float p_density;
+            shape *shape = nullptr; // TODO free shape res. after use
+            float density = 0.0f;
     };
 }
 
