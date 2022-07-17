@@ -61,10 +61,13 @@ void player::draw( engine::graphic_draw *graphic) {
                             l_entity == p_player) // not himself
                             continue;
                         
+                        engine::used_entity_handler = p_entity;
                         if( script::function( "OpenInventory",l_entity->lua_state, l_entity->index)) {
                             p_state = player_state_inventory_transfer;
                             p_transfer_target = l_entity;
                         }
+                        engine::used_entity_handler = nullptr;
+
                     }
                 }
             } break;
@@ -136,6 +139,12 @@ void player::draw( engine::graphic_draw *graphic) {
                         // return item
                         p_item_move.origin->add( &p_item_move.item_origin_state); // TODO If it does not work, the object is deleted
                         clearItemMove();
+                    }
+
+                    if( p_transfer_target) {
+                        engine::used_entity_handler = p_entity;
+                        script::function( "CloseInventory", p_transfer_target->lua_state, p_transfer_target->index);
+                        engine::used_entity_handler = nullptr;
                     }
                 }
             } break; // player_state::player_state_inventory
@@ -209,12 +218,21 @@ void player::clearItemMove() {
 }
 
 void player::drawInventory( engine::graphic_draw *graphic) {
-    static const int32_t l_border_offset = 50;
+    vec2 l_camera = graphic->getCamera()->getPosition().toVec();
+
+    static const int32_t l_border_offset = 40;
     graphic->setDrawColor( 20, 20, 20, 200);
     graphic->drawFilledRect( vec2{ l_border_offset, 0} + graphic->getCamera()->getPosition().toVec(), graphic->getCamera()->getSize().toVec() - vec2{  l_border_offset*2, 0});
 
     p_player->inventory->draw( graphic); // player inventory
     if( p_transfer_target &&
-        p_transfer_target->inventory)
+        p_transfer_target->inventory) {
+        p_font->print( l_camera + vec2{120, 90}, "%s:", p_transfer_target->objtype->name.c_str());
         p_transfer_target->inventory->draw( graphic, vec2{ 0, 100});  // target inventory
+    }
+    
+    p_font->print( l_camera + vec2{ 40, 20}, "states:");
+    p_font->print( l_camera + vec2{ 40, 30}, "strength %d", 3);
+    p_font->print( l_camera + vec2{ 40, 40}, "skill %d", 2);
+    p_font->print( l_camera + vec2{ 40, 50}, "magic %d", 2);
 }
