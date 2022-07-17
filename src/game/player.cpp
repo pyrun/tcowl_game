@@ -30,14 +30,6 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
         l_entry.objtype = entitys->getTypeByName("bread");
         l_entry.pos = vec2{ 5, 3};
         p_player->inventory->add( &l_entry);
-
-        /*p_player->inventory->add( { 2, 3}, &l_entry);
-        l_entry.objtype = entitys->getType(102);
-        p_player->inventory->add( { 4, 2}, &l_entry);
-        l_entry.objtype = entitys->getType(103);
-        p_player->inventory->add( { 3, 3}, &l_entry);
-        l_entry.objtype = entitys->getType(101);
-        p_player->inventory->add( { 2, 2}, &l_entry);*/
     }
 }
 
@@ -58,12 +50,17 @@ void player::draw( engine::graphic_draw *graphic) {
 
                 if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_inventory)) {
                     p_state = player_state::player_state_inventory;
-                    vec2 l_offset = {2, 2};
+                    vec2 l_offset = {5, 5};
                     std::vector<engine::entity*> l_entitys = p_entity->find(
-                        p_player->body->position.toVec()-l_offset,
+                        p_player->body->position.toVec()+p_player->body->shape->getOffset().toVec()-l_offset,
                         p_player->body->shape->getAABB().toVec()+l_offset*vec2{2,2});
-                    for( engine::entity *l_entity: l_entitys) {
-                        if( l_entity->inventory && l_entity != p_player) {
+
+                    for( engine::entity *l_entity: l_entitys) { // check if we can find an inventory
+                        if( l_entity->inventory == nullptr || // no inventory
+                            l_entity == p_player) // not himself
+                            continue;
+                        
+                        if( script::function( "OpenInventory",l_entity->lua_state, l_entity->index)) {
                             p_state = player_state_inventory_transfer;
                             p_transfer_target = l_entity;
                         }
@@ -120,10 +117,6 @@ void player::draw( engine::graphic_draw *graphic) {
                         case engine::inventory_grid_state::inventory_grid_state_taken: {
                             graphic->setDrawColor( 255, 64, 32, 255);
                             SDL_SetTextureColorMod( p_item_move.item->objtype->image.getTexture(), 255, 64, 32);
-                        } break;
-                        case engine::inventory_grid_state::inventory_grid_state_available: {
-                            graphic->setDrawColor( 0, 255, 64, 255);
-                            SDL_SetTextureColorMod( p_item_move.item->objtype->image.getTexture(), 0, 255, 64);
                         } break;
                         default:
                         break;
@@ -215,8 +208,9 @@ void player::clearItemMove() {
 }
 
 void player::drawInventory( engine::graphic_draw *graphic) {
-    graphic->setDrawColor( 70, 30, 30, 100);
-    graphic->drawFilledRect( vec2{ 0, 0} + graphic->getCamera()->getPosition().toVec(), graphic->getCamera()->getSize().toVec());
+    static const int32_t l_border_offset = 50;
+    graphic->setDrawColor( 20, 20, 20, 200);
+    graphic->drawFilledRect( vec2{ l_border_offset, 0} + graphic->getCamera()->getPosition().toVec(), graphic->getCamera()->getSize().toVec() - vec2{  l_border_offset*2, 0});
 
     p_player->inventory->draw( graphic); // player inventory
     if( p_transfer_target &&

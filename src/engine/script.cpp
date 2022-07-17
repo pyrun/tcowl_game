@@ -45,23 +45,32 @@ void engine::script::run( lua_State *state) {
     }
 }
 
-void engine::script::function( std::string function, lua_State *state, int16_t x, int16_t y) {
+bool engine::script::function( std::string function, lua_State *state, int16_t x, int16_t y) {
     if( state == NULL)
-        return;
+        return false;
 
     // name the function
     lua_getglobal( state, function.c_str());
     if( !lua_isfunction( state, -1)) {
         lua_pop( state,1);
-        return;
+        return false;
     }
     lua_pushnumber( state, x);
     lua_pushnumber( state, y);
 
     // call the function
-    if( lua_pcall( state, 2, 0, 0)) {
+    if( lua_pcall( state, 2, 1, 0)) {
         log( log_error, "engine::script::function %s", lua_tostring( state, -1));
     }
+
+    if (!lua_isboolean( state, -1)) // get no value back
+        return false;
+    
+    // get value and pop the answer
+    bool l_return = lua_toboolean( state, -1);
+    lua_pop( state, 1);
+
+    return l_return;
 }
 
 void engine::script::free( lua_State *state) {

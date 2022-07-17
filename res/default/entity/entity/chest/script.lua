@@ -21,3 +21,7 @@ function Update( id)
 		tcowl.entity.addInventoryItem( value, 5, 1, "bread")
 	end
 end
+
+function OpenInventory( id)
+	return true
+end
