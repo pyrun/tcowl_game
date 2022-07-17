@@ -107,6 +107,7 @@ static int lua_setAnimation( lua_State *state) {
         if( action.name == l_action_name)
             l_action = &action;
     if( l_action) {
+        l_obj->change = true;
         l_obj->action = l_action->id;
         if( lua_isnumber( state, 3))
             l_obj->animation_tick = lua_tonumber( state, 3);
