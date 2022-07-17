@@ -163,7 +163,6 @@ void hub::calcPhysic( float dt) {
                     l_position_other,
                     l_rect_other
                 )) {
-                    l_body->collision = true;
                     // calculate collision
                     engine::fvec2 l_collisiontime = sweptAABB( l_body->position + l_body->shape->getOffset(), // pos
                                                         l_body->shape->getAABB(), // size
@@ -187,10 +186,11 @@ void hub::calcPhysic( float dt) {
                     
                     // see which side is affected and set it
                     if( l_collision) {
+                        l_body->collision = true;
                         l_collision_face = l_normal;
 
                         if( p_debug_level)
-                            engine::log( engine::log_debug, "hub::update %d %d %d with %d", l_normal.x, l_normal.y, i, n);
+                            engine::log( engine::log_debug, "hub::update %d %d %d with %d, l_nearest_collisiontime %d %d", l_normal.x, l_normal.y, i, n, l_nearest_collisiontime.x, l_nearest_collisiontime.y);
                     }
                 }
             }
