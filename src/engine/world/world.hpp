@@ -10,7 +10,6 @@
 #include <engine/network_ids.hpp>
 #include <network/network.hpp>
 
-#include "room.hpp"
 #include "tile.hpp"
 #include "tile_manager.hpp"
 #include "biom_manager.hpp"
@@ -24,14 +23,19 @@ namespace engine {
         uint32_t ticks = 0;
         uint32_t animation_tick = 0;
 
-        tile *bot = nullptr;
-
-        biom *biom = nullptr;
+        tile data;
     };
 
     struct world_physic_body {
         physic::body body;
         physic::shape_rect *shape;
+    };
+
+    struct world_data {
+        world_tile *tiles;
+        world_physic_body *physic_bodys;
+
+        biom *biom;
     };
 
     class world : public engine::graphic_object, public network::synchronisation {
@@ -40,7 +44,6 @@ namespace engine {
             ~world();
 
             void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
-            void generate(biom *biom);
             bool checkSolidTileReachable( vec2 position);
             void generate_collisionmap( physic::hub *hub);
             void cleanup();
@@ -69,16 +72,13 @@ namespace engine {
             tile_manager *getTileManager() { return p_tileset; }
             vec2 getWorldSize() { return { WORLD_SIZE, WORLD_SIZE}; }
         private:
-            world_tile *p_world_data;
-            world_physic_body *p_physic_bodys;
+            world_data *p_world_data;
 
             uint32_t p_seed;
             tile_manager *p_tileset;
             biom_manager *p_biom_manager;
 
             graphic *p_graphic;
-
-            std::vector<room*> p_rooms;
     };
 
     extern world *used_world_handler;

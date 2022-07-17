@@ -1,4 +1,5 @@
 {
+    "name": "brick",
     "id": 3,
     "image": "graphic.png",
     "solid": true

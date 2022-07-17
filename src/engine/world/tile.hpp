@@ -34,12 +34,14 @@ namespace engine {
     };
 
     struct tile {
-            uint16_t id;
-            image image;
-            bool solid;
-            std::string folder;
+        uint16_t id = 0;
+        std::string name;
 
-            std::vector<tile_graphic> graphic;
+        image image;
+        bool solid = false;
+        std::string folder;
+
+        std::vector<tile_graphic> graphic;
     };
 };
 

@@ -1,6 +1,5 @@
 #include "world.hpp"
 
-
 #include <engine/noise.hpp>
 #include <engine/helper.hpp>
 #include <engine/timer.hpp>
@@ -21,28 +20,19 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_graphic = graphic;
     p_tileset = tileset;
     p_biom_manager = biom_manager;
-    p_world_data = new world_tile[WORLD_SIZE*WORLD_SIZE];
-
-    p_physic_bodys = new world_physic_body[WORLD_PHYSIC_BODYS] {};
+    p_world_data = new world_data;
+    p_world_data->tiles = new world_tile[WORLD_SIZE*WORLD_SIZE];
+    p_world_data->physic_bodys = new world_physic_body[WORLD_PHYSIC_BODYS] {};
 
     graphic->getCamera()->setBorder( { WORLD_SIZE, WORLD_SIZE});
 
     // set up map
-    biom *l_biom = p_biom_manager->get( 0/* rand()%p_biom_manager->getAmount()*/);
-    generate( l_biom);
+    p_world_data->biom = p_biom_manager->get(0);
 
-}
-
-void world::generate( biom *biom) {
-    for( uint32_t x = 0; x < WORLD_SIZE; x++) {
-        for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            world_tile *l_tile = getTile( x, y);
-            l_tile->biom = biom;
-        }
-    }
-
-    // once
-    update();
+    engine::used_world_handler = this;
+    p_biom_manager->update();
+    script::function( "Generation", p_world_data->biom->getLuaState(), WORLD_SIZE, WORLD_SIZE);
+    engine::used_world_handler = nullptr;
 }
 
 bool world::checkSolidTileReachable( vec2 position) {
@@ -50,15 +40,14 @@ bool world::checkSolidTileReachable( vec2 position) {
     uint8_t l_solid = 0;
     
     world_tile *l_tile_stay = getTile( position.x, position.y);
-    if( l_tile_stay == nullptr || l_tile_stay->bot->solid == false)
+    if( l_tile_stay == nullptr || l_tile_stay->data.solid == false)
         return false; // tile not solid or nullptr
 
     for( int32_t i  = 0; i < 4; i++) {
         world_tile *l_tile = getTile( position.x+l_array[i].x, position.y+l_array[i].y);
         if( l_tile == nullptr)
             l_solid++;
-        else if( l_tile->bot &&
-            l_tile->bot->solid)
+        else if( l_tile->data.solid)
             l_solid++;
     }
 
@@ -73,7 +62,7 @@ void world::generate_collisionmap( physic::hub *hub) {
 
     // TODO cleanup
     for( uint32_t i = 0; i < WORLD_PHYSIC_BODYS; i++)
-        hub->del( &p_physic_bodys[i].body);
+        hub->del( &p_world_data->physic_bodys[i].body);
 
     std::vector<vec2> l_skip_list; // tiles that alrdy has collision boxes get to this list
     auto checkSkip = []( std::vector<vec2> list, int x, int y) {
@@ -110,11 +99,12 @@ void world::generate_collisionmap( physic::hub *hub) {
                     };
                 }
 
-                physic::body *l_body = &p_physic_bodys[l_index].body;
-                if( p_physic_bodys[l_index].shape != nullptr)
-                    delete p_physic_bodys[l_index].shape;
-                p_physic_bodys[l_index].shape = new physic::shape_rect( { (float)(ENGINE_TILE_SIZE*l_line), (float)(ENGINE_TILE_SIZE*l_row) });
-                l_body->shape = p_physic_bodys[l_index].shape;
+                physic::body *l_body = &p_world_data->physic_bodys[l_index].body;
+
+                if( p_world_data->physic_bodys[l_index].shape != nullptr)
+                    delete p_world_data->physic_bodys[l_index].shape;
+                p_world_data->physic_bodys[l_index].shape = new physic::shape_rect( { (float)(ENGINE_TILE_SIZE*l_line), (float)(ENGINE_TILE_SIZE*l_row) });
+                l_body->shape = p_world_data->physic_bodys[l_index].shape;
                 l_body->position = { (float)x*ENGINE_TILE_SIZE, (float)y*ENGINE_TILE_SIZE};
                 hub->add( l_body); // add to the hub
 
@@ -145,28 +135,19 @@ std::vector<uint8_t> world::getRawData() {
 
     l_data.reserve(l_size);
 
+    // biom
+    l_data.push_back( (p_world_data->biom->getId()>>8));
+    l_data.push_back( (p_world_data->biom->getId()));
+
     for( uint32_t i = 0; i < WORLD_SIZE*WORLD_SIZE; i++) {
         // id
-        l_data.push_back( (p_world_data[i].bot->id>>8));
-        l_data.push_back( (p_world_data[i].bot->id));
-        
-        // biom
-        l_data.push_back( (p_world_data[i].biom->getId()>>8));
-        l_data.push_back( (p_world_data[i].biom->getId()));
+        l_data.push_back( (p_world_data->tiles[i].data.id>>8));
+        l_data.push_back( (p_world_data->tiles[i].data.id));
 
         // tick
-        l_data.push_back( p_world_data[i].animation_tick);
+        l_data.push_back( p_world_data->tiles[i].animation_tick);
     }
     return l_data;
-}
-
-void world::createRoom( vec2 position) {
-    room *l_room;
-
-    l_room = new room();
-    l_room->init(position);
-
-    p_rooms.push_back( l_room);
 }
 
 void world::setTile(int x, int y, tile *tiledata) {
@@ -175,11 +156,12 @@ void world::setTile(int x, int y, tile *tiledata) {
         x < 0 ||
         y < 0)
         return;
-    world_tile *l_tile = &p_world_data[WORLD_SIZE * x + y];
-    l_tile->bot = tiledata;
+    world_tile *l_tile = getTile( x, y);
+
+    l_tile->data = *tiledata;
 
     // set face
-    engine::tile_graphic *l_tile_graphic = &l_tile->bot->graphic[0]; // TODO check
+    engine::tile_graphic *l_tile_graphic = &l_tile->data.graphic[0]; // TODO check
     l_tile->animation_tick = rand()%l_tile_graphic->length;
 }
 
@@ -189,7 +171,7 @@ world_tile *world::getTile(int x, int y) {
         x < 0 ||
         y < 0)
         return nullptr;
-    return &p_world_data[WORLD_SIZE * x + y];  
+    return &p_world_data->tiles[WORLD_SIZE * x + y];  
 }
 
 void world::reload( graphic_draw *graphic) {
@@ -205,9 +187,7 @@ void world::draw( engine::graphic_draw *graphic) {
             world_tile *l_data = getTile( x, y);
             if( !l_data)
                 continue;
-            tile *l_tile = l_data->bot;
-            if( !l_tile)
-                continue;
+            tile *l_tile = &l_data->data;
 
             engine::tile_graphic *l_tile_graphic = &l_tile->graphic[0]; // TODO check
             if( !l_tile_graphic)
@@ -234,8 +214,7 @@ void world::draw( engine::graphic_draw *graphic) {
 uint32_t world::outNetworkData( world_tile *tile, vec2 pos, uint8_t *dataDist) {
     uint32_t l_offset = 0;
 
-    helper::int16toUint8x2( tile->biom->getId(), dataDist + l_offset); l_offset +=2;
-    helper::int16toUint8x2( tile->bot->id, dataDist + l_offset); l_offset +=2;
+    helper::int16toUint8x2( tile->data.id, dataDist + l_offset); l_offset +=2;
     helper::int16toUint8x2( tile->animation_tick, dataDist + l_offset); l_offset +=2;
     helper::int16toUint8x2( pos.x, dataDist + l_offset); l_offset +=2;
     helper::int16toUint8x2( pos.y, dataDist + l_offset); l_offset +=2;
@@ -248,7 +227,6 @@ void world::inNetworkData( uint8_t *dataDist) {
     int16_t l_id_biom, l_id, l_animation_tick;
     int16_t l_x, l_y;
 
-    helper::uint8x2toInt16( dataDist + l_offset, &l_id_biom); l_offset +=2;
     helper::uint8x2toInt16( dataDist + l_offset, &l_id); l_offset +=2;
     helper::uint8x2toInt16( dataDist + l_offset, &l_animation_tick); l_offset +=2;
     helper::uint8x2toInt16( dataDist + l_offset, &l_x); l_offset +=2;
@@ -297,15 +275,6 @@ void world::update() {
     engine::used_world_handler = this;
 
     p_biom_manager->update();
-
-    for( uint32_t x = 0; x < WORLD_SIZE; x++) {
-        for( uint32_t y = 0; y < WORLD_SIZE; y++) {
-            world_tile *l_tile = getTile( x, y);
-            if( l_tile->bot == nullptr && l_tile->biom) {
-                script::function( "Set", l_tile->biom->getLuaState(), x, y);
-            }
-        }
-    }
 
     engine::used_world_handler = nullptr;
 }

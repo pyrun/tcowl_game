@@ -71,6 +71,7 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
 
     // Name
     l_tile->id = helper::json::getUint32( &l_json, "id");
+    l_tile->name = helper::json::getString( &l_json, "name");
     
     // Graphic
     std::string l_image_file;
@@ -85,6 +86,11 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
 
     // Load image
     l_tile->image.load( graphic, folder + l_image_file);
+    if( l_tile->image.getTexture() == nullptr) {
+        log( log_level::log_warn, "tile_manager::loadtype %s graphic file cannot be loaded", (folder + ENGINE_TILE_FILE_DESCRIPTION).c_str());
+        removetype( l_tile);
+        return;
+    }
 
     // Alpha key
     uint8_t *l_color_key;
@@ -132,6 +138,8 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
         l_graphic.type = engine::tile_graphic_type::tile_graphic_type_dafault;
         l_tile->graphic.push_back( l_graphic);
     }
+
+    log( log_level::log_warn, "tile_manager::loadtype \"%s\" #%d loaded", l_tile->name.c_str(), l_tile->id);
 }
 
 void tile_manager::reload( graphic_draw *graphic) {
@@ -160,8 +168,15 @@ bool tile_manager::removetype( tile *target) {
 }
 
 tile *tile_manager::getById( uint16_t id) {
-    for( uint32_t i = 0; i < p_type.size(); i++)
-        if( p_type[i].id == id)
-            return &p_type[i];
-    return NULL;
+    for( tile &l_tile: p_type)
+        if( l_tile.id == id)
+            return &l_tile;
+    return nullptr;
+}
+
+tile *tile_manager::getByName( std::string name) {
+    for( tile &l_tile: p_type)
+        if( l_tile.name == name)
+            return &l_tile;
+    return nullptr;
 }

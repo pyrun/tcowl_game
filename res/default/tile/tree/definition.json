@@ -1,0 +1,20 @@
+{
+    "name": "tree",
+    "image": "graphic.png",
+    "alpha-key": [ 255, 255, 255],
+    "graphic": [
+        {
+            "name": "idle",
+            "position": [ 16, 0],
+            "length": 1,
+            "ticks-for-next-image": 0
+        },
+        {
+            "type":"s",
+            "name": "full",
+            "position": [ 0, 16],
+            "length": 1,
+            "ticks-for-next-image": 0
+        }
+    ]
+}

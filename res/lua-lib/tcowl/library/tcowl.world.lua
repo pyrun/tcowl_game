@@ -20,3 +20,11 @@ function tcowl.world.getSize() end
 ---@param x? number # The x coordinate
 ---@param y? number # The y coordinate
 function tcowl.world.setTile( id , x, y) end
+
+---
+---Set Tile in the current world
+---
+---@param name? string # Tile name
+---@param x? number # The x coordinate
+---@param y? number # The y coordinate
+function tcowl.world.setTile( name, x, y) end

@@ -89,8 +89,6 @@ void app::begin() {
     // Update Once
     update();
 
-    std::vector<uint8_t> l_data = p_world.getRawData();
-
     /*for( size_t i = 0; i < l_data.size(); i+=5) {
         printf("%02x ", l_data[i] );
         printf("%02x\n", l_data[i+1] );
