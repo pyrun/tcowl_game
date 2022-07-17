@@ -191,6 +191,9 @@ void world::draw( engine::graphic_draw *graphic) {
                 continue;
             tile *l_tile = &l_data->data;
 
+            if( l_tile->id == 0)
+                continue;
+
             engine::tile_graphic *l_tile_graphic = &l_tile->graphic[0]; // TODO check
             if( !l_tile_graphic)
                 continue;
@@ -235,8 +238,12 @@ void world::inNetworkData( uint8_t *dataDist) {
     helper::uint8x2toInt16( dataDist + l_offset, &l_y); l_offset +=2;
 
     engine::tile *l_tile = p_tileset->getById( l_id);
-    if( l_tile == nullptr)
+    if( l_tile == nullptr) {
+        engine::world_tile *l_tile = getTile( l_x, l_y);
+        if( l_tile)
+            l_tile->data.id = 0;
         return;
+    }
     
     setTile( l_x, l_y, l_tile);
     engine::world_tile *l_world_tile = getTile( l_x, l_y);
