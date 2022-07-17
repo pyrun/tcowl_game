@@ -14,6 +14,7 @@ using namespace engine;
 
 tile_manager::tile_manager() {
     p_type.clear();
+    p_highestid = 1;
 }
 
 tile_manager::~tile_manager() {
@@ -70,8 +71,10 @@ void tile_manager::loadtype( graphic *graphic, std::string folder) {
     tile *l_tile = createtype();
 
     // Name
-    l_tile->id = helper::json::getUint32( &l_json, "id");
+    l_tile->id = helper::json::getUint32( &l_json, "id", p_highestid);
     l_tile->name = helper::json::getString( &l_json, "name");
+    if( l_tile->id >= p_highestid)
+        p_highestid = l_tile->id+1;
     
     // Graphic
     std::string l_image_file;

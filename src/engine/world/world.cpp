@@ -33,6 +33,8 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_biom_manager->update();
     script::function( "Generation", p_world_data->biom->getLuaState(), WORLD_SIZE, WORLD_SIZE);
     engine::used_world_handler = nullptr;
+
+
 }
 
 bool world::checkSolidTileReachable( vec2 position) {

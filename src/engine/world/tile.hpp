@@ -38,7 +38,7 @@ namespace engine {
         std::string name;
 
         image image;
-        bool solid = false;
+        bool solid = true;
         std::string folder;
 
         std::vector<tile_graphic> graphic;

@@ -47,19 +47,13 @@ function Intilisation( try)
 end
 
 function Generation( w, h)
-
     for x = 0, w-1 do
         for y = 0, h-1 do
-            tcowl.world.setTile( "earth", x, y)
+            for i, room in pairs(rooms) do
+                if (room.x <= x and room.y <= y and room.x+room.w > x and room.y+room.h > y) then
+                    tcowl.world.setTile( "grass", x, y)
+                end
+            end
         end
     end
-
-
-
-    --for i, room in pairs(rooms) do
-    --    if (room.x <= x and room.y <= y and room.x+room.w > x and room.y+room.h > y) then
-    --        tcowl.world.setTile( "tree", x, y-1)
-    --        tcowl.world.setTile( "grass", x, y)
-    --    end
-    --end
 end

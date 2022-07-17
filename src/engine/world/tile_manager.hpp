@@ -25,6 +25,8 @@ namespace engine {
             bool removetype( tile *target);
 
             std::vector<tile> p_type;
+
+            uint32_t p_highestid;
     };
 };
 
