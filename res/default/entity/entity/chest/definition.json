@@ -7,7 +7,7 @@
     "inventory-size": [ 3, 3],
     "action": [
         {
-            "name": "Idle",
+            "name": "Close",
             "position": [ 0, 0],
             "size": [ 21, 15],
             "length": 1,

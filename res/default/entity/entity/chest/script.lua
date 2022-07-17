@@ -8,12 +8,6 @@ function Intilisation( id)
 end
 
 function Update( id)
-	local l_hasItems = false
-
-	if l_hasItems == false then
-		tcowl.entity.setAnimation( id, "Open")
-	end
-
 	local entitys = {}
 	entitys = tcowl.entity.find( id, -10, -10, 20, 20)
 
@@ -23,5 +17,11 @@ function Update( id)
 end
 
 function OpenInventory( id)
+	tcowl.entity.setAnimation( id, "Open")
+	return true
+end
+
+function CloseInventory( id)
+	tcowl.entity.setAnimation( id, "Close")
 	return true
 end
