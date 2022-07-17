@@ -55,6 +55,7 @@ void player::draw( engine::graphic_draw *graphic) {
                         p_player->body->position.toVec()+p_player->body->shape->getOffset().toVec()-l_offset,
                         p_player->body->shape->getAABB().toVec()+l_offset*vec2{2,2});
 
+
                     for( engine::entity *l_entity: l_entitys) { // check if we can find an inventory
                         if( l_entity->inventory == nullptr || // no inventory
                             l_entity == p_player) // not himself
