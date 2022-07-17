@@ -301,7 +301,7 @@ std::vector<entity*> entity_handler::find( vec2 pos, vec2 rect) {
         // use physic hub for check
         if( p_hub.testAABBAABB( fvec2{ (float)pos.x, (float)pos.y},
             fvec2{ (float)rect.x, (float)rect.y},
-            l_entity->body->position,
+            l_entity->body->position+l_entity->body->shape->getOffset(),
             l_entity->body->shape->getAABB())) {
             // check if its new
             bool l_new = true;
