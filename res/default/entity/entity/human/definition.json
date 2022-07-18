@@ -1,6 +1,5 @@
 {
     "name": "human",
-    "id": 1,
     "happy": true,
     "image": "graphic.bmp",
     "alpha-key": [ 68, 123, 134],

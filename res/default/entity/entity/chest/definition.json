@@ -1,6 +1,5 @@
 {
     "name": "chest",
-    "id": 6,
     "image": "graphic.png",
     "collision-type": "rect",
     "collision-data": [ 0, 8, 21, 4],
