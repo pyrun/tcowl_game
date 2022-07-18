@@ -25,21 +25,56 @@ function CheckSpaceRoom( x, y, w, h, space)
 end
 
 function Intilisation( try)
-    print("Biom grass script")
+    print("Forest grass script")
 
     local world_size_x, world_size_y = tcowl.world.getSize()
 
     local room_min_length = 4
-    local room_max_length = 20
+    local room_max_length = 7
 
-    for i = 1, 2024 do
+    AddRoom( 16, 16, 5, 5)
+    local last_room = rooms[#rooms]
+
+
+    for i = 1, 500 do
         local room = {}
-        room.x = math.random(0,world_size_x)
-        room.y = math.random(0,world_size_y)
+        local dir = math.random(1,4)
+        local last_room = rooms[math.random(#rooms)]
+        local result
+
         room.w = math.random( room_min_length, room_max_length)
         room.h = math.random( room_min_length, room_max_length)
 
-        local result = CheckSpaceRoom( room.x, room.y, room.w, room.h, 1)
+        if dir == 1 then
+            room.x = last_room.w+last_room.x+1
+            room.y = last_room.y
+            result = CheckSpaceRoom( room.x, room.y, room.w, room.h, 1)
+            if result then
+                tcowl.world.setTile( "grass", room.x-1, room.y+math.random(math.min(room.h, last_room.h)-1))
+            end
+        elseif dir == 2 then
+            room.x = last_room.x
+            room.y = last_room.h+last_room.y+1
+            result = CheckSpaceRoom( room.x, room.y, room.w, room.h, 1)
+            if result then
+                tcowl.world.setTile( "grass", room.x+math.random(math.min(room.w, last_room.w))-1, room.y-1)
+            end
+        elseif dir == 3 then
+            room.x = last_room.x - 1 - room.w
+            room.y = last_room.y
+            result = CheckSpaceRoom( room.x, room.y, room.w, room.h, 1)
+            if result then
+                tcowl.world.setTile( "grass", room.x+room.w, room.y+math.random(math.min(room.h, last_room.h)-1))
+            end
+        elseif dir == 4 then
+            room.x = last_room.x
+            room.y = last_room.y - 1 - room.h
+            result = CheckSpaceRoom( room.x, room.y, room.w, room.h, 1)
+            if result then
+             tcowl.world.setTile( "grass", room.x+math.random(math.min(room.w, last_room.w))-1, room.y+room.h)
+            end
+        end
+
         if result then
             AddRoom( room.x, room.y, room.w, room.h)
         end
@@ -47,6 +82,7 @@ function Intilisation( try)
 end
 
 function Generation( w, h)
+
     for x = 0, w-1 do
         for y = 0, h-1 do
             for i, room in pairs(rooms) do
