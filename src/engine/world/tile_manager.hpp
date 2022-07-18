@@ -26,7 +26,7 @@ namespace engine {
 
             std::vector<tile> p_type;
 
-            uint32_t p_highestid;
+            uint16_t p_highest_id;
     };
 };
 

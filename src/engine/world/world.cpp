@@ -24,7 +24,7 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_world_data->tiles = new world_tile[WORLD_SIZE*WORLD_SIZE];
     p_world_data->physic_bodys = new world_physic_body[WORLD_PHYSIC_BODYS] {};
 
-    graphic->getCamera()->setBorder( { WORLD_SIZE, WORLD_SIZE});
+    graphic->getCamera()->setBorder( { WORLD_SIZE*ENGINE_TILE_SIZE, WORLD_SIZE*ENGINE_TILE_SIZE});
 
     // set up map
     p_world_data->biom = p_biom_manager->get(0);

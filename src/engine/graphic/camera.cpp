@@ -51,8 +51,8 @@ void camera::update() {
         p_position.x = 0;
     if( p_position.y < 0)
         p_position.y = 0;
-    if( p_border.x + p_size.x < p_position.x)
-        p_position.x = p_border.x + p_size.x;
-    if( p_border.y + p_size.y < p_position.y)
-        p_position.y = p_border.y + p_size.y;
+    if( p_border.x - p_size.x < p_position.x)
+        p_position.x = p_border.x - p_size.x;
+    if( p_border.y - p_size.y < p_position.y)
+        p_position.y = p_border.y - p_size.y;
 }
