@@ -14,6 +14,7 @@ using namespace engine;
 
 type_handler::type_handler() {
     p_type.clear();
+    p_highest_id = 1024; // for automatic numbering
 }
 
 type_handler::~type_handler() { }
@@ -72,11 +73,9 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
 
     // Id
     uint32_t l_id;
-    l_type->id = helper::json::getUint32( &l_json, "id", 0);
-    if( l_type->id == 0) { // keine Nummer vergeben
-        removetype( l_type);
-        return;
-    }
+    l_type->id = helper::json::getUint32( &l_json, "id", p_highest_id);
+    if( l_type->id >= p_highest_id)
+        p_highest_id = l_type->id+1;
 
     // Type
     std::string l_object_type = helper::json::getString( &l_json, "type", "object");

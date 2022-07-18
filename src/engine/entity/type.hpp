@@ -61,6 +61,8 @@ namespace engine {
             type *createtype();
             bool removetype( type *target);
 
+            uint16_t p_highest_id;
+
             std::vector<type> p_type;
     };
 };
