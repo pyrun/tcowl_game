@@ -44,6 +44,8 @@ void player::draw( engine::graphic_draw *graphic) {
     helper::time::reset( &l_time);
     
     if( p_player) {
+        p_font->print( l_camera + vec2{ -120, 10} + vec2{ (int32_t)graphic->getCamera()->getSize().x, 0}, "Pos %.1f %.1f", p_player->body->position.x, p_player->body->position.y);
+    
         switch(p_state) {
             case player_state::player_state_idle: {
                 p_entity->bindInput( p_player, p_input->getInputMap());
