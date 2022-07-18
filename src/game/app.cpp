@@ -56,14 +56,14 @@ void app::begin() {
     app_config_network l_net_type = p_argv.get<app_config_network>("network-type", app_config_network_offline);
     if( l_net_type == app_config_network_offline ||
         l_net_type == app_config_network_server) {
-        int16_t l_id = p_entity.createObject(1);
+        int16_t l_id = p_entity.createObject("human");
         p_entity.setPosition( l_id, { 100, 100});
 
-        l_id = p_entity.createObject(1);
-        p_entity.setPosition( l_id, { 100, 100});
+        l_id = p_entity.createObject("human");
+        p_entity.setPosition( l_id, { 16*32/2, 16*32/2});
 
-        l_id = p_entity.createObject(6);
-        p_entity.setPosition( l_id, { 120, 102});
+        l_id = p_entity.createObject("chest");
+        p_entity.setPosition( l_id, { 16*32/2+20, 16*32/2+20});
         p_entity.deleteObject( 0);
     }
     if( l_net_type == app_config_network_server)
