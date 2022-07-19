@@ -42,7 +42,8 @@ void player::draw( engine::graphic_draw *graphic) {
 
     p_font->print( l_camera + vec2{ -50, 0} + vec2{ (int32_t)graphic->getCamera()->getSize().x, 0}, "%2.1d ms", helper::time::getDurrent(&l_time));
     helper::time::reset( &l_time);
-    
+
+    p_player = p_entity->get( 1);
     if( p_player) {
         p_font->print( l_camera + vec2{ -120, 10} + vec2{ (int32_t)graphic->getCamera()->getSize().x, 0}, "Pos %.1f %.1f", p_player->body->position.x, p_player->body->position.y);
     
@@ -163,9 +164,7 @@ void player::draw( engine::graphic_draw *graphic) {
 }
 
 void player::update() {
-    if( p_player) {
-        p_player->change = true;
-    }
+
 }
 
 bool player::tryGetItemFromInventory( engine::vec2 pos, engine::entity *entity) {
@@ -180,6 +179,7 @@ bool player::tryGetItemFromInventory( engine::vec2 pos, engine::entity *entity) 
         p_item_move.pos = l_answer.point;
         entity->inventory->del( l_answer.item);
         p_item_move.origin = entity->inventory;
+        entity->change = true;
         return true;
     }
     return false;
@@ -195,6 +195,7 @@ bool player::tryPutItemToInventory( engine::vec2 pos, engine::entity *entity) {
     engine::inventory_entry *l_item_add = entity->inventory->add( p_item_move.item); // try to add in inventory
     if( l_item_add) { // if happend we change some settings
         l_item_add->angle = p_item_move.item->angle;
+        entity->change = true;
         clearItemMove();
         return true;
     }
@@ -234,7 +235,8 @@ void player::drawInventory( engine::graphic_draw *graphic) {
     }
     
     p_font->print( l_camera + vec2{ 40, 20}, "states:");
-    p_font->print( l_camera + vec2{ 40, 30}, "strength %d", 3);
-    p_font->print( l_camera + vec2{ 40, 40}, "skill %d", 2);
-    p_font->print( l_camera + vec2{ 40, 50}, "magic %d", 2);
+    int32_t l_index = 0;
+    for( engine::entity_parameter &l_par:p_player->parameter) {
+        p_font->print( l_camera + vec2{ 40, 30+(10*l_index++)}, "%s %d", l_par.name.c_str(), l_par.value);
+    }
 }
