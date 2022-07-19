@@ -234,7 +234,13 @@ void server::close() {
             enet_peer_disconnect( &p_server->peers[l_client->peerID], 0);
         }
         ENetEvent l_event;
-        bool l_quit = false;
+        bool l_quit = true;
+
+        // check if we have connections
+        for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++)
+            if( p_clients[i] != nullptr)
+                l_quit = false;
+
         while( l_quit == false && enet_host_service( p_server, &l_event, 3000) > 0) {
             switch (l_event.type) {
                 case ENET_EVENT_TYPE_RECEIVE: {
