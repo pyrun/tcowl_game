@@ -92,8 +92,8 @@ engine::fvec2 hub::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
             return { 1.f, 1.f};
     
     if( p_debug_level > 0) {
-        engine::log( engine::log_debug, "hub::sweptAABB pos1,rect1   %.2f %.2f %.2f %.2f", pos1.x, pos1.y, rect1.x, rect1.y);
-        engine::log( engine::log_debug, "hub::sweptAABB pos2,rect2 %.2f %.2f %.2f %.2f", pos2.x, pos2.y, rect2.x, rect2.y);
+        engine::log( engine::log_debug, "hub::sweptAABB pos1,rect1 %3.2f %3.2f %3.2f %3.2f", pos1.x, pos1.y, rect1.x, rect1.y);
+        engine::log( engine::log_debug, "hub::sweptAABB pos2,rect2 %3.2f %3.2f %3.2f %3.2f", pos2.x, pos2.y, rect2.x, rect2.y);
         engine::log( engine::log_debug, "hub::sweptAABB velocity %.16f %.16f", velocity.x, velocity.y);
         engine::log( engine::log_debug, "hub::sweptAABB l_delta_entry %.8f %.8f", l_delta_entry.x, l_delta_entry.y);
         engine::log( engine::log_debug, "hub::sweptAABB l_time_entry %.2f %.2f", l_time_entry.x, l_time_entry.y);
@@ -102,12 +102,15 @@ engine::fvec2 hub::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
     }
 
     // calculate normal of collided surface
-    engine::fvec2 *l_collide_factor = &l_delta_entry;
     if( l_time_entry.x > l_time_entry.y) {// check if x or y
-        normal->x = (l_collide_factor->x<0.f)? -1: 1;
+        normal->x = (velocity.x<0.f)? -1: 1;
+        if( normal->x == -1) // Avoid glitch with nagative numbers - origin not fully understood
+            l_entryTime -= std::nextafter(1.0f, 0.0f);
         return { l_entryTime, 1.f};
     } else {
-        normal->y = (l_collide_factor->y<0.f)? -1: 1;
+        normal->y = (velocity.y<0.f)? -1: 1;
+        if( normal->y == -1) // Avoid glitch with nagative numbers - origin not fully understood
+            l_entryTime -= std::nextafter(1.0f, 0.0f);
         return { 1.f, l_entryTime};
     }
 }
@@ -190,7 +193,7 @@ void hub::calcPhysic( float dt) {
                         l_collision_face = l_normal;
 
                         if( p_debug_level)
-                            engine::log( engine::log_debug, "hub::update %d %d %d with %d, l_nearest_collisiontime %d %d", l_normal.x, l_normal.y, i, n, l_nearest_collisiontime.x, l_nearest_collisiontime.y);
+                            engine::log( engine::log_debug, "hub::update %d %d %d with %d, l_nearest_collisiontime %1.4f %1.4f", l_normal.x, l_normal.y, i, n, l_nearest_collisiontime.x, l_nearest_collisiontime.y);
                     }
                 }
             }
