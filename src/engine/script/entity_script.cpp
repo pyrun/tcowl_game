@@ -265,6 +265,62 @@ static int lua_find( lua_State *state) {
     return 1;
 }
 
+static int lua_setParameter( lua_State *state) {
+    entity *l_obj;
+    int l_id;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    if( !lua_isstring( state, 2) || !lua_isnumber( state, 3)) {
+        log( log_warn, "lua_setParameter call wrong argument");
+        return 0;
+    }
+
+    // search for parameter
+    bool l_search = false;
+    for( entity_parameter &l_parameter:l_obj->parameter) {
+        if( l_parameter.name == std::string(lua_tostring( state, 2))) {
+            l_search = true;
+            l_parameter.value = lua_tonumber( state, 3);
+            break;
+        }
+    }
+    // create new parameter
+    if( l_search == false) {
+        entity_parameter l_parameter;
+        l_parameter.name = lua_tostring( state, 2);
+        l_parameter.value = lua_tonumber( state, 3);
+        l_obj->parameter.push_back( l_parameter);
+    }
+    return 0;
+}
+
+static int lua_getParameter( lua_State *state) {
+    entity *l_obj;
+    int l_id;
+
+    l_obj = entity_script_getObject( state);
+    if( !l_obj)
+        return 0;
+
+    if( !lua_isstring( state, 2)) {
+        log( log_warn, "lua_getParameter call wrong argument");
+        return 0;
+    }
+
+    // search for parameter
+    bool l_search = false;
+    for( entity_parameter &l_parameter:l_obj->parameter) {
+        if( l_parameter.name == std::string(lua_tostring( state, 2))) {
+            lua_pushnumber( state, l_parameter.value);
+            return 1;
+        }
+    }
+    return 0;
+}
+
 #ifdef __cplusplus
 }
 #endif
@@ -281,6 +337,8 @@ static const struct luaL_Reg entity_lib_funcs[] = {
     {"setInventoryState", lua_setInventoryState},
     {"addInventoryItem", lua_addInventoryItem},
     {"find", lua_find},
+    {"setParameter", lua_setParameter},
+    {"getParameter", lua_getParameter},
     {NULL, NULL}
     };
 

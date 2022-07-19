@@ -16,6 +16,11 @@
 #define ENGINE_ENTITY_MAX_AMOUNT 1024
 
 namespace engine {
+    struct entity_parameter {
+        std::string name;
+        uint32_t value;
+    };
+
     struct entity {
         uint16_t index;
 
@@ -32,6 +37,8 @@ namespace engine {
         engine::input_map *input;
 
         inventory_grid *inventory;
+
+        std::vector<entity_parameter> parameter;
 
         bool change; // synchronised with other systems, used for example in the network
     };

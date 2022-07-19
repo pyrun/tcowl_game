@@ -1,5 +1,5 @@
 local velocity_window = 0.1
-local walk_speed = 10.0
+local walk_speed = 8.0
 
 function Intilisation( id)
 	for x=3,6 do
@@ -7,7 +7,9 @@ function Intilisation( id)
 			tcowl.entity.setInventoryState( id, x, y, "available")
 		end
 	end
-	
+	tcowl.entity.setParameter( id, "strength", 2);
+	tcowl.entity.setParameter( id, "skill", 1);
+	tcowl.entity.setParameter( id, "magic", 1);
 end
 
 function Update( id)

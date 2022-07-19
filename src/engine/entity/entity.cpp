@@ -195,6 +195,15 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
     dataDist[l_offset] = obj->action; l_offset +=1;
     dataDist[l_offset] = obj->animation_tick; l_offset +=1;
 
+    // inventory
+    dataDist[l_offset] = (uint8_t)obj->inventory->getList()->size(); l_offset +=1;
+    for( int32_t i = 0; i < obj->inventory->getList()->size(); i++) {
+        inventory_entry *l_item = &obj->inventory->getList()->at(i);
+        dataDist[l_offset] = l_item->angle; l_offset +=1;
+        helper::int32toUint8x4( l_item->pos.x, dataDist + l_offset); l_offset +=4;
+        helper::int32toUint8x4( l_item->pos.y, dataDist + l_offset); l_offset +=4;
+        helper::int16toUint8x2( l_item->objtype->id, dataDist + l_offset); l_offset +=2;
+    }
     return l_offset;
 }
 
@@ -226,6 +235,30 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     l_entity->action = dataDist[l_offset]; l_offset +=1;
     l_entity->animation_tick = dataDist[l_offset]; l_offset +=1;
     helper::time::reset( &l_entity->animation_time);
+
+    // inventory
+    uint8_t l_length = dataDist[l_offset]; l_offset +=1;
+    for( uint8_t i = 0; i < l_length; i++) {
+        int16_t l_id;
+        engine::inventory_entry l_item;
+        l_item.angle = (inventory_angle)dataDist[l_offset]; l_offset +=1;
+        helper::uint8x4toInt32( dataDist + l_offset, &l_item.pos.x); l_offset +=4;
+        helper::uint8x4toInt32( dataDist + l_offset, &l_item.pos.y); l_offset +=4;
+        helper::uint8x2toInt16( dataDist + l_offset, &l_id); l_offset +=2;
+        l_item.objtype = p_types->getById( l_id);
+
+        if( i >= (uint8_t)l_entity->inventory->getList()->size()) {
+            l_entity->inventory->add( &l_item);
+        } else {
+            engine::inventory_entry *l_list_item = &l_entity->inventory->getList()->at(i);
+            if( !(l_item.pos == l_list_item->pos) ||
+                l_item.angle != l_list_item->angle ||
+                l_item.objtype->id != l_list_item->objtype->id) {
+                l_entity->inventory->del( l_list_item);
+                l_entity->inventory->add( &l_item);
+            }
+        }
+    }
 }
 
 void entity_handler::update( float dt, world *world) {

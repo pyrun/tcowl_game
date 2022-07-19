@@ -131,7 +131,7 @@ void inventory_grid::drawItem( graphic_draw *graphic, vec2 pos, inventory_entry 
         pos,
         l_action->size,
         l_action->postion,
-        (double)item->angle,
+        item->angle*90.f,
         &centre);
 }
 

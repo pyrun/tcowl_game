@@ -96,3 +96,18 @@ function tcowl.entity.addInventoryItem( id, x, y, objname) end
 ---@param h? number # rect h
 ---@return table number objects_id # ids
 function tcowl.entity.find( id, x, y, w, h) end
+
+---
+---Set Parameter, will be created if not existing
+---
+---@param id? number # object id
+---@param name? string # parameter name
+---@param value? number #
+function tcowl.entity.setParameter( id, name, value)  end
+
+---
+---Get Parameter
+---
+---@param id? number # object id
+---@param name? string # parameter name
+function tcowl.entity.getParameter( id, name, value)  end

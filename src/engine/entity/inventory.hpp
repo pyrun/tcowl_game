@@ -12,11 +12,11 @@
 #define ENTITY_INVENTORY_SIZE_VEC2 vec2{ ENTITY_INVENTORY_SIZE, ENTITY_INVENTORY_SIZE}
 
 namespace engine {
-    enum inventory_angle : uint32_t{
+    enum inventory_angle : uint8_t{
         inventory_angle_0 = 0,
-        inventory_angle_90 = 90,
-        inventory_angle_180 = 180,
-        inventory_angle_270 = 270,
+        inventory_angle_90,
+        inventory_angle_180,
+        inventory_angle_270,
     };
 
     struct inventory_entry {
