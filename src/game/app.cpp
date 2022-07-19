@@ -88,11 +88,6 @@ void app::begin() {
 
     // Update Once
     update();
-
-    /*for( size_t i = 0; i < l_data.size(); i+=5) {
-        printf("%02x ", l_data[i] );
-        printf("%02x\n", l_data[i+1] );
-    }*/
 }
 
 bool app::update() {
