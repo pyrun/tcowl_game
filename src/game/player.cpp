@@ -195,7 +195,6 @@ bool player::tryPutItemToInventory( engine::vec2 pos, engine::entity *entity) {
     engine::inventory_entry *l_item_add = entity->inventory->add( p_item_move.item); // try to add in inventory
     if( l_item_add) { // if happend we change some settings
         l_item_add->angle = p_item_move.item->angle;
-        entity->change = true;
         clearItemMove();
         return true;
     }
@@ -218,6 +217,12 @@ void player::clearItemMove() {
         delete p_item_move.item;
     p_item_move.item = nullptr;
     p_item_move.origin = nullptr;
+
+    // TODO: set only the entity change true
+    if( p_player)
+        p_player->change = true;
+    if( p_transfer_target)
+        p_transfer_target->change = true;
 }
 
 void player::drawInventory( engine::graphic_draw *graphic) {

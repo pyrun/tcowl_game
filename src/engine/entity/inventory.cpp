@@ -56,6 +56,12 @@ vec2 inventory_grid::getTilePos( vec2 pos_abs) {
     return l_pos/ENTITY_INVENTORY_SIZE_VEC2;
 }
 
+void inventory_grid::clear() {
+    for( inventory_entry &l_item:p_items) {
+        del( &l_item);
+    }
+}
+
 engine::inventory_grid_state inventory_grid::check( inventory_entry *objtype) {
     for (engine::vec2 const& l_hitbox : getItemHitboxList(objtype)) {
         engine::inventory_grid_state *l_state = p_grid->get( objtype->pos.x+l_hitbox.x, objtype->pos.y+l_hitbox.y);

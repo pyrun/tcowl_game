@@ -46,6 +46,8 @@ namespace helper {
 
             uint32_t getW() { return p_w; }
             uint32_t getH() { return p_h; }
+            
+            type *getArray() { return p_map; }
         private:
             type *p_map;
             uint32_t p_w, p_h;

@@ -46,6 +46,7 @@ namespace engine {
             inventory_grid_state check( inventory_entry *objtype);
             bool del( inventory_entry *item);
             vec2 getTilePos( vec2 pos_abs);
+            void clear();
 
             inventory_onClick_answer onClick( vec2 pos);
             void turn( inventory_entry *item, bool clockwise);
@@ -57,6 +58,7 @@ namespace engine {
             void drawItem( graphic_draw *graphic, vec2 pos, inventory_entry *item, vec2 centre = vec2{ 0, 0});
 
             std::vector<inventory_entry> *getList() { return &p_items; }
+            helper::map2d<inventory_grid_state> *getGrid() { return p_grid; }
         private:
              std::vector<vec2> getItemHitboxList( inventory_entry *item); // with rotate
             vec2 calcDrawPos( graphic_draw *graphic, vec2 offset);

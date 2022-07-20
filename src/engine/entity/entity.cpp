@@ -195,14 +195,30 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
     dataDist[l_offset] = obj->action; l_offset +=1;
     dataDist[l_offset] = obj->animation_tick; l_offset +=1;
 
-    // inventory
-    dataDist[l_offset] = (uint8_t)obj->inventory->getList()->size(); l_offset +=1;
-    for( int32_t i = 0; i < obj->inventory->getList()->size(); i++) {
-        inventory_entry *l_item = &obj->inventory->getList()->at(i);
-        dataDist[l_offset] = l_item->angle; l_offset +=1;
-        helper::int32toUint8x4( l_item->pos.x, dataDist + l_offset); l_offset +=4;
-        helper::int32toUint8x4( l_item->pos.y, dataDist + l_offset); l_offset +=4;
-        helper::int16toUint8x2( l_item->objtype->id, dataDist + l_offset); l_offset +=2;
+
+    // inventory def
+    if( obj->inventory == nullptr) {
+        dataDist[l_offset] = 0; l_offset +=1;
+    } else {
+        uint8_t l_size = obj->inventory->getGrid()->getH() * obj->inventory->getGrid()->getW();
+        dataDist[l_offset] = l_size; l_offset +=1;
+        for( uint8_t i = 0; i < l_size; i++) {
+            engine::inventory_grid_state *l_tileg_grid_state = &obj->inventory->getGrid()->getArray()[i];
+            dataDist[l_offset] = (uint8_t)*l_tileg_grid_state; l_offset +=1;
+        }
+    }
+    // inventory items
+    if( obj->inventory == nullptr) {
+        dataDist[l_offset] = 0; l_offset +=1;
+    } else {
+        dataDist[l_offset] = (uint8_t)obj->inventory->getList()->size(); l_offset +=1;
+        for( int32_t i = 0; i < obj->inventory->getList()->size(); i++) {
+            inventory_entry *l_item = &obj->inventory->getList()->at(i);
+            dataDist[l_offset] = l_item->angle; l_offset +=1;
+            helper::int32toUint8x4( l_item->pos.x, dataDist + l_offset); l_offset +=4;
+            helper::int32toUint8x4( l_item->pos.y, dataDist + l_offset); l_offset +=4;
+            helper::int16toUint8x2( l_item->objtype->id, dataDist + l_offset); l_offset +=2;
+        }
     }
     return l_offset;
 }
@@ -236,8 +252,27 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     l_entity->animation_tick = dataDist[l_offset]; l_offset +=1;
     helper::time::reset( &l_entity->animation_time);
 
-    // inventory
+    // inventory def
     uint8_t l_length = dataDist[l_offset]; l_offset +=1;
+    for( uint8_t i = 0; i < l_length; i++) {
+        engine::inventory_grid_state *l_tileg_grid_state = &l_entity->inventory->getGrid()->getArray()[i];
+        engine::inventory_grid_state l_tile_grid_state_recv = (engine::inventory_grid_state)dataDist[l_offset]; l_offset +=1;
+        if( l_tile_grid_state_recv == engine::inventory_grid_state::inventory_grid_state_unavailable)
+            *l_tileg_grid_state = l_tile_grid_state_recv;
+        else if( *l_tileg_grid_state == engine::inventory_grid_state::inventory_grid_state_unavailable)
+            *l_tileg_grid_state = engine::inventory_grid_state::inventory_grid_state_available;
+    }
+    // inventory items
+    l_length = dataDist[l_offset]; l_offset +=1;
+    if( l_entity->inventory != nullptr &&
+        l_length == 0 &&
+        l_entity->inventory->getList()->size()) {
+        l_entity->inventory->clear();
+    }
+    if( l_length && l_length != l_entity->inventory->getList()->size()) { // check size match
+        // TODO: better solution
+        l_entity->inventory->clear();
+    }
     for( uint8_t i = 0; i < l_length; i++) {
         int16_t l_id;
         engine::inventory_entry l_item;
@@ -259,6 +294,7 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
             }
         }
     }
+    l_entity->change = false;
 }
 
 void entity_handler::update( float dt, world *world) {
