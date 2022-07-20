@@ -10,6 +10,7 @@ using namespace engine;
 world *engine::used_world_handler = NULL;
 
 world::world() {
+    p_change = false;
 }
 
 world::~world() {
@@ -33,8 +34,7 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
     p_biom_manager->update();
     script::function( "Generation", p_world_data->biom->getLuaState(), WORLD_SIZE, WORLD_SIZE);
     engine::used_world_handler = nullptr;
-
-
+    p_change = true;
 }
 
 bool world::checkSolidTileReachable( vec2 position) {
@@ -240,8 +240,10 @@ void world::inNetworkData( uint8_t *dataDist) {
     engine::tile *l_tile = p_tileset->getById( l_id);
     if( l_tile == nullptr) {
         engine::world_tile *l_tile = getTile( l_x, l_y);
-        if( l_tile)
+        if( l_tile) {
             l_tile->data.id = 0;
+            l_tile->data.solid = true;
+        }
         return;
     }
     
@@ -276,14 +278,21 @@ bool world::newClientCallback( network::client *client, network::connection *net
 
 void world::recvPacket( network::packet packet) {
     // todo check okay
-    if( packet.type == engine::network_id::network_id_world_data )
+    if( packet.type == engine::network_id::network_id_world_data ) {
         inNetworkData( packet.data);
+        p_change = true;
+    }
 }
 
-void world::update() {
+void world::update( physic::hub *hub) {
     engine::used_world_handler = this;
 
     p_biom_manager->update();
+
+    if( p_change && hub != nullptr) {
+        p_change = false;
+        generate_collisionmap( hub);
+    }
 
     engine::used_world_handler = nullptr;
 }

@@ -84,8 +84,6 @@ void app::begin() {
     p_player.begin( &p_font, p_input.get(0), &p_entity);
     p_graphic.addObject( &p_player);
 
-    p_world.generate_collisionmap( p_entity.getPhysicHub());
-
     // Update Once
     update();
 }
@@ -128,7 +126,7 @@ bool app::update() {
         if( p_network->isConnected() == false)
             return false;
     }
-    p_world.update();
+    p_world.update( p_entity.getPhysicHub());
     
     // physics
     uint32_t l_physics_current = SDL_GetTicks();

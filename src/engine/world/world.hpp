@@ -66,7 +66,7 @@ namespace engine {
             bool newClientCallback( network::client *client, network::connection *network_interface) override;
             void recvPacket( network::packet packet) override;
 
-            void update();
+            void update( physic::hub *hub);
 
             const uint32_t getPriority() override { return 32; }
             tile_manager *getTileManager() { return p_tileset; }
@@ -77,6 +77,8 @@ namespace engine {
             uint32_t p_seed;
             tile_manager *p_tileset;
             biom_manager *p_biom_manager;
+
+            bool p_change;
 
             graphic *p_graphic;
     };
