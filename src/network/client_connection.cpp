@@ -27,7 +27,6 @@ bool client_connection::begin() {
     }
 
     p_client = enet_host_create( NULL, 1, 2, 0, 0);
-
     if( p_client == nullptr) {
         engine::log( engine::log_error, "client_connection::begin An error occurred while trying to create an ENet client host.");
         return false;
@@ -131,6 +130,11 @@ void client_connection::update() {
                 if( l_packet.crc != getCRC8( l_packet))
                     continue;
                 if( l_packet.type == network_type_heartbeat) {
+                    // send data if we have changes
+                    for( uint32_t i = 0; (i < p_sync_objects.size()); i++) {
+                        network::synchronisation *l_sync = p_sync_objects[i];
+                        l_sync->network_update( this);
+                    }
                     sendHeartbeat();
                     continue;
                 }
