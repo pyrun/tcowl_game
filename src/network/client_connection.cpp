@@ -130,11 +130,6 @@ void client_connection::update() {
                 if( l_packet.crc != getCRC8( l_packet))
                     continue;
                 if( l_packet.type == network_type_heartbeat) {
-                    // send data if we have changes
-                    for( uint32_t i = 0; (i < p_sync_objects.size()); i++) {
-                        network::synchronisation *l_sync = p_sync_objects[i];
-                        l_sync->network_update( this);
-                    }
                     sendHeartbeat();
                     continue;
                 }
