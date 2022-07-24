@@ -68,7 +68,14 @@ static int lua_doVelocity( lua_State *state) {
         return 0;
     }
 
-    l_obj->body->velocity = l_obj->body->velocity + engine::fvec2{ (float)lua_tonumber( state, 2), (float)lua_tonumber( state, 3)};
+    engine::fvec2 l_vel = { (float)lua_tonumber( state, 2), (float)lua_tonumber( state, 3)};
+
+    if( l_vel.x == 0 &&
+        l_vel.y == 0)
+        return 0;
+
+    l_obj->change = true;
+    l_obj->body->velocity = l_obj->body->velocity + l_vel;
 
     return 0;
 }
@@ -106,7 +113,7 @@ static int lua_setAnimation( lua_State *state) {
     for( action &action: l_obj->objtype->actions) 
         if( action.name == l_action_name)
             l_action = &action;
-    if( l_action) {
+    if( l_action->id != l_obj->action) {
         l_obj->change = true;
         l_obj->action = l_action->id;
         if( lua_isnumber( state, 3))
@@ -224,6 +231,8 @@ static int lua_addInventoryItem( lua_State *state) {
     l_entry.pos = l_pos;
 
     engine::inventory_entry *l_item = l_obj->inventory->add( &l_entry);
+    
+    l_obj->change = true;
 
     // TODO check if happen
     lua_pushboolean( state, l_item==nullptr?false:true);

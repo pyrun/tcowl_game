@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
 #include <vector>
+#include <list>
 
 #include "network.hpp"
 
@@ -41,6 +42,7 @@ namespace network {
             
             client *p_clients[NETWORK_SERVER_MAX_CLIENTS];
             std::vector<synchronisation*> p_sync_objects;
+            std::list<network::packet> p_clients_packets;
     };
 };
 

@@ -29,6 +29,7 @@ namespace network {
         uint8_t data[NETWORK_PACKET_MAX_SIZE];
         uint32_t length;
         uint8_t crc;
+        uint32_t peerID;
     };
 
     class connection {

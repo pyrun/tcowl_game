@@ -164,6 +164,7 @@ void server::update() {
                 // get type and length
                 l_packet.type = (network::packet_type)l_event.packet->data[0];
                 l_packet.length = l_event.packet->data[1];
+                l_packet.peerID = l_event.peer->incomingPeerID;
 
                 // check if valid
                 if( l_length != l_packet.length + 3) {
@@ -188,6 +189,7 @@ void server::update() {
                 }
 
                 // pocess packet
+                p_clients_packets.push_back( l_packet);
                 for( uint32_t i = 0; i < p_sync_objects.size(); i++) {
                     network::synchronisation *l_sync = p_sync_objects[i];
                     l_sync->recvPacket( l_packet);
@@ -212,6 +214,16 @@ void server::update() {
         network::synchronisation *l_sync = p_sync_objects[i];
         l_sync->network_update( this);
         l_heartbeat = true;
+    }
+
+    while( !p_clients_packets.empty() && l_heartbeat) {
+        packet *l_packet = &p_clients_packets.back();
+        for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
+            if( getClient( i) != NULL &&
+                getClient( i)->peerID != l_packet->peerID)
+                    sendPacket( *l_packet, getClient( i));
+            p_clients_packets.pop_back();
+        }
     }
     
     // heatbeat
