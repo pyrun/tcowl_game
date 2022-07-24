@@ -5,6 +5,7 @@ function Intilisation( id)
 		end
 	end
 	tcowl.entity.addInventoryItem( id, 0, 1, "sword")
+	tcowl.entity.addInventoryItem( id, 2, 0, "magic_wood")
 end
 
 function Update( id)
