@@ -30,20 +30,20 @@ function Update( id)
 
 	if math.abs(l_velX) > math.abs(l_velY) then
 		if l_velX < -velocity_window then
-			tcowl.entity.setAnimation( id, "Walk4")
+			tcowl.entity.setAnimation( id, "WalkLeft")
 			-- Links
 		end
 		if l_velX > velocity_window then
-			tcowl.entity.setAnimation( id, "Walk2")
+			tcowl.entity.setAnimation( id, "WalkRight")
 			-- Rechts
 		end
 	else
 		if l_velY < -velocity_window then
-			tcowl.entity.setAnimation( id, "Walk3")
+			tcowl.entity.setAnimation( id, "WalkUp")
 			-- Runter
 		end
 		if l_velY > velocity_window then
-			tcowl.entity.setAnimation( id, "Walk1")
+			tcowl.entity.setAnimation( id, "WalkDown")
 			-- Hoch
 		end
 	end

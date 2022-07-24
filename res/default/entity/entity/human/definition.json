@@ -1,15 +1,13 @@
 {
     "name": "human",
-    "happy": true,
-    "image": "graphic.bmp",
-    "alpha-key": [ 68, 123, 134],
+    "image": "graphic.png",
     "depth_sorting_offset": [ 0, -8],
     "collision-type": "rect",
     "collision-data": [ 1, 18, 14, 10],
     "inventory-size": [ 10, 5],
     "action": [
         {
-            "name": "Walk1",
+            "name": "WalkDown",
             "position": [ 0, 0],
             "size": [ 16, 32],
             "length": 4,
@@ -17,7 +15,7 @@
             "bind-velocity": true
         },
         {
-            "name": "Walk2",
+            "name": "WalkRight",
             "position": [ 0, 32],
             "size": [ 16, 32],
             "length": 4,
@@ -25,7 +23,7 @@
             "bind-velocity": true
         },
         {
-            "name": "Walk3",
+            "name": "WalkUp",
             "position": [ 0, 64],
             "size": [ 16, 32],
             "length": 4,
@@ -33,7 +31,7 @@
             "bind-velocity": true
         },
         {
-            "name": "Walk4",
+            "name": "WalkLeft",
             "position": [ 0, 96],
             "size": [ 16, 32],
             "length": 4,
