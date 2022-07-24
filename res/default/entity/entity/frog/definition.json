@@ -1,0 +1,42 @@
+{
+    "name": "frog",
+    "image": "frog.png",
+    "depth_sorting_offset": [ 0, -8],
+    "collision-type": "rect",
+    "collision-data": [ 1, 12, 14, 2],
+    "action": [
+        {
+            "name": "WalkDown",
+            "position": [ 0, 0],
+            "size": [ 16, 16],
+            "length": 2,
+            "delay": 100,
+            "bind-velocity": true
+        },
+        {
+            "name": "WalkRight",
+            "position": [ 64, 0],
+            "size": [ 16, 16],
+            "length": 2,
+            "delay": 100,
+            "flip-verticaly": true,
+            "bind-velocity": true
+        },
+        {
+            "name": "WalkLeft",
+            "position": [ 64, 0],
+            "size": [ 16, 16],
+            "length": 2,
+            "delay": 100,
+            "bind-velocity": true
+        },
+        {
+            "name": "WalkUp",
+            "position": [ 32, 0],
+            "size": [ 16, 16],
+            "length": 2,
+            "delay": 100,
+            "bind-velocity": true
+        }
+    ]
+}

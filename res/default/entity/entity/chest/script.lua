@@ -13,7 +13,7 @@ function Update( id)
 	entitys = tcowl.entity.find( id, -10, -10, 20, 20)
 
 	for index, value in ipairs(entitys) do
-		tcowl.entity.addInventoryItem( value, 5, 1, "bread")
+		--tcowl.entity.addInventoryItem( value, 5, 1, "bread")
 	end
 end
 
