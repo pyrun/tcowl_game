@@ -178,8 +178,8 @@ bool player::tryGetItemFromInventory( engine::vec2 pos, engine::entity *entity) 
         p_item_move.item_origin_state = *l_answer.item;
         p_item_move.pos = l_answer.point;
         entity->inventory->del( l_answer.item);
-        p_item_move.origin = entity->inventory;
         entity->change = true;
+        p_item_move.origin = entity->inventory;
         return true;
     }
     return false;

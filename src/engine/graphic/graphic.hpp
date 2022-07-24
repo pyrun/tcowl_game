@@ -24,6 +24,12 @@
 #define ENGINE_GRAPHIC_ARC_PRECISION_SPEP (M_PI_2/ENGINE_GRAPHIC_ARC_PRECISION_VALUE)
 
 namespace engine {
+    enum graphic_flip  {
+        graphic_flip_none = 0,
+        graphic_flip_horizontal,
+        graphic_flip_vertical
+    };
+
     struct graphic_config {
         char titel[ENGINE_GRAPHIC_DEFAULT_TITEL_LENGTH];
         vec2 native_resolution = vec2{ ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_W, ENGINE_GRAPHIC_DEFAULT_NATIVE_RESOLUTION_H};
@@ -41,7 +47,7 @@ namespace engine {
         public:
             virtual void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
 
-            virtual void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}, double angle = 0, vec2 *center = nullptr) = 0;
+            virtual void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}, double angle = 0, vec2 *center = nullptr, graphic_flip flip = graphic_flip_none) = 0;
             virtual void drawRect( vec2 pos, vec2 rect) = 0;
             virtual void drawFilledRect( vec2 pos, vec2 rect) = 0;
             virtual void drawEllipse( vec2 pos, fvec2 radius) = 0;
@@ -89,7 +95,7 @@ namespace engine {
 
             void setDrawColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
 
-            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}, double angle = 0, vec2 *center = nullptr) override;
+            void draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift = vec2{ 0, 0}, double angle = 0, vec2 *center = nullptr, graphic_flip flip = graphic_flip_none) override;
             void drawRect( vec2 pos, vec2 rect) override;
             void drawFilledRect( vec2 pos, vec2 rect) override;
             void drawEllipse( vec2 pos, fvec2 radius) override;

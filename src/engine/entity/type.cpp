@@ -142,6 +142,8 @@ void type_handler::loadtype( graphic *graphic, std::string folder) {
             l_action.length = helper::json::getUint32( &l_action_json, "length", 1);
             l_action.delay = helper::json::getUint32( &l_action_json, "delay", 1);
             l_action.bind_velocity = helper::json::getBool( &l_action_json, "bind-velocity", false);
+            l_action.flip_vertical = helper::json::getBool( &l_action_json, "flip-verticaly", false);
+            l_action.flip_horizontal = helper::json::getBool( &l_action_json, "flip-horizontal", false);
 
             log( log_level::log_debug, "action '%s' %dx%d %dx%d length %d durration %d",
                 l_action.name.c_str(),

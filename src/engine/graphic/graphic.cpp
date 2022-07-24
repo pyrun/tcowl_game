@@ -123,7 +123,7 @@ bool graphic::checkObject( graphic_object* object) {
     return false;
 }
 
-void graphic::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift, double angle, vec2 *center) {
+void graphic::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift, double angle, vec2 *center, graphic_flip flip) {
     if( p_camera.getPosition().x > pos.x+size.x ||
         p_camera.getPosition().y > pos.y+size.y ||
         p_camera.getPosition().x+p_camera.getSize().x < pos.x ||
@@ -136,10 +136,16 @@ void graphic::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift, doubl
     SDL_Rect l_srcrect = { shift.x, shift.y, size.x, size.y};
     SDL_Rect l_dstrect = { pos.x, pos.y, size.x, size.y}; 
 
+    int l_flip = SDL_RendererFlip::SDL_FLIP_NONE;
+    switch( flip) {
+        case graphic_flip::graphic_flip_horizontal: l_flip |= SDL_RendererFlip::SDL_FLIP_VERTICAL; break;
+        case graphic_flip::graphic_flip_vertical: l_flip |= SDL_RendererFlip::SDL_FLIP_HORIZONTAL; break;
+        default: break;
+    }
     SDL_RenderCopyEx( p_renderer, image->getTexture(), &l_srcrect, &l_dstrect, 
         angle,
         (SDL_Point*)center,
-        SDL_RendererFlip::SDL_FLIP_NONE);
+        (SDL_RendererFlip)l_flip);
     p_displayed_elements_counter++;
 }
 

@@ -358,7 +358,10 @@ void entity_handler::drawEntity( engine::graphic_draw *graphic, entity* obj) {
     graphic->draw(  &obj->objtype->image,
                     obj->body->position.toVec(),
                     l_action->size,
-                    l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0});
+                    l_action->postion + vec2{ (int32_t)(obj->animation_tick%l_action->length) * l_action->size.x, 0},
+                    0.0,
+                    nullptr,
+                    l_action->flip_horizontal?graphic_flip_horizontal:graphic_flip_none | l_action->flip_vertical?graphic_flip_vertical:graphic_flip_none);
 }
 
 std::vector<entity*> entity_handler::find( vec2 pos, vec2 rect) {

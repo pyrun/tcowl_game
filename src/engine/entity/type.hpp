@@ -20,6 +20,9 @@ namespace engine {
         uint32_t delay; // Nach wie vielen Ticks weiter gesprungen wird
         uint32_t length; // Anzahl der Bilder
         bool bind_velocity; // Anpassen der Animationsgeschwindigkeit an die Geschwindigkeit
+
+        bool flip_vertical = false;
+        bool flip_horizontal = false;
     };
 
     enum type_objecttype {
