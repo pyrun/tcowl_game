@@ -59,8 +59,11 @@ void app::begin() {
         int16_t l_id = p_entity.createObject("human");
         p_entity.setPosition( l_id, { 100, 100});
 
-        l_id = p_entity.createObject("frog");
+        l_id = p_entity.createObject("human");
         p_entity.setPosition( l_id, { 16*32/2, 16*32/2});
+
+        l_id = p_entity.createObject("frog");
+        p_entity.setPosition( l_id, engine::fvec2{ 16*32/2, 16*32/2} + engine::fvec2{ 40, 30});
 
         l_id = p_entity.createObject("chest");
         p_entity.setPosition( l_id, { 16*32/2+20, 16*32/2+20});

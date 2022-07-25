@@ -21,6 +21,18 @@ namespace game {
         engine::vec2 pos;
     };
 
+    enum player_battle_team : uint8_t {
+        player_battle_team_ally = 0,
+        player_battle_team_enemy
+    };
+
+    struct player_battle_obj {
+        engine::entity *entity;
+        uint8_t team;
+        uint32_t time = 0;
+        uint32_t tick = 0;
+    };
+
     class player : public engine::graphic_object {
         public:
             player();
@@ -39,6 +51,7 @@ namespace game {
             engine::inventory_grid_state checkItemInInventory( engine::vec2 pos, engine::entity *entity);
             void clearItemMove();
             void drawInventory( engine::graphic_draw *graphic);
+            void drawBattle( engine::graphic_draw *graphic);
         private:
             player_state p_state;
             player_move_item p_item_move;
@@ -46,10 +59,15 @@ namespace game {
             engine::font *p_font;
             engine::input *p_input;
             engine::entity_handler *p_entity;
-            engine::entity *p_player;
-            engine::image *p_backpack;
 
+            engine::entity *p_player;
+
+            // Trasfer
+            engine::image *p_backpack;
             engine::entity *p_transfer_target;
+
+            // Battle
+            std::vector<player_battle_obj> p_battle;
     };
 };
 

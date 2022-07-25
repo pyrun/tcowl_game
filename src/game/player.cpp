@@ -23,12 +23,23 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     p_entity = entitys;
 
     p_player = p_entity->get( 1);
-    p_transfer_target = p_entity->get( 2);
+    p_transfer_target = nullptr;
+
+
+    p_battle.push_back( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
+    p_battle.push_back( { .entity = p_entity->get( 2), .team = player_battle_team_enemy });
+    p_state =  player_state::player_state_battle;
+
+
 
     if( p_player && p_player->inventory) {
         engine::inventory_entry l_entry;
         l_entry.objtype = entitys->getTypeByName("bread");
         l_entry.pos = vec2{ 5, 3};
+        p_player->inventory->add( &l_entry);
+
+        l_entry.objtype = entitys->getTypeByName("sword");
+        l_entry.pos = vec2{ 3, 2};
         p_player->inventory->add( &l_entry);
     }
 }
@@ -151,6 +162,10 @@ void player::draw( engine::graphic_draw *graphic) {
                     }
                 }
             } break; // player_state::player_state_inventory
+            
+            case player_state_battle: {
+                drawBattle( graphic);
+            } break;
 
             default:
             break;
@@ -244,4 +259,43 @@ void player::drawInventory( engine::graphic_draw *graphic) {
     for( engine::entity_parameter &l_par:p_player->parameter) {
         p_font->print( l_camera + vec2{ 40, 30+(10*l_index++)}, "%s %d", l_par.name.c_str(), l_par.value);
     }
+}
+
+void player::drawBattle( engine::graphic_draw *graphic) {
+    vec2 l_camera = graphic->getCamera()->getPosition().toVec();
+
+    // dark background
+    graphic->setDrawColor( 20, 20, 20, 200);
+    graphic->drawFilledRect( graphic->getCamera()->getPosition().toVec(), graphic->getCamera()->getSize().toVec());
+
+    // floor background
+    graphic->setDrawColor( 20, 20, 20, 220);
+    graphic->drawFilledRect( graphic->getCamera()->getPosition().toVec()+vec2{ 0, 100}, graphic->getCamera()->getSize().toVec());
+
+
+    p_font->print( l_camera + vec2{ 10, 10}, "Battle Order:");
+    int l_index=0;
+    for( player_battle_obj &l_obj:p_battle) {
+        p_font->print( l_camera + vec2{ 10, 20+l_index*10}, "%d %s", l_index, l_obj.entity->objtype->name.c_str());
+
+        // draw entity
+        engine::action *l_action = &l_obj.entity->objtype->actions[0];
+        
+        if( helper::time::check( &l_obj.time, l_action->delay) ) {
+            helper::time::reset( &l_obj.time);
+            l_obj.tick++;
+        }
+
+        graphic->draw(  &l_obj.entity->objtype->image,
+                        l_camera + vec2{ 50+l_index*30, 120},
+                        l_action->size,
+                        l_action->postion + vec2{ (int32_t)(l_obj.tick%l_action->length) * l_action->size.x, 0},
+                        0.0,
+                        nullptr,
+                        l_action->flip_horizontal?graphic_flip_horizontal:graphic_flip_none | l_action->flip_vertical?graphic_flip_vertical:graphic_flip_none);
+
+        l_index++;
+    }
+
+    p_player->inventory->draw( graphic); // player inventory
 }
