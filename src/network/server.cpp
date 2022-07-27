@@ -217,13 +217,13 @@ void server::update() {
     }
 
     while( !p_clients_packets.empty() && l_heartbeat) {
-        packet *l_packet = &p_clients_packets.back();
+        packet &l_packet = p_clients_packets.front();
         for( uint32_t i = 0; i < NETWORK_SERVER_MAX_CLIENTS; i++) {
             if( getClient( i) != NULL &&
-                getClient( i)->peerID != l_packet->peerID)
-                    sendPacket( *l_packet, getClient( i));
-            p_clients_packets.pop_back();
+                getClient( i)->peerID != l_packet.peerID)
+                    sendPacket( l_packet, getClient( i));
         }
+        p_clients_packets.pop_front();
     }
     
     // heatbeat
