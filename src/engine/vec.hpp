@@ -44,6 +44,10 @@ namespace engine {
         bool operator==(const vec2 rhs){
             return (rhs.x == this->x) && (rhs.y == this->y);
         }
+
+        vec2 half() {
+            return vec2{ x/2, y/2};
+        }
     };
 
     struct vec3 {
@@ -101,6 +105,10 @@ namespace engine {
 
         float normalize() {
             return std::sqrt(x*x + y*y);
+        }
+
+        fvec2 half() {
+            return fvec2{ x/2.f, y/2.f};
         }
     };
 
