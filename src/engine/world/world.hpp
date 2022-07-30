@@ -70,6 +70,7 @@ namespace engine {
 
             const uint32_t getPriority() override { return 32; }
             tile_manager *getTileManager() { return p_tileset; }
+            biom *getBiom() { return p_world_data==nullptr?nullptr:p_world_data->biom; }
             vec2 getWorldSize() { return { WORLD_SIZE, WORLD_SIZE}; }
         private:
             world_data *p_world_data;

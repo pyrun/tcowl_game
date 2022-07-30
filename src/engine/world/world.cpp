@@ -32,7 +32,7 @@ void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_m
 
     engine::used_world_handler = this;
     p_biom_manager->update();
-    script::function( "Generation", p_world_data->biom->getLuaState(), WORLD_SIZE, WORLD_SIZE);
+    script::function( "Generation", p_world_data->biom->lua, WORLD_SIZE, WORLD_SIZE);
     engine::used_world_handler = nullptr;
     p_change = true;
 }
@@ -138,8 +138,8 @@ std::vector<uint8_t> world::getRawData() {
     l_data.reserve(l_size);
 
     // biom
-    l_data.push_back( (p_world_data->biom->getId()>>8));
-    l_data.push_back( (p_world_data->biom->getId()));
+    l_data.push_back( (p_world_data->biom->id>>8));
+    l_data.push_back( (p_world_data->biom->id));
 
     for( uint32_t i = 0; i < WORLD_SIZE*WORLD_SIZE; i++) {
         // id

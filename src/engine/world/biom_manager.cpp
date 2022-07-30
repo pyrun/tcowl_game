@@ -71,16 +71,17 @@ void biom_manager::loadType( std::string folder) {
     biom *l_biom = create();
 
     // Name
-    l_biom->setId( helper::json::getUint32( &l_json, "id"));
-    l_biom->setName( helper::json::getString( &l_json, "name", "noName").c_str());
-    l_biom->setScriptName( folder + helper::json::getString( &l_json, "script", "noName").c_str());
+    l_biom->id = helper::json::getUint32( &l_json, "id");
+    l_biom->name = helper::json::getString( &l_json, "name", "noName").c_str();
+    l_biom->script_file = folder + helper::json::getString( &l_json, "script", "noName").c_str();
+    l_biom->battle_bg_file = folder + helper::json::getString( &l_json, "battle-bg", "noName").c_str();
 
     if( !loadScript( l_biom)) {
         remove( l_biom);
         return;
     }
 
-    log( log_trace, "biom_manager::loadType %s %s", l_biom->getName().c_str(), l_biom->getScriptName().c_str());
+    log( log_trace, "biom_manager::loadType %s %s", l_biom->name.c_str(), l_biom->script_file.c_str());
 }
 
 bool biom_manager::loadScript( biom *biom) {
@@ -91,11 +92,11 @@ bool biom_manager::loadScript( biom *biom) {
         return false;
     
     // Delete existing script beforehand if it is existing
-    script::free( biom->getLuaState());
+    script::free( biom->lua);
 
     // try load script
-    biom->setLuaState( script::loadFile( biom->getScriptName().c_str()));
-    if( biom->getLuaState() == NULL)
+    biom->lua = script::loadFile( biom->script_file.c_str());
+    if( biom->lua == nullptr)
         return false;
 
 
@@ -108,8 +109,8 @@ void biom_manager::init() {
     for( uint32_t i = 0; i < p_biomes.size(); i++) {
         biom *l_type = &p_biomes[i];
         // run once
-        script::run( l_type->getLuaState());
-        script::function( "Intilisation", l_type->getLuaState());
+        script::run( l_type->lua);
+        script::function( "Intilisation", l_type->lua);
     }
 }
 

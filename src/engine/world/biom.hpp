@@ -3,31 +3,18 @@
 
 #include <string>
 #include <engine/script.hpp>
+#include <engine/graphic/image.hpp>
 
 namespace engine {
-    class biom {
-        public:
-            biom();
-            ~biom();
+    struct biom {
+        uint16_t id;
+        std::string name;
 
-            void setId(uint16_t id) { p_id = id; }
-            uint16_t getId() { return p_id; }
+        std::string script_file;
+        lua_State *lua = nullptr;
 
-            void setName( std::string name) { p_name = name; }
-            std::string getName() { return p_name; }
-
-            void setScriptName( std::string name) { p_script_file = name; }
-            std::string getScriptName() { return p_script_file; }
-            void setLuaState( lua_State *state) { p_lua = state; }
-            lua_State *getLuaState() { return p_lua; }
-
-            void update();
-        private:
-            uint16_t p_id;
-            std::string p_name;
-
-            std::string p_script_file;
-            lua_State *p_lua;
+        std::string battle_bg_file;
+        image battle_bg;
     };
 };
 
