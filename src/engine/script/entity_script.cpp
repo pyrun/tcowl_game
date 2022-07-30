@@ -191,7 +191,13 @@ static int lua_setInventoryState( lua_State *state) {
     // TODO check if inventory_grid_state_unavailable or inventory_grid_state_taken
     if( l_state_name == "available")
         l_state = inventory_grid_state_available;
-    l_obj->inventory->setState( l_pos, l_state);
+    if(l_obj->inventory) {
+        l_obj->inventory->setState( l_pos, l_state);
+    } else {
+        lua_pushboolean( state, false);
+        return 1;
+    }
+
 
     // TODO check if happen
     lua_pushboolean( state, true);
