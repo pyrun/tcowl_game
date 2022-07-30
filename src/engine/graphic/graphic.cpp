@@ -123,7 +123,7 @@ bool graphic::checkObject( graphic_object* object) {
     return false;
 }
 
-void graphic::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift, double angle, vec2 *center, graphic_flip flip) {
+void graphic::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift, double angle, vec2 *center, graphic_flip flip, int zoom) {
     if( p_camera.getPosition().x > pos.x+size.x ||
         p_camera.getPosition().y > pos.y+size.y ||
         p_camera.getPosition().x+p_camera.getSize().x < pos.x ||
@@ -134,7 +134,7 @@ void graphic::draw( graphic_image *image, vec2 pos, vec2 size, vec2 shift, doubl
     pos = pos - p_camera.getPosition().toVec();
 
     SDL_Rect l_srcrect = { shift.x, shift.y, size.x, size.y};
-    SDL_Rect l_dstrect = { pos.x, pos.y, size.x, size.y}; 
+    SDL_Rect l_dstrect = { pos.x, pos.y, size.x*zoom, size.y*zoom}; 
 
     int l_flip = SDL_RendererFlip::SDL_FLIP_NONE;
     switch( flip) {
