@@ -31,6 +31,8 @@ namespace game {
         uint8_t team;
         uint32_t time = 0;
         uint32_t tick = 0;
+
+        int32_t draw_index; // is set in the draw call
     };
 
     class player : public engine::graphic_object {
@@ -38,7 +40,7 @@ namespace game {
             player();
             ~player();
 
-            void begin( engine::font *font, engine::input *input, engine::entity_handler *entity);
+            void begin( engine::font *font, engine::input *input, engine::entity_handler *entity, engine::world *world);
 
             void reload( engine::graphic_draw *graphic) override {}
             void draw( engine::graphic_draw *graphic) override;
@@ -52,6 +54,8 @@ namespace game {
             void clearItemMove();
             void drawInventory( engine::graphic_draw *graphic);
             void drawBattle( engine::graphic_draw *graphic);
+
+            void addBattleTarget( player_battle_obj obj);
         private:
             player_state p_state;
             player_move_item p_item_move;
@@ -59,6 +63,7 @@ namespace game {
             engine::font *p_font;
             engine::input *p_input;
             engine::entity_handler *p_entity;
+            engine::world *p_world;
 
             engine::entity *p_player;
 

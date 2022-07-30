@@ -1,5 +1,7 @@
 #include "player.hpp"
 
+#include <algorithm>
+
 using namespace engine;
 using namespace game;
 
@@ -18,19 +20,24 @@ player::~player() {
     
 }
 
-void player::begin( engine::font *font, engine::input*input, engine::entity_handler *entitys) {
+void player::begin( engine::font *font, engine::input*input, engine::entity_handler *entitys, engine::world *world) {
     p_font = font;
     p_input = input;
     p_entity = entitys;
+    p_world = world;
 
     p_player = p_entity->get( 1);
     p_transfer_target = nullptr;
 
+    addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
+    //addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
+    //addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
+    //addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
+    //addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
+    addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
+    //addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
+    addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
 
-    p_battle.push_back( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
-    p_battle.push_back( { .entity = p_entity->get( 2),  .team = player_battle_team_enemy });
-    p_battle.push_back( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
-    p_battle.push_back( { .entity = p_entity->get( 2),  .team = player_battle_team_enemy });
     p_state =  player_state::player_state_battle;
 
 
@@ -276,11 +283,23 @@ void player::drawBattle( engine::graphic_draw *graphic) {
     graphic->setDrawColor( 20, 20, 20, 220);
     graphic->drawFilledRect( graphic->getCamera()->getPosition().toVec()+vec2{ 0, 100}, graphic->getCamera()->getSize().toVec());
 
+    // battle background
+    engine::biom *l_biom = p_world->getBiom();
+        if( l_biom != nullptr) {
+        if( l_biom->battle_bg.getTexture() == nullptr)
+            l_biom->battle_bg.load( graphic, l_biom->battle_bg_file.c_str());
+
+        if( l_biom->battle_bg.getTexture() != nullptr)
+            graphic->draw(  &l_biom->battle_bg,
+                            l_camera + vec2{ 0, l_camera_size.y - l_biom->battle_bg.size.y},
+                            l_biom->battle_bg.size);
+    }
 
     p_font->print( l_camera + vec2{ 10, 10}, "Battle Order:");
-    int l_index=0;
+
+    uint32_t l_index = 0; 
     for( player_battle_obj &l_obj:p_battle) {
-        p_font->print( l_camera + vec2{ 10, 20+l_index*10}, "%d %s", l_index, l_obj.entity->objtype->name.c_str());
+        p_font->print( l_camera + vec2{ 10, 20 + l_obj.draw_index *10}, "%d %d %s", l_index++, l_obj.draw_index, l_obj.entity->objtype->name.c_str());
 
         // draw entity
         action *l_action = l_obj.entity->objtype->findAction( "Battle");
@@ -293,8 +312,8 @@ void player::drawBattle( engine::graphic_draw *graphic) {
         }
 
         int32_t l_zoom = 2;
-        float l_width = l_camera_size.x*0.4f;
-        vec2 l_offset = vec2{ (int32_t)(l_width/(p_battle.size()-1) *(l_index) )-(int32_t)(l_width/2), 0};
+        float l_width = l_camera_size.x*0.8f;
+        vec2 l_offset = vec2{ (int32_t)(l_width/(p_battle.size()-1) *(l_obj.draw_index) )-(int32_t)(l_width/2), 40+(int32_t)(sin(l_obj.draw_index*10)*20.f)};
 
         graphic->draw(  &l_obj.entity->objtype->image,
                         l_camera + l_camera_size.half()-l_action->size.half()*vec2{ 2, 2} + l_offset,
@@ -304,9 +323,28 @@ void player::drawBattle( engine::graphic_draw *graphic) {
                         nullptr,
                         (l_obj.team == player_battle_team_enemy)^l_action->flip_vertical?graphic_flip::graphic_flip_vertical:graphic_flip_none,
                         l_zoom);
-
-        l_index++;
     }
 
     p_player->inventory->draw( graphic); // player inventory
+}
+
+void player::addBattleTarget( player_battle_obj obj) {
+    p_battle.push_back( obj);
+    std::vector<player_battle_obj> p_battle_draw = p_battle; // copy
+
+    // set index
+    uint32_t l_n = 0;
+    for( player_battle_obj &l_obj:p_battle_draw)
+        l_obj.draw_index = l_n++;
+
+    // sort order by team
+    struct {
+        bool operator()(player_battle_obj a, player_battle_obj b) const { return a.team < b.team; }
+    } customLess;
+    std::sort(p_battle_draw.begin(), p_battle_draw.end(), customLess);
+
+    // set draw index
+    l_n = 0;
+    for( player_battle_obj &l_obj:p_battle_draw)
+        p_battle[l_obj.draw_index].draw_index = l_n++;
 }

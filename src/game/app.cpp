@@ -84,7 +84,7 @@ void app::begin() {
     p_animation_lasttime = SDL_GetTicks();
 
     // player
-    p_player.begin( &p_font, p_input.get(0), &p_entity);
+    p_player.begin( &p_font, p_input.get(0), &p_entity, &p_world);
     p_graphic.addObject( &p_player);
 
     // Update Once

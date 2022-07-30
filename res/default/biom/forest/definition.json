@@ -1,5 +1,6 @@
 {
     "id": "1",
     "name": "forest",
-    "script": "script.lua"
+    "script": "script.lua",
+    "battle-bg": "bg.png"
 }
