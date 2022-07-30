@@ -1,6 +1,8 @@
 #ifndef ENGINE_TYPE_HPP
 #define ENGINE_TYPE_HPP
 
+#include "action.hpp"
+
 #include <string>
 #include <engine/vec.hpp>
 #include <engine/graphic/graphic.hpp>
@@ -12,19 +14,6 @@
 #define ENGINE_TYPE_FILE_SCRIPT "script.lua"
 
 namespace engine {
-    struct action {
-        uint32_t id; // Zuordnung
-        std::string name;
-        vec2 postion; // Wo im Bild das erste anfängt
-        vec2 size; // Größe w x h
-        uint32_t delay; // Nach wie vielen Ticks weiter gesprungen wird
-        uint32_t length; // Anzahl der Bilder
-        bool bind_velocity; // Anpassen der Animationsgeschwindigkeit an die Geschwindigkeit
-
-        bool flip_vertical = false;
-        bool flip_horizontal = false;
-    };
-
     enum type_objecttype {
         type_objecttype_object,
         type_objecttype_item,
@@ -44,6 +33,8 @@ namespace engine {
         vec2 inventory_size;
 
         vec2 depth_sorting_offset; // offset beim z-depth sorting
+        
+        action *findAction( std::string name);
     };
 
     class type_handler {

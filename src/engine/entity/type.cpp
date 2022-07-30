@@ -12,6 +12,13 @@ using json = nlohmann::json;
 
 using namespace engine;
 
+action *engine::type::findAction( std::string name) {
+    for( action &l_action:actions)
+        if( l_action.name == name)
+            return &l_action;
+    return nullptr;
+}
+
 type_handler::type_handler() {
     p_type.clear();
     p_highest_id = 1024; // for automatic numbering
