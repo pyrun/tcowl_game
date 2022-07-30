@@ -37,6 +37,14 @@
             "length": 2,
             "delay": 100,
             "bind-velocity": true
+        },
+        {
+            "name": "Battle",
+            "position": [ 64, 0],
+            "size": [ 16, 16],
+            "length": 2,
+            "flip-verticaly": true,
+            "delay": 1000
         }
     ]
 }

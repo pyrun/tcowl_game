@@ -5,12 +5,13 @@ using namespace game;
 
 #include <engine/log.hpp>
 #include <engine/timer.hpp>
+#include <engine/entity/action.hpp>
 
 player::player() {
     p_font = NULL;
     p_item_move.item = nullptr;
     p_item_move.origin = nullptr;
-    p_state =  player_state::player_state_idle;
+    p_state = player_state::player_state_idle;
 }
 
 player::~player() {
@@ -27,7 +28,9 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
 
 
     p_battle.push_back( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
-    p_battle.push_back( { .entity = p_entity->get( 2), .team = player_battle_team_enemy });
+    p_battle.push_back( { .entity = p_entity->get( 2),  .team = player_battle_team_enemy });
+    p_battle.push_back( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
+    p_battle.push_back( { .entity = p_entity->get( 2),  .team = player_battle_team_enemy });
     p_state =  player_state::player_state_battle;
 
 
@@ -263,6 +266,7 @@ void player::drawInventory( engine::graphic_draw *graphic) {
 
 void player::drawBattle( engine::graphic_draw *graphic) {
     vec2 l_camera = graphic->getCamera()->getPosition().toVec();
+    vec2 l_camera_size = graphic->getCamera()->getSize().toVec();
 
     // dark background
     graphic->setDrawColor( 20, 20, 20, 200);
@@ -279,20 +283,27 @@ void player::drawBattle( engine::graphic_draw *graphic) {
         p_font->print( l_camera + vec2{ 10, 20+l_index*10}, "%d %s", l_index, l_obj.entity->objtype->name.c_str());
 
         // draw entity
-        engine::action *l_action = &l_obj.entity->objtype->actions[0];
+        action *l_action = l_obj.entity->objtype->findAction( "Battle");
+        if( l_action == nullptr)
+            l_action = &l_obj.entity->objtype->actions[0];
         
         if( helper::time::check( &l_obj.time, l_action->delay) ) {
             helper::time::reset( &l_obj.time);
             l_obj.tick++;
         }
 
+        int32_t l_zoom = 2;
+        float l_width = l_camera_size.x*0.4f;
+        vec2 l_offset = vec2{ (int32_t)(l_width/(p_battle.size()-1) *(l_index) )-(int32_t)(l_width/2), 0};
+
         graphic->draw(  &l_obj.entity->objtype->image,
-                        l_camera + vec2{ 50+l_index*30, 120},
+                        l_camera + l_camera_size.half()-l_action->size.half()*vec2{ 2, 2} + l_offset,
                         l_action->size,
                         l_action->postion + vec2{ (int32_t)(l_obj.tick%l_action->length) * l_action->size.x, 0},
                         0.0,
                         nullptr,
-                        l_action->flip_horizontal?graphic_flip_horizontal:graphic_flip_none | l_action->flip_vertical?graphic_flip_vertical:graphic_flip_none);
+                        (l_obj.team == player_battle_team_enemy)^l_action->flip_vertical?graphic_flip::graphic_flip_vertical:graphic_flip_none,
+                        l_zoom);
 
         l_index++;
     }
