@@ -48,8 +48,8 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
         l_entry.pos = vec2{ 5, 3};
         p_player->inventory->add( &l_entry);
 
-        l_entry.objtype = entitys->getTypeByName("sword");
-        l_entry.pos = vec2{ 3, 2};
+        l_entry.objtype = entitys->getTypeByName("bread_sword");
+        l_entry.pos = vec2{ 3, 1};
         p_player->inventory->add( &l_entry);
     }
 }
@@ -274,6 +274,7 @@ void player::drawInventory( engine::graphic_draw *graphic) {
 void player::drawBattle( engine::graphic_draw *graphic) {
     vec2 l_camera = graphic->getCamera()->getPosition().toVec();
     vec2 l_camera_size = graphic->getCamera()->getSize().toVec();
+    vec2 l_mouse = graphic->getMousePositionToLogicalMousePosition( p_input->getInputMap()->mouse);
 
     // dark background
     graphic->setDrawColor( 20, 20, 20, 200);
@@ -295,10 +296,20 @@ void player::drawBattle( engine::graphic_draw *graphic) {
                             l_biom->battle_bg.size);
     }
 
+    if( p_battle_icons.getTexture() == nullptr)
+        p_battle_icons.load( graphic, "system/battle.png");
+
+    bool l_click = false;
+    if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_use))
+        l_click = true;
+
     p_font->print( l_camera + vec2{ 10, 10}, "Battle Order:");
 
     uint32_t l_index = 0; 
-    for( player_battle_obj &l_obj:p_battle) {
+    for( player_battle_obj &l_obj:p_battle.battle_objects) {
+        if( l_obj.entity == nullptr)
+            continue;
+        
         p_font->print( l_camera + vec2{ 10, 20 + l_obj.draw_index *10}, "%d %d %s", l_index++, l_obj.draw_index, l_obj.entity->objtype->name.c_str());
 
         // draw entity
@@ -313,24 +324,43 @@ void player::drawBattle( engine::graphic_draw *graphic) {
 
         int32_t l_zoom = 2;
         float l_width = l_camera_size.x*0.8f;
-        vec2 l_offset = vec2{ (int32_t)(l_width/(p_battle.size()-1) *(l_obj.draw_index) )-(int32_t)(l_width/2), 40+(int32_t)(sin(l_obj.draw_index*10)*20.f)};
+        vec2 l_offset = vec2{ (int32_t)(l_width/(p_battle.battle_objects.size()-1) *(l_obj.draw_index) )-(int32_t)(l_width/2), 40+(int32_t)(sin(l_obj.draw_index*10)*20.f)};
 
+        vec2 l_position = l_camera_size.half()-l_action->size.half()*vec2{ 2, 2} + l_offset;
+
+        // draw hud
+        graphic->draw(  &p_battle_icons,
+            l_camera + l_position-vec2{ 0, 16},
+            vec2{ 16, 16},
+            vec2{ 0, 0});
+
+        // object
         graphic->draw(  &l_obj.entity->objtype->image,
-                        l_camera + l_camera_size.half()-l_action->size.half()*vec2{ 2, 2} + l_offset,
+                        l_camera + l_position,
                         l_action->size,
                         l_action->postion + vec2{ (int32_t)(l_obj.tick%l_action->length) * l_action->size.x, 0},
                         0.0,
                         nullptr,
                         (l_obj.team == player_battle_team_enemy)^l_action->flip_vertical?graphic_flip::graphic_flip_vertical:graphic_flip_none,
                         l_zoom);
+        if( p_battle.target == &l_obj) {
+            graphic->setDrawColor( 255, 20, 20, 220);
+            graphic->drawRect( l_camera + l_position, l_action->size*vec2{ l_zoom, l_zoom});
+        }
+
+        if( l_obj.entity->index != p_player->index &&
+            l_click &&
+            physic::testAABBAABB( fvec2{ (float)l_mouse.x, (float)l_mouse.y}, fvec2{ 1.f, 1.f},
+                fvec2{ (float)l_position.x, (float)l_position.y}, fvec2{ (float)l_action->size.x*l_zoom, (float)l_action->size.y*l_zoom}))
+            p_battle.target = &l_obj;
     }
 
     p_player->inventory->draw( graphic); // player inventory
 }
 
 void player::addBattleTarget( player_battle_obj obj) {
-    p_battle.push_back( obj);
-    std::vector<player_battle_obj> p_battle_draw = p_battle; // copy
+    p_battle.battle_objects.push_back( obj);
+    std::vector<player_battle_obj> p_battle_draw = p_battle.battle_objects; // copy
 
     // set index
     uint32_t l_n = 0;
@@ -346,5 +376,5 @@ void player::addBattleTarget( player_battle_obj obj) {
     // set draw index
     l_n = 0;
     for( player_battle_obj &l_obj:p_battle_draw)
-        p_battle[l_obj.draw_index].draw_index = l_n++;
+        p_battle.battle_objects[l_obj.draw_index].draw_index = l_n++;
 }

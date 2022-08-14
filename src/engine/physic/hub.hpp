@@ -8,13 +8,15 @@
 #define ENGINE_PHYSIC_TIME 0.005f
 
 namespace physic {
+        bool testAABBAABB( const engine::fvec2 &rectPos1, const engine::fvec2 &rectSize1, const engine::fvec2 &rectPos2, const engine::fvec2 &rectSize2);
+        engine::fvec2 sweptAABB( engine::fvec2 pos1, engine::fvec2 rect1, engine::fvec2 pos2, engine::fvec2 rect2, engine::fvec2 vel, engine::vec2 *normal);
+    
     class hub : public engine::graphic_object{
         public:
             hub();
             ~hub();
 
-            bool testAABBAABB( const engine::fvec2 &rectPos1, const engine::fvec2 &rectSize1, const engine::fvec2 &rectPos2, const engine::fvec2 &rectSize2);
-            engine::fvec2 sweptAABB( engine::fvec2 pos1, engine::fvec2 rect1, engine::fvec2 pos2, engine::fvec2 rect2, engine::fvec2 vel, engine::vec2 *normal);
+            
 
             void update( float dt);
             void calcPhysic( float dt);

@@ -32,7 +32,15 @@ namespace game {
         uint32_t time = 0;
         uint32_t tick = 0;
 
+        uint8_t energy = 1;
+
         int32_t draw_index; // is set in the draw call
+    };
+
+    struct player_battle {
+        std::vector<player_battle_obj> battle_objects;
+        uint8_t index;
+        player_battle_obj *target = nullptr;
     };
 
     class player : public engine::graphic_object {
@@ -68,11 +76,12 @@ namespace game {
             engine::entity *p_player;
 
             // Trasfer
-            engine::image *p_backpack;
             engine::entity *p_transfer_target;
 
             // Battle
-            std::vector<player_battle_obj> p_battle;
+            player_battle p_battle;
+            engine::image p_battle_icons;
+            
     };
 };
 

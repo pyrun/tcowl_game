@@ -10,17 +10,8 @@
 using namespace engine;
 using namespace physic;
 
-hub::hub() {
-    setDebugLevel(0);
-    p_dt = 0;
-}
-
-hub::~hub() {
-
-}
-
-bool hub::testAABBAABB( const engine::fvec2 &rectPos1, const engine::fvec2 &rectSize1,
-                        const engine::fvec2 &rectPos2, const engine::fvec2 &rectSize2) {
+bool physic::testAABBAABB(  const engine::fvec2 &rectPos1, const engine::fvec2 &rectSize1,
+                    const engine::fvec2 &rectPos2, const engine::fvec2 &rectSize2) {
     float l_left = rectPos2.x - ( rectPos1.x + rectSize1.x);
     float l_top = (rectPos2.y + rectSize2.y) - rectPos1.y;
     float l_right = (rectPos2.x + rectSize2.x) - rectPos1.x;
@@ -30,7 +21,7 @@ bool hub::testAABBAABB( const engine::fvec2 &rectPos1, const engine::fvec2 &rect
 };
 
 // SweptAABB(Box b1, Box b2, float& normalx, float& normaly)
-engine::fvec2 hub::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
+engine::fvec2 physic::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
                         engine::fvec2 pos2, engine::fvec2 rect2,
                         engine::fvec2 velocity,
                         engine::vec2 *normal) {
@@ -91,7 +82,7 @@ engine::fvec2 hub::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
         if (pos1.y+rect1.y <= pos2.y || pos1.y >= pos2.y+rect2.y)
             return { 1.f, 1.f};
     
-    if( p_debug_level > 0) {
+    /*if( p_debug_level > 0) { TODO add Debug
         engine::log( engine::log_debug, "hub::sweptAABB pos1,rect1 %3.2f %3.2f %3.2f %3.2f", pos1.x, pos1.y, rect1.x, rect1.y);
         engine::log( engine::log_debug, "hub::sweptAABB pos2,rect2 %3.2f %3.2f %3.2f %3.2f", pos2.x, pos2.y, rect2.x, rect2.y);
         engine::log( engine::log_debug, "hub::sweptAABB velocity %.16f %.16f", velocity.x, velocity.y);
@@ -99,7 +90,7 @@ engine::fvec2 hub::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
         engine::log( engine::log_debug, "hub::sweptAABB l_time_entry %.2f %.2f", l_time_entry.x, l_time_entry.y);
         engine::log( engine::log_debug, "hub::sweptAABB l_entryTime %.10f", l_entryTime);
         engine::log( engine::log_debug, "hub::sweptAABB l_exitTime %.10f", l_exitTime);
-    }
+    }*/
 
     // calculate normal of collided surface
     if( l_time_entry.x > l_time_entry.y) {// check if x or y
@@ -113,6 +104,15 @@ engine::fvec2 hub::sweptAABB(   engine::fvec2 pos1, engine::fvec2 rect1,
             l_entryTime -= std::nextafter(1.0f, 0.0f);
         return { 1.f, l_entryTime};
     }
+}
+
+hub::hub() {
+    setDebugLevel(0);
+    p_dt = 0;
+}
+
+hub::~hub() {
+
 }
 
 void hub::update( float dt) {

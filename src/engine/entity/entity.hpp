@@ -16,13 +16,15 @@
 #define ENGINE_ENTITY_MAX_AMOUNT 1024
 
 namespace engine {
+    typedef uint16_t entity_id;
+
     struct entity_parameter {
         std::string name;
         uint32_t value;
     };
 
     struct entity {
-        uint16_t index;
+        entity_id index;
 
         type *objtype;
         int16_t objtypeid;
@@ -50,15 +52,15 @@ namespace engine {
 
             void init( type_handler *types);
 
-            int16_t createObject( int16_t objid); // -> objtype
-            int16_t createObject( std::string name); // -> objtype
-            int16_t createObject( type *objtype, int32_t index = -1);
+            entity_id createObject( entity_id objid); // -> objtype
+            entity_id createObject( std::string name); // -> objtype
+            entity_id createObject( type *objtype, int32_t index = -1);
             bool deleteObject( uint32_t index);
             bool loadScriptFile( entity *entity);
             bool bindInput( entity *entity, engine::input_map *input_obj);
 
-            entity *get( int16_t index);
-            void setPosition( int16_t index, fvec2 pos);
+            entity *get( entity_id index);
+            void setPosition( entity_id index, fvec2 pos);
 
             uint32_t outNetworkData( entity *obj, uint8_t *dataDist);
             void inNetworkData( uint8_t *dataDist);

@@ -33,7 +33,7 @@ void entity_handler::init( type_handler *types) {
     p_types = types;
 }
 
-int16_t entity_handler::createObject( std::string name) {
+entity_id entity_handler::createObject( std::string name) {
     if( p_types == nullptr)
         return -1;
     for( uint32_t i = 0; i < p_types->getAmount(); i++)
@@ -42,7 +42,7 @@ int16_t entity_handler::createObject( std::string name) {
     return -1;
 }
 
-int16_t entity_handler::createObject( int16_t objid) {
+entity_id entity_handler::createObject( entity_id objid) {
     if( p_types == nullptr)
         return -1;
     type *l_type = p_types->getById( objid);
@@ -51,7 +51,7 @@ int16_t entity_handler::createObject( int16_t objid) {
     return createObject( l_type);
 }
 
-int16_t entity_handler::createObject( type *objtype, int32_t index) {
+entity_id entity_handler::createObject( type *objtype, int32_t index) {
     if( p_types == nullptr)
         return -1;
     if( objtype == nullptr)
@@ -59,7 +59,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
     
     entity *l_entity = nullptr;
     bool l_found = false;
-    uint16_t l_index = 0;
+    entity_id l_index = 0;
 
     if( index < 0) {
         for( uint32_t i = 0; i < ENGINE_ENTITY_MAX_AMOUNT; i++) {
@@ -74,7 +74,7 @@ int16_t entity_handler::createObject( type *objtype, int32_t index) {
             return -1;
         }
     } else {
-        l_index = (uint32_t)index;
+        l_index = (entity_id)index;
     }
 
     // Step 1 - object
@@ -166,11 +166,11 @@ bool entity_handler::bindInput( entity *entity, input_map *input_obj) {
     return true;
 }
 
-entity *entity_handler::get( int16_t index) {
+entity *entity_handler::get( entity_id index) {
     return index>=0&&index<ENGINE_ENTITY_MAX_AMOUNT?p_entity[ (uint16_t)index]:nullptr;
 }
 
-void entity_handler::setPosition( int16_t index, fvec2 pos) {
+void entity_handler::setPosition( entity_id index, fvec2 pos) {
     entity *l_entity;
     l_entity = get(index);
     if( l_entity == nullptr)
@@ -374,7 +374,7 @@ std::vector<entity*> entity_handler::find( vec2 pos, vec2 rect) {
             l_entity->body->shape == nullptr)
             continue;
         // use physic hub for check
-        if( p_hub.testAABBAABB( fvec2{ (float)pos.x, (float)pos.y},
+        if( physic::testAABBAABB( fvec2{ (float)pos.x, (float)pos.y},
             fvec2{ (float)rect.x, (float)rect.y},
             l_entity->body->position+l_entity->body->shape->getOffset(),
             l_entity->body->shape->getAABB())) {
