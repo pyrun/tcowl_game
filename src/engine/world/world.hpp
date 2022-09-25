@@ -40,10 +40,10 @@ namespace engine {
 
     class world : public engine::graphic_object, public network::synchronisation {
         public:
-            world();
+            world( graphic *graphic, tile_manager *tileset, biom_manager *biom_manager);
             ~world();
 
-            void begin( graphic *graphic, tile_manager *tilemananger, biom_manager *biom_manager, uint32_t seed = 0x0);
+            void start(uint32_t seed = 0);
             bool checkSolidTileReachable( vec2 position);
             void generate_collisionmap( physic::hub *hub);
             void cleanup();

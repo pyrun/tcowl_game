@@ -9,23 +9,23 @@ using namespace engine;
 
 world *engine::used_world_handler = NULL;
 
-world::world() {
+world::world( graphic *graphic, tile_manager *tileset, biom_manager *biom_manager) {
     p_change = false;
+    p_graphic = graphic;
+    p_tileset = tileset;
+    p_biom_manager = biom_manager;
 }
 
 world::~world() {
 }
 
-void world::begin( graphic *graphic, tile_manager *tileset, biom_manager *biom_manager, uint32_t seed) {
+void world::start( uint32_t seed) {
     p_seed = seed;
-    p_graphic = graphic;
-    p_tileset = tileset;
-    p_biom_manager = biom_manager;
     p_world_data = new world_data;
     p_world_data->tiles = new world_tile[WORLD_SIZE*WORLD_SIZE];
     p_world_data->physic_bodys = new world_physic_body[WORLD_PHYSIC_BODYS] {};
 
-    graphic->getCamera()->setBorder( { WORLD_SIZE*ENGINE_TILE_SIZE, WORLD_SIZE*ENGINE_TILE_SIZE});
+    p_graphic->getCamera()->setBorder( { WORLD_SIZE*ENGINE_TILE_SIZE, WORLD_SIZE*ENGINE_TILE_SIZE});
 
     // set up map
     p_world_data->biom = p_biom_manager->get(0);

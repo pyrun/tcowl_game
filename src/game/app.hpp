@@ -36,6 +36,14 @@ namespace game {
             bool update();
 
             void close();
+        protected:
+            void settings();
+            void initialisation();
+            void load_files();
+            void start();
+            void start_network();
+
+            bool update_events();
         private:
             // Engine stuff
             engine::graphic p_graphic;
