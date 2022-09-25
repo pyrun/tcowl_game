@@ -329,10 +329,15 @@ void player::drawBattle( engine::graphic_draw *graphic) {
         vec2 l_position = l_camera_size.half()-l_action->size.half()*vec2{ 2, 2} + l_offset;
 
         // draw hud
-        graphic->draw(  &p_battle_icons,
-            l_camera + l_position-vec2{ 0, 16},
-            vec2{ 16, 16},
-            vec2{ 0, 0});
+        if(l_obj.team == player_battle_team_enemy)
+            graphic->draw( &p_battle_icons,
+                l_camera + l_position-vec2{ 0, 16},
+                vec2{ 8, 8},
+                vec2{ 8, 0},
+                0.0,
+                nullptr,
+                engine::graphic_flip_none,
+                2);
 
         // object
         graphic->draw(  &l_obj.entity->objtype->image,
@@ -343,13 +348,14 @@ void player::drawBattle( engine::graphic_draw *graphic) {
                         nullptr,
                         (l_obj.team == player_battle_team_enemy)^l_action->flip_vertical?graphic_flip::graphic_flip_vertical:graphic_flip_none,
                         l_zoom);
+
         if( p_battle.target == &l_obj) {
             graphic->setDrawColor( 255, 20, 20, 220);
             graphic->drawRect( l_camera + l_position, l_action->size*vec2{ l_zoom, l_zoom});
         }
 
-        if( l_obj.entity->index != p_player->index &&
-            l_click &&
+        if( l_click &&
+            l_obj.entity->index != p_player->index &&
             physic::testAABBAABB( fvec2{ (float)l_mouse.x, (float)l_mouse.y}, fvec2{ 1.f, 1.f},
                 fvec2{ (float)l_position.x, (float)l_position.y}, fvec2{ (float)l_action->size.x*l_zoom, (float)l_action->size.y*l_zoom}))
             p_battle.target = &l_obj;

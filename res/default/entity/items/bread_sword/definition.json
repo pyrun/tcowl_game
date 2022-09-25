@@ -1,0 +1,19 @@
+{
+    "name": "bread_sword",
+    "type": "item",
+    "image": "bread_sword.png",
+    "action": [
+        {
+            "name": "Idle",
+            "position": [ 0, 0],
+            "size": [ 16, 48],
+            "length": 1,
+            "delay": 0
+        }
+    ],
+    "item-hitbox": [
+        [ 0, 0],
+        [ 0, 1],
+        [ 0, 2]
+    ]
+}
