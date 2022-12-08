@@ -29,27 +29,20 @@ void player::begin( engine::font *font, engine::input*input, engine::entity_hand
     p_player = p_entity->get( 1);
     p_transfer_target = nullptr;
 
-    addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
-    //addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
-    //addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
-    //addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
-    //addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
-    addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
-    //addBattleTarget( { .entity = p_entity->get( 1), .team = player_battle_team_ally });
-    addBattleTarget( { .entity = p_entity->get( 2), .team = player_battle_team_enemy});
-
-    p_state =  player_state::player_state_battle;
-
-
-
     if( p_player && p_player->inventory) {
         engine::inventory_entry l_entry;
         l_entry.objtype = entitys->getTypeByName("bread");
         l_entry.pos = vec2{ 5, 3};
         p_player->inventory->add( &l_entry);
 
+        engine::inventory_entry_data l_data;
+        l_data.name = "Test123";
+        l_data.value = 32156;
         l_entry.objtype = entitys->getTypeByName("bread_sword");
         l_entry.pos = vec2{ 3, 1};
+        l_entry.data.push_back(l_data);
+        if(l_entry.data.size())
+                log(engine::log_debug, "%d", l_entry.data.size());
         p_player->inventory->add( &l_entry);
     }
 }
@@ -135,6 +128,13 @@ void player::draw( engine::graphic_draw *graphic) {
                     }
                 }
 
+                // Activate item
+                /*if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_action)) {
+                    engine::inventory_onClick_answer l_answer = p_player->inventory->onClick( l_mouse);
+                    if( l_answer.item)
+                        l_answer.item
+                }*/
+
                 drawInventory( graphic); // draw inventory// drag item draw
 
                 if( p_item_move.item != nullptr) {
@@ -172,10 +172,6 @@ void player::draw( engine::graphic_draw *graphic) {
                     }
                 }
             } break; // player_state::player_state_inventory
-            
-            case player_state_battle: {
-                drawBattle( graphic);
-            } break;
 
             default:
             break;
@@ -269,118 +265,4 @@ void player::drawInventory( engine::graphic_draw *graphic) {
     for( engine::entity_parameter &l_par:p_player->parameter) {
         p_font->print( l_camera + vec2{ 40, 30+(10*l_index++)}, "%s %d", l_par.name.c_str(), l_par.value);
     }
-}
-
-void player::drawBattle( engine::graphic_draw *graphic) {
-    vec2 l_camera = graphic->getCamera()->getPosition().toVec();
-    vec2 l_camera_size = graphic->getCamera()->getSize().toVec();
-    vec2 l_mouse = graphic->getMousePositionToLogicalMousePosition( p_input->getInputMap()->mouse);
-
-    // dark background
-    graphic->setDrawColor( 20, 20, 20, 200);
-    graphic->drawFilledRect( graphic->getCamera()->getPosition().toVec(), graphic->getCamera()->getSize().toVec());
-
-    // floor background
-    graphic->setDrawColor( 20, 20, 20, 220);
-    graphic->drawFilledRect( graphic->getCamera()->getPosition().toVec()+vec2{ 0, 100}, graphic->getCamera()->getSize().toVec());
-
-    // battle background
-    engine::biom *l_biom = p_world->getBiom();
-        if( l_biom != nullptr) {
-        if( l_biom->battle_bg.getTexture() == nullptr)
-            l_biom->battle_bg.load( graphic, l_biom->battle_bg_file.c_str());
-
-        if( l_biom->battle_bg.getTexture() != nullptr)
-            graphic->draw(  &l_biom->battle_bg,
-                            l_camera + vec2{ 0, l_camera_size.y - l_biom->battle_bg.size.y},
-                            l_biom->battle_bg.size);
-    }
-
-    if( p_battle_icons.getTexture() == nullptr)
-        p_battle_icons.load( graphic, "system/battle.png");
-
-    bool l_click = false;
-    if( p_input->edgeDetection( input_key_edge_detection_down, input_buttons_use))
-        l_click = true;
-
-    p_font->print( l_camera + vec2{ 10, 10}, "Battle Order:");
-
-    uint32_t l_index = 0; 
-    for( player_battle_obj &l_obj:p_battle.battle_objects) {
-        if( l_obj.entity == nullptr)
-            continue;
-        
-        p_font->print( l_camera + vec2{ 10, 20 + l_obj.draw_index *10}, "%d %d %s", l_index++, l_obj.draw_index, l_obj.entity->objtype->name.c_str());
-
-        // draw entity
-        action *l_action = l_obj.entity->objtype->findAction( "Battle");
-        if( l_action == nullptr)
-            l_action = &l_obj.entity->objtype->actions[0];
-        
-        if( helper::time::check( &l_obj.time, l_action->delay) ) {
-            helper::time::reset( &l_obj.time);
-            l_obj.tick++;
-        }
-
-        int32_t l_zoom = 2;
-        float l_width = l_camera_size.x*0.8f;
-        vec2 l_offset = vec2{ (int32_t)(l_width/(p_battle.battle_objects.size()-1) *(l_obj.draw_index) )-(int32_t)(l_width/2), 40+(int32_t)(sin(l_obj.draw_index*10)*20.f)};
-
-        vec2 l_position = l_camera_size.half()-l_action->size.half()*vec2{ 2, 2} + l_offset;
-
-        // draw hud
-        if(l_obj.team == player_battle_team_enemy)
-            graphic->draw( &p_battle_icons,
-                l_camera + l_position-vec2{ 0, 16},
-                vec2{ 8, 8},
-                vec2{ 8, 0},
-                0.0,
-                nullptr,
-                engine::graphic_flip_none,
-                2);
-
-        // object
-        graphic->draw(  &l_obj.entity->objtype->image,
-                        l_camera + l_position,
-                        l_action->size,
-                        l_action->postion + vec2{ (int32_t)(l_obj.tick%l_action->length) * l_action->size.x, 0},
-                        0.0,
-                        nullptr,
-                        (l_obj.team == player_battle_team_enemy)^l_action->flip_vertical?graphic_flip::graphic_flip_vertical:graphic_flip_none,
-                        l_zoom);
-
-        if( p_battle.target == &l_obj) {
-            graphic->setDrawColor( 255, 20, 20, 220);
-            graphic->drawRect( l_camera + l_position, l_action->size*vec2{ l_zoom, l_zoom});
-        }
-
-        if( l_click &&
-            l_obj.entity->index != p_player->index &&
-            physic::testAABBAABB( fvec2{ (float)l_mouse.x, (float)l_mouse.y}, fvec2{ 1.f, 1.f},
-                fvec2{ (float)l_position.x, (float)l_position.y}, fvec2{ (float)l_action->size.x*l_zoom, (float)l_action->size.y*l_zoom}))
-            p_battle.target = &l_obj;
-    }
-
-    p_player->inventory->draw( graphic); // player inventory
-}
-
-void player::addBattleTarget( player_battle_obj obj) {
-    p_battle.battle_objects.push_back( obj);
-    std::vector<player_battle_obj> p_battle_draw = p_battle.battle_objects; // copy
-
-    // set index
-    uint32_t l_n = 0;
-    for( player_battle_obj &l_obj:p_battle_draw)
-        l_obj.draw_index = l_n++;
-
-    // sort order by team
-    struct {
-        bool operator()(player_battle_obj a, player_battle_obj b) const { return a.team < b.team; }
-    } customLess;
-    std::sort(p_battle_draw.begin(), p_battle_draw.end(), customLess);
-
-    // set draw index
-    l_n = 0;
-    for( player_battle_obj &l_obj:p_battle_draw)
-        p_battle.battle_objects[l_obj.draw_index].draw_index = l_n++;
 }

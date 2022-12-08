@@ -11,7 +11,6 @@ namespace game {
         player_state_idle = 0,
         player_state_inventory,
         player_state_inventory_transfer,
-        player_state_battle,
     };
 
     struct player_move_item {
@@ -19,28 +18,6 @@ namespace game {
         engine::inventory_entry item_origin_state;
         engine::inventory_grid *origin;
         engine::vec2 pos;
-    };
-
-    enum player_battle_team : uint8_t {
-        player_battle_team_ally = 0,
-        player_battle_team_enemy
-    };
-
-    struct player_battle_obj {
-        engine::entity *entity;
-        uint8_t team;
-        uint32_t time = 0;
-        uint32_t tick = 0;
-
-        uint8_t energy = 1;
-
-        int32_t draw_index; // is set in the draw call
-    };
-
-    struct player_battle {
-        std::vector<player_battle_obj> battle_objects;
-        uint8_t index;
-        player_battle_obj *target = nullptr;
     };
 
     class player : public engine::graphic_object {
@@ -61,9 +38,7 @@ namespace game {
             engine::inventory_grid_state checkItemInInventory( engine::vec2 pos, engine::entity *entity);
             void clearItemMove();
             void drawInventory( engine::graphic_draw *graphic);
-            void drawBattle( engine::graphic_draw *graphic);
 
-            void addBattleTarget( player_battle_obj obj);
         private:
             player_state p_state;
             player_move_item p_item_move;
@@ -77,11 +52,6 @@ namespace game {
 
             // Trasfer
             engine::entity *p_transfer_target;
-
-            // Battle
-            player_battle p_battle;
-            engine::image p_battle_icons;
-            
     };
 };
 
