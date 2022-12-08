@@ -218,6 +218,16 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
             helper::int32toUint8x4( l_item->pos.x, dataDist + l_offset); l_offset +=4;
             helper::int32toUint8x4( l_item->pos.y, dataDist + l_offset); l_offset +=4;
             helper::int16toUint8x2( l_item->objtype->id, dataDist + l_offset); l_offset +=2;
+            
+            // send inventory data
+            helper::int32toUint8x4( l_item->data.size(), dataDist + l_offset); l_offset +=4;
+            for( auto l_data:l_item->data) {
+                uint32_t l_size = l_data.name.size();
+                helper::int32toUint8x4( l_size, dataDist + l_offset); l_offset +=4;
+                for( int n = 0; l_size > n; n++)
+                    dataDist[l_offset] = ((char)l_data.name[n]); l_offset +=1;
+                helper::int32toUint8x4( l_data.value, dataDist + l_offset); l_offset +=4;
+            }
         }
     }
     return l_offset;
@@ -281,6 +291,22 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
         helper::uint8x4toInt32( dataDist + l_offset, &l_item.pos.y); l_offset +=4;
         helper::uint8x2toInt16( dataDist + l_offset, &l_id); l_offset +=2;
         l_item.objtype = p_types->getById( l_id);
+
+        // inventory data
+        int32_t l_size;
+        helper::uint8x4toInt32( dataDist + l_offset, &l_size); l_offset +=4;
+        for( int n = 0; l_size > n; n++) {
+            engine::inventory_entry_data l_data;
+            int32_t l_name_size;
+            helper::uint8x4toInt32( dataDist + l_offset, &l_name_size); l_offset +=4;
+            for( int z = 0; l_name_size > z; z++) {
+                l_data.name += ((char)dataDist[l_offset]);
+                l_offset +=1;
+            }
+            helper::uint8x4toInt32( dataDist + l_offset, &l_data.value); l_offset +=4;
+            // save data or check for changes
+            // log(engine::log_debug, "inventory_entry_data %s %i", l_data.name.c_str(), l_data.value);
+        }
 
         if( i >= (uint8_t)l_entity->inventory->getList()->size()) {
             l_entity->inventory->add( &l_item);

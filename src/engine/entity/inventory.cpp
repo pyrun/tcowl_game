@@ -22,10 +22,7 @@ inventory_entry *inventory_grid::add( inventory_entry *objtype) {
     for (engine::vec2 const& l_hitbox : getItemHitboxList(objtype) ) {
         setState( objtype->pos+l_hitbox, inventory_grid_state::inventory_grid_state_taken);
     }
-    inventory_entry l_enitry;
-    l_enitry.objtype = objtype->objtype;
-    l_enitry.pos = objtype->pos;
-    l_enitry.angle = objtype->angle;
+    inventory_entry l_enitry = *objtype; // copy
     p_items.push_back( l_enitry);
     return &p_items[p_items.size()-1];
 }

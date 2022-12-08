@@ -19,10 +19,16 @@ namespace engine {
         inventory_angle_270,
     };
 
+    struct inventory_entry_data {
+        std::string name;
+        int32_t value;
+    };
+
     struct inventory_entry {
         engine::type *objtype;
         vec2 pos;
         inventory_angle angle = inventory_angle_0;
+        std::vector<inventory_entry_data> data;
     };
 
     enum inventory_grid_state {
