@@ -9,6 +9,9 @@ int main( int argc, char* args[] ) {
     sdl::init();
     game::app l_app;
 
+    if( sizeof(std::size_t) != sizeof(int32_t)) // TODO: better check
+        while(1);
+
     // check args
     if( argc > 1)
         l_app.loadAgrs( args[1]);
