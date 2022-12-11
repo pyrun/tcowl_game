@@ -224,8 +224,10 @@ uint32_t entity_handler::outNetworkData( entity *obj, uint8_t *dataDist) {
             for( auto l_data:l_item->data) {
                 uint32_t l_size = l_data.name.size();
                 helper::int32toUint8x4( l_size, dataDist + l_offset); l_offset +=4;
-                for( int n = 0; l_size > n; n++)
-                    dataDist[l_offset] = ((char)l_data.name[n]); l_offset +=1;
+                for( int n = 0; l_size > n; n++) {
+                    char l_char = l_data.name[n];
+                    dataDist[l_offset] = l_char; l_offset +=1;
+                }
                 helper::int32toUint8x4( l_data.value, dataDist + l_offset); l_offset +=4;
             }
         }
@@ -285,40 +287,54 @@ void entity_handler::inNetworkData( uint8_t *dataDist) {
     }
     for( uint8_t i = 0; i < l_length; i++) {
         int16_t l_id;
-        engine::inventory_entry l_item;
+        engine::inventory_entry l_item, *l_item_ptr = nullptr;
         l_item.angle = (inventory_angle)dataDist[l_offset]; l_offset +=1;
         helper::uint8x4toInt32( dataDist + l_offset, &l_item.pos.x); l_offset +=4;
         helper::uint8x4toInt32( dataDist + l_offset, &l_item.pos.y); l_offset +=4;
         helper::uint8x2toInt16( dataDist + l_offset, &l_id); l_offset +=2;
         l_item.objtype = p_types->getById( l_id);
 
+        // check if inventory_entry is there or only need change value
+        if( i >= (uint8_t)l_entity->inventory->getList()->size()) {
+            l_item_ptr = l_entity->inventory->add( &l_item);
+        } else {
+            l_item_ptr = &l_entity->inventory->getList()->at(i);
+            if( !(l_item.pos == l_item_ptr->pos) ||
+                l_item.angle != l_item_ptr->angle ||
+                l_item.objtype->id != l_item_ptr->objtype->id) {
+                l_entity->inventory->del( l_item_ptr);
+                l_item_ptr = l_entity->inventory->add( &l_item);
+            }
+        }
+
         // inventory data
         int32_t l_size;
+        bool l_replace = false;
         helper::uint8x4toInt32( dataDist + l_offset, &l_size); l_offset +=4;
+        l_replace = l_size != l_item_ptr->data.size(); // check if list 
+        if( l_replace)
+            l_item_ptr->data.clear();
         for( int n = 0; l_size > n; n++) {
             engine::inventory_entry_data l_data;
             int32_t l_name_size;
             helper::uint8x4toInt32( dataDist + l_offset, &l_name_size); l_offset +=4;
             for( int z = 0; l_name_size > z; z++) {
-                l_data.name += ((char)dataDist[l_offset]);
+                char l_char = dataDist[l_offset];
+                l_data.name += l_char;
                 l_offset +=1;
             }
             helper::uint8x4toInt32( dataDist + l_offset, &l_data.value); l_offset +=4;
-            // save data or check for changes
-            // log(engine::log_debug, "inventory_entry_data %s %i", l_data.name.c_str(), l_data.value);
-        }
 
-        if( i >= (uint8_t)l_entity->inventory->getList()->size()) {
-            l_entity->inventory->add( &l_item);
-        } else {
-            engine::inventory_entry *l_list_item = &l_entity->inventory->getList()->at(i);
-            if( !(l_item.pos == l_list_item->pos) ||
-                l_item.angle != l_list_item->angle ||
-                l_item.objtype->id != l_list_item->objtype->id) {
-                l_entity->inventory->del( l_list_item);
-                l_entity->inventory->add( &l_item);
+            if( l_replace) {
+                l_item_ptr->data.push_back( l_data);
+            } else { // save the new value
+                engine::inventory_entry_data *l_entry_data_ptr = &l_item_ptr->data[n];
+                if( l_data.name != l_entry_data_ptr->name)
+                    l_entry_data_ptr->name = l_data.name;
+                l_entry_data_ptr->value = l_data.value;
             }
         }
+
     }
     l_entity->change = false;
 }
