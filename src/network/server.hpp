@@ -9,7 +9,7 @@
 #include "network.hpp"
 
 #define NETWORK_SERVER_MAX_CLIENTS 16
-#define NETWORK_SERVER_PACKETSIZE 256
+#define NETWORK_SERVER_PACKETSIZE 512
 
 namespace network {
     class server : public service {
